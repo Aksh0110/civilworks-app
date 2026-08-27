@@ -12,26 +12,27 @@ export async function GET(
       return NextResponse.json({ message: 'Project not found' }, { status: 404 });
     }
     return NextResponse.json({ data: project });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Failed to fetch project' },
+      { message: error.message || 'Failed to fetch project' },
       { status: 500 }
     );
   }
 }
 
-export async function PUT(
+export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const updated = await updateProject(id, body);
+
+    const updated = await updateProject(id, body, body.user || 'Site Supervisor');
     return NextResponse.json({ data: updated });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Failed to update project' },
+      { message: error.message || 'Failed to update project' },
       { status: 400 }
     );
   }

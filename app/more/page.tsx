@@ -2,6 +2,8 @@ import AppShell from '@/components/AppShell';
 import Link from 'next/link';
 
 const modules = [
+  { icon: '📊', title: 'Reports & Analytics', desc: 'Statements, muster registers & cost summaries', href: '/reports' },
+  { icon: '📂', title: 'Documents Hub', desc: 'Centralized site drawings, bills & attachments', href: '/documents' },
   { icon: '💳', title: 'Payments & Receipts', desc: 'Pay workers & vendors via cash/UPI', href: '/payments' },
   { icon: '🏬', title: 'Vendor Management', desc: 'Vendor profiles, bills & ledgers', href: '/vendors' },
   { icon: '📦', title: 'Materials & Stock', desc: 'Receive, issue & track site inventory', href: '/materials' },
@@ -17,7 +19,7 @@ export default function MorePage() {
       <main className="content">
         <h1 className="page-title">Operations & Modules</h1>
         <p className="subtle" style={{ marginBottom: '16px' }}>
-          Access all site management workflows and financial tools.
+          Access all site management workflows, reports, and document repositories.
         </p>
 
         <div className="grid">
