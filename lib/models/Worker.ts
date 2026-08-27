@@ -36,4 +36,6 @@ WorkerSchema.index({ projectId: 1, name: 1 });
 WorkerSchema.index({ projectId: 1, category: 1 });
 
 export const Worker = mongoose.models.Worker || mongoose.model('Worker', WorkerSchema);
+export const WorkerModel = Worker;
+
 

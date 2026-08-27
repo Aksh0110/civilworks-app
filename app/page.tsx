@@ -13,6 +13,8 @@ export default function HomePage() {
   const [expenseSummary, setExpenseSummary] = useState<{ todayTotal: number; monthTotal: number; projectTotal: number } | null>(null);
   const [todayProgress, setTodayProgress] = useState<any>(null);
 
+  const [paymentSummary, setPaymentSummary] = useState<any>(null);
+
   useEffect(() => {
     if (!activeProject?._id) return;
     const today = new Date().toISOString().slice(0, 10);
@@ -51,9 +53,17 @@ export default function HomePage() {
         if (data.data) setTodayProgress(data.data);
       })
       .catch(console.error);
+
+    fetch(`/api/payments/summary?projectId=${activeProject._id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data) setPaymentSummary(data.data);
+      })
+      .catch(console.error);
   }, [activeProject?._id]);
 
   const quick = [
+    { icon: '💳', label: 'Payment', href: '/payments', active: true },
     { icon: '✓', label: 'Attendance', href: '/attendance', active: true },
     { icon: '📦', label: 'Material', href: '/materials', active: true },
     { icon: '📋', label: 'Daily Progress', href: '/progress', active: true },

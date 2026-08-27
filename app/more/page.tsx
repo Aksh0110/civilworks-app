@@ -1,32 +1,39 @@
 import AppShell from '@/components/AppShell';
+import Link from 'next/link';
 
-const upcomingModules = [
-  { icon: '📦', title: 'Materials & Stock', desc: 'Receive, issue & track site inventory' },
-  { icon: '₹', title: 'Expenses & Bills', desc: 'Log site expenditures & vouchers' },
-  { icon: '📋', title: 'Daily Work Progress', desc: 'Record work completed & site photos' },
-  { icon: '💳', title: 'Payments & Receipts', desc: 'Pay workers & vendors via cash/UPI' },
-  { icon: '🏬', title: 'Vendor Management', desc: 'Vendor profiles, bills & ledgers' },
-  { icon: '📊', title: 'Reports & Export', desc: 'Daily registers & cost summaries' }
+const modules = [
+  { icon: '💳', title: 'Payments & Receipts', desc: 'Pay workers & vendors via cash/UPI', href: '/payments' },
+  { icon: '🏬', title: 'Vendor Management', desc: 'Vendor profiles, bills & ledgers', href: '/vendors' },
+  { icon: '📦', title: 'Materials & Stock', desc: 'Receive, issue & track site inventory', href: '/materials' },
+  { icon: '📋', title: 'Daily Work Progress', desc: 'Record work completed & site diary', href: '/progress' },
+  { icon: '💸', title: 'Expenses & Bills', desc: 'Log site operational expenditures', href: '/expenses' },
+  { icon: '👷', title: 'Workers', desc: 'Worker database & rates', href: '/workers' },
+  { icon: '🏗️', title: 'Projects', desc: 'Site projects & locations', href: '/projects' }
 ];
 
 export default function MorePage() {
   return (
     <AppShell>
       <main className="content">
-        <h1 className="page-title">Advanced Workflows</h1>
+        <h1 className="page-title">Operations & Modules</h1>
         <p className="subtle" style={{ marginBottom: '16px' }}>
-          Workflows 02–06 will unlock in subsequent development milestones.
+          Access all site management workflows and financial tools.
         </p>
 
         <div className="grid">
-          {upcomingModules.map((item) => (
-            <div key={item.title} className="card" style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          {modules.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className="card text-decoration-none"
+              style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
+            >
               <div style={{ fontSize: '28px' }}>{item.icon}</div>
               <div>
                 <strong>{item.title}</strong>
                 <div className="subtle">{item.desc}</div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>
