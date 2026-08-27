@@ -1,0 +1,37 @@
+{
+  "name": "civilworks-manager",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "node ./node_modules/next/dist/bin/next build --webpack",
+    "start": "npx --no-install next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pm2:dev": "node node_modules/pm2/bin/pm2 start ecosystem.config.cjs --only civilworks-dev",
+    "pm2:dev:restart": "node node_modules/pm2/bin/pm2 restart civilworks-dev",
+    "pm2:dev:stop": "node node_modules/pm2/bin/pm2 delete civilworks-dev",
+    "pm2:prod": "npm run build && node node_modules/pm2/bin/pm2 start ecosystem.config.cjs --only civilworks-prod --env production",
+    "pm2:prod:restart": "node node_modules/pm2/bin/pm2 restart civilworks-prod",
+    "pm2:prod:stop": "node node_modules/pm2/bin/pm2 delete civilworks-prod",
+    "pm2:delete:all": "node node_modules/pm2/bin/pm2 delete all",
+    "pm2:kill": "node node_modules/pm2/bin/pm2 kill",
+    "pm2:status": "node node_modules/pm2/bin/pm2 status",
+    "seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "mongoose": "^9.9.3",
+    "next": "16.3.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "pm2": "^6.0.13",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
