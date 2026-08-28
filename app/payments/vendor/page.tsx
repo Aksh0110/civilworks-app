@@ -405,8 +405,8 @@ export default function PayVendorPage() {
 
       {/* Confirmation Modal */}
       {showConfirmModal && selectedVendor && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-5 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-3">
               Confirm Vendor Payment
             </h3>

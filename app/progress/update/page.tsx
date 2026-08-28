@@ -760,8 +760,8 @@ export default function WorkUpdatePage() {
 
       {/* Work Type Selection Modal */}
       {isWorkTypeSelectOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-lg bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="w-full sm:max-w-lg bg-white border border-slate-200 rounded-2xl p-6 max-h-[85vh] overflow-y-auto flex flex-col shadow-2xl animate-in slide-in-from-bottom">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span>🏗️</span> Select Work Type
