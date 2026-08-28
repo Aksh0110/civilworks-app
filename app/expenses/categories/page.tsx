@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ExpenseCategoryModal from '@/components/ExpenseCategoryModal';
 import ConfirmModal from '@/components/ConfirmModal';
+import ModuleGuard from '@/components/ModuleGuard';
 
 interface CategoryItem {
   _id: string;
@@ -45,7 +46,8 @@ export default function ExpenseCategoriesPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-20">
+    <ModuleGuard module="expenses">
+      <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header */}
       <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
@@ -137,6 +139,7 @@ export default function ExpenseCategoriesPage() {
         onConfirm={handleDeleteCategory}
       />
     </div>
+    </ModuleGuard>
   );
 }
 

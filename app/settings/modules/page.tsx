@@ -32,7 +32,10 @@ export default function ModuleControlPanelPage() {
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const handleToggle = async (key: keyof IProjectModules) => {
-    if (!activeProject?._id) return;
+    if (!activeProject?._id) {
+      setStatusMsg({ type: 'error', text: 'Please select an active project site first from the top header.' });
+      return;
+    }
     const nextState = !enabledModules[key];
     try {
       setSavingKey(key);
@@ -73,6 +76,13 @@ export default function ModuleControlPanelPage() {
             </span>
           </div>
         </div>
+
+        {!activeProject?._id && (
+          <div className="p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-bold flex items-center gap-2">
+            <span>⚠️</span>
+            <span>Please select a Project Site from the top bar dropdown before configuring module settings.</span>
+          </div>
+        )}
 
         {statusMsg && (
           <div

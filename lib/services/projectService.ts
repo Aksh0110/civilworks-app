@@ -44,7 +44,8 @@ export async function createProject(data: Partial<IProject>, user?: string) {
     expectedEndDate: data.expectedEndDate ? new Date(data.expectedEndDate) : undefined,
     siteContact: data.siteContact?.trim(),
     managerName: data.managerName?.trim(),
-    notes: data.notes?.trim()
+    notes: data.notes?.trim(),
+    modules: data.modules
   });
 
   await logAuditAction({
@@ -80,6 +81,7 @@ export async function updateProject(id: string, data: Partial<IProject>, user?: 
       ...(project.modules || {}),
       ...data.modules
     };
+    (project as any).markModified('modules');
   }
 
   await project.save();

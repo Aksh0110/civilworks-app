@@ -43,7 +43,8 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       setProjects(list);
 
       const savedId = typeof window !== 'undefined' ? localStorage.getItem('civilworks_active_project') : null;
-      let matched = list.find((p) => p._id === savedId);
+      const targetId = activeProject?._id || savedId;
+      let matched = list.find((p) => p._id === targetId);
       if (!matched && list.length > 0) {
         matched = list[0];
       }
