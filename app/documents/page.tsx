@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
 import ConfirmModal from '@/components/ConfirmModal';
-import ModuleGuard from '@/components/ModuleGuard';
 
 interface DocumentItem {
   _id: string;
@@ -109,8 +108,7 @@ export default function DocumentsHubPage() {
   });
 
   return (
-    <ModuleGuard module="documents">
-      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -312,6 +310,5 @@ export default function DocumentsHubPage() {
         onConfirm={handleDeleteDoc}
       />
     </div>
-    </ModuleGuard>
   );
 }

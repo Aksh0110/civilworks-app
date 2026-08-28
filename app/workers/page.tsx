@@ -5,7 +5,6 @@ import AppShell from '@/components/AppShell';
 import { useProject } from '@/lib/context/ProjectContext';
 import WorkerModal from '@/components/WorkerModal';
 import ConfirmModal from '@/components/ConfirmModal';
-import ModuleGuard from '@/components/ModuleGuard';
 
 export default function WorkersPage() {
   const { activeProject } = useProject();
@@ -69,8 +68,7 @@ export default function WorkersPage() {
 
   return (
     <AppShell>
-      <ModuleGuard module="workers">
-        <main className="content">
+      <main className="content">
         <div className="page-header">
           <div>
             <h1 className="page-title">Workers</h1>
@@ -186,7 +184,6 @@ export default function WorkersPage() {
           onConfirm={handleDeleteWorker}
         />
       </main>
-      </ModuleGuard>
     </AppShell>
   );
 }

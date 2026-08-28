@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { IProjectModules } from '../models/Project';
 
 export interface ProjectSummary {
   _id: string;
@@ -9,7 +8,6 @@ export interface ProjectSummary {
   code: string;
   location?: string;
   status: string;
-  modules?: IProjectModules;
 }
 
 interface ProjectContextType {

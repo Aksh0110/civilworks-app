@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
-import ModuleGuard from '@/components/ModuleGuard';
 
 export default function MaterialsPage() {
   const { activeProject } = useProject();
@@ -25,8 +24,7 @@ export default function MaterialsPage() {
   }, [activeProject?._id]);
 
   return (
-    <ModuleGuard module="materials">
-      <div className="space-y-6 pb-12 max-w-4xl mx-auto">
+    <div className="space-y-6 pb-12 max-w-4xl mx-auto">
       {/* Top Banner Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -165,6 +163,5 @@ export default function MaterialsPage() {
         </Link>
       </div>
     </div>
-    </ModuleGuard>
   );
 }

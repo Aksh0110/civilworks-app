@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
 import ConfirmModal from '@/components/ConfirmModal';
-import ModuleGuard from '@/components/ModuleGuard';
 
 interface PaymentSummary {
   todayLabourPaid: number;
@@ -114,8 +113,7 @@ export default function PaymentsMainPage() {
   });
 
   return (
-    <ModuleGuard module="payments">
-      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -444,6 +442,5 @@ export default function PaymentsMainPage() {
         onConfirm={handleDeletePayment}
       />
     </div>
-    </ModuleGuard>
   );
 }

@@ -513,6 +513,42 @@ export async function adjustStock(
   };
 }
 
+// Fast Lightweight Stock Metrics Fetch
+export async function getStockMetricsOnly(projectId: string) {
+  await connectMongoDB();
+  if (!mongoose.isValidObjectId(projectId)) {
+    return { lowStockCount: 0, outOfStockCount: 0, totalAttentionCount: 0 };
+  }
+
+  const matQuery: any = { status: 'ACTIVE' };
+  const materials = await Material.find(matQuery).select('_id minStockLevel').lean().exec();
+
+  const stockQuery: any = { projectId };
+  const stocks = await MaterialStock.find(stockQuery).select('materialId currentStock').lean().exec();
+
+  const stockMap = new Map<string, number>();
+  stocks.forEach((s: any) => stockMap.set(s.materialId.toString(), s.currentStock || 0));
+
+  let lowStockCount = 0;
+  let outOfStockCount = 0;
+
+  materials.forEach((m: any) => {
+    const currentStock = stockMap.get(m._id.toString()) || 0;
+    const minStock = m.minStockLevel || 0;
+    if (currentStock <= 0) {
+      outOfStockCount++;
+    } else if (minStock > 0 && currentStock < minStock) {
+      lowStockCount++;
+    }
+  });
+
+  return {
+    lowStockCount,
+    outOfStockCount,
+    totalAttentionCount: lowStockCount + outOfStockCount
+  };
+}
+
 // Stock Overview Query
 export async function getStockOverview(
   projectId: string,

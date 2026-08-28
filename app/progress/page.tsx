@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
-import ModuleGuard from '@/components/ModuleGuard';
 
 interface ProgressHistoryItem {
   _id: string;
@@ -47,8 +46,7 @@ export default function DailyProgressHubPage() {
   );
 
   return (
-    <ModuleGuard module="progress">
-      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
@@ -192,6 +190,5 @@ export default function DailyProgressHubPage() {
         </div>
       )}
     </div>
-    </ModuleGuard>
   );
 }
