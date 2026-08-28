@@ -31,31 +31,17 @@ export default function MorePage() {
 
         <div className="grid">
           {isAdmin && (
-            <>
-              <Link
-                href="/admin/users"
-                className="card text-decoration-none border-2 border-[#087F3E] bg-[#EAF7EF]"
-                style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
-              >
-                <div style={{ fontSize: '28px' }}>👥</div>
-                <div>
-                  <strong className="text-[#056B34]">User Management Portal</strong>
-                  <div className="subtle text-[#056B34]">Supervise users, roles & assigned site permissions</div>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/audit"
-                className="card text-decoration-none border-2 border-purple-500 bg-purple-50"
-                style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
-              >
-                <div style={{ fontSize: '28px' }}>📋</div>
-                <div>
-                  <strong className="text-purple-900">Activity Audit & Supervision</strong>
-                  <div className="subtle text-purple-700">Monitor all supervised user actions & audit trails</div>
-                </div>
-              </Link>
-            </>
+            <Link
+              href="/admin/users"
+              className="card text-decoration-none border-2 border-[#087F3E] bg-[#EAF7EF]"
+              style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
+            >
+              <div style={{ fontSize: '28px' }}>👥</div>
+              <div>
+                <strong className="text-[#056B34]">User Management Portal</strong>
+                <div className="subtle text-[#056B34]">Supervise users, roles & assigned site permissions</div>
+              </div>
+            </Link>
           )}
 
           {visibleModules.map((item) => (

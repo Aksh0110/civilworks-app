@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import { useAuth } from '@/lib/context/AuthContext';
 import UserModal from '@/components/UserModal';
+import UserActivityModal from '@/components/UserActivityModal';
 
 interface ManagedUser {
   _id: string;
@@ -34,6 +35,9 @@ export default function AdminUserManagementPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState<ManagedUser | null>(null);
+
+  // User Activity Modal State
+  const [selectedActivityUser, setSelectedActivityUser] = useState<ManagedUser | null>(null);
 
   useEffect(() => {
     if (isAdmin) {
@@ -99,7 +103,7 @@ export default function AdminUserManagementPage() {
           </p>
           <Link
             href="/"
-            className="inline-block px-5 py-2.5 bg-[#087F3E] text-white text-xs font-extrabold rounded-xl"
+            className="inline-block px-5 py-2.5 bg-[#087F3E] text-[#ffffff] text-xs font-extrabold rounded-xl"
           >
             ← Return to Site Dashboard
           </Link>
@@ -135,28 +139,19 @@ export default function AdminUserManagementPage() {
               <h1 className="text-2xl font-extrabold text-slate-900">User Management Portal</h1>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Supervise user accounts, assign role permissions, and control project site accessibility.
+              Supervise user accounts, view user activities, assign role permissions, and control site access.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-            <Link
-              href="/admin/audit"
-              className="px-4 h-11 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-extrabold rounded-xl transition-colors flex items-center justify-center gap-1.5"
-            >
-              <span>📋</span> Activity Audit
-            </Link>
-
-            <button
-              onClick={() => {
-                setUserToEdit(null);
-                setIsModalOpen(true);
-              }}
-              className="px-5 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl transition-colors shadow flex items-center justify-center gap-2"
-            >
-              <span>+</span> Create Supervised User
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              setUserToEdit(null);
+              setIsModalOpen(true);
+            }}
+            className="px-5 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
+          >
+            <span>+</span> Create Supervised User
+          </button>
         </div>
 
         {/* KPI Summary Cards */}
@@ -274,6 +269,14 @@ export default function AdminUserManagementPage() {
 
                   <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <button
+                      onClick={() => setSelectedActivityUser(u)}
+                      className="px-3 py-1.5 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] text-xs font-extrabold rounded-xl transition-colors flex items-center gap-1"
+                      title="View user activities & work history"
+                    >
+                      <span>👤</span> View Activities
+                    </button>
+
+                    <button
                       onClick={() => {
                         setUserToEdit(u);
                         setIsModalOpen(true);
@@ -302,7 +305,7 @@ export default function AdminUserManagementPage() {
           </div>
         )}
 
-        {/* User Modal */}
+        {/* User Edit / Create Modal */}
         <UserModal
           isOpen={isModalOpen}
           userToEdit={userToEdit}
@@ -312,6 +315,15 @@ export default function AdminUserManagementPage() {
             showToast(userToEdit ? 'User updated successfully' : 'Supervised user account created');
             loadData();
           }}
+        />
+
+        {/* User Activity & Profile Modal */}
+        <UserActivityModal
+          isOpen={Boolean(selectedActivityUser)}
+          userId={selectedActivityUser?._id || null}
+          userName={selectedActivityUser?.name || ''}
+          userEmail={selectedActivityUser?.email || ''}
+          onClose={() => setSelectedActivityUser(null)}
         />
       </div>
     </AppShell>
