@@ -43,3 +43,72 @@ export async function getAuditLogs(entity?: string, entityId?: string, limit = 5
   }
   return AuditLog.find(filter).sort({ timestamp: -1 }).limit(limit).lean();
 }
+
+export interface FilterAuditOptions {
+  userFilter?: string;
+  categoryFilter?: string;
+  projectId?: string;
+  limit?: number;
+}
+
+export async function getFilteredAuditLogs(options: FilterAuditOptions = {}) {
+  await connectMongoDB();
+  const { userFilter, categoryFilter, projectId, limit = 100 } = options;
+  const filter: any = {};
+
+  if (userFilter && userFilter !== 'ALL') {
+    filter.user = new RegExp(userFilter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  }
+
+  if (projectId && projectId !== 'ALL') {
+    filter.$or = [
+      { projectId: projectId },
+      { 'metadata.projectId': projectId },
+      { entity: 'Project', entityId: projectId }
+    ];
+  }
+
+  if (categoryFilter && categoryFilter !== 'ALL') {
+    switch (categoryFilter) {
+      case 'LOGINS':
+        filter.action = { $in: ['USER_LOGIN_SUCCESS', 'ADMIN_USER_SEEDED'] };
+        break;
+      case 'FINANCIAL':
+        filter.action = { $in: ['EXPENSE_CREATED', 'PAYMENT_CREATED', 'PAYMENT_VOIDED', 'WAGE_CALCULATED'] };
+        break;
+      case 'PROGRESS_STOCK':
+        filter.action = { $in: ['WORK_PROGRESS_UPDATED', 'MATERIAL_STOCK_UPDATED', 'MATERIAL_RECEIVED'] };
+        break;
+      case 'USER_ADMIN':
+        filter.action = { $in: ['USER_CREATED', 'USER_UPDATED', 'USER_DEACTIVATED', 'ADMIN_USER_SEEDED'] };
+        break;
+    }
+  }
+
+  const logs = await AuditLog.find(filter).sort({ timestamp: -1 }).limit(limit).lean().exec();
+  return JSON.parse(JSON.stringify(logs));
+}
+
+export async function getAuditSummaryStats() {
+  await connectMongoDB();
+
+  const totalActions = await AuditLog.countDocuments().exec();
+
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayActions = await AuditLog.countDocuments({ timestamp: { $gte: todayStart } }).exec();
+  const todayLogins = await AuditLog.countDocuments({
+    action: 'USER_LOGIN_SUCCESS',
+    timestamp: { $gte: todayStart }
+  }).exec();
+
+  const uniqueUsers = await AuditLog.distinct('user').exec();
+
+  return {
+    totalActions,
+    todayActions,
+    todayLogins,
+    activeMonitoredUsersCount: uniqueUsers.length
+  };
+}

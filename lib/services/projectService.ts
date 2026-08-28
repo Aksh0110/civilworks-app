@@ -8,11 +8,14 @@ import { getProjectPaymentSummary, roundMoney } from './paymentService';
 import { getDailyReportData } from './progressService';
 import { isFeatureEnabled } from '../config/features';
 
-export async function getProjects(status?: string) {
+export async function getProjects(status?: string, allowedProjectIds?: string[]) {
   await connectMongoDB();
   const filter: any = {};
   if (status) {
     filter.status = status;
+  }
+  if (allowedProjectIds && Array.isArray(allowedProjectIds)) {
+    filter._id = { $in: allowedProjectIds };
   }
   const projects = await Project.find(filter).sort({ createdAt: -1 }).exec();
   return JSON.parse(JSON.stringify(projects));
@@ -158,8 +161,12 @@ export interface ProjectOverviewPayload {
   recentActivity: Array<{ id: string; timestamp: Date; title: string; subtitle: string; icon: string }>;
 }
 
-export async function getProjectOverview(projectId: string): Promise<ProjectOverviewPayload> {
+export async function getProjectOverview(projectId: string, allowedProjectIds?: string[]): Promise<ProjectOverviewPayload> {
   await connectMongoDB();
+
+  if (allowedProjectIds && Array.isArray(allowedProjectIds) && !allowedProjectIds.includes(projectId)) {
+    throw new Error('Access Denied. You do not have permission to view this project site.');
+  }
 
   const project = await getProjectById(projectId);
   if (!project) throw new Error('Project not found');
@@ -322,12 +329,15 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
   };
 }
 
-export async function getProjectsOverviewList(statusTab?: string) {
+export async function getProjectsOverviewList(statusTab?: string, allowedProjectIds?: string[]) {
   await connectMongoDB();
 
   const query: any = {};
   if (statusTab && statusTab !== 'ALL') {
     query.status = statusTab;
+  }
+  if (allowedProjectIds && Array.isArray(allowedProjectIds)) {
+    query._id = { $in: allowedProjectIds };
   }
 
   const projects = await Project.find(query).sort({ name: 1 }).lean();

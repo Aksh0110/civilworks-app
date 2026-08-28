@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
+import { useAuth } from '@/lib/context/AuthContext';
 import { isFeatureEnabled } from '@/lib/config/features';
 
 import ProjectModal from '@/components/ProjectModal';
@@ -24,6 +25,7 @@ interface ProjectListItem {
 
 export default function ProjectsDirectoryPage() {
   const { activeProject, setActiveProjectId, refreshProjects } = useProject();
+  const { user, isAdmin } = useAuth();
 
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [search, setSearch] = useState('');
@@ -96,6 +98,11 @@ export default function ProjectsDirectoryPage() {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏗️</span>
             <h1 className="text-xl font-bold text-slate-900">Project Directory</h1>
+            <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+              isAdmin ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-[#056B34] border-[#bce6cb]'
+            }`}>
+              {isAdmin ? '🌐 All Sites (Admin)' : `🔒 Authorized Sites (${projects.length})`}
+            </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             Current site:{' '}

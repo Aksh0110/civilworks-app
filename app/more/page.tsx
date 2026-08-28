@@ -1,6 +1,9 @@
+'use client';
+
 import AppShell from '@/components/AppShell';
 import Link from 'next/link';
 import { isFeatureEnabled } from '@/lib/config/features';
+import { useAuth } from '@/lib/context/AuthContext';
 
 const modules = [
   { key: 'reports', icon: '📊', title: 'Reports & Analytics', desc: 'Statements, muster registers & cost summaries', href: '/reports' },
@@ -15,6 +18,7 @@ const modules = [
 ];
 
 export default function MorePage() {
+  const { isAdmin } = useAuth();
   const visibleModules = modules.filter((m) => m.key === 'projects' || isFeatureEnabled(m.key as any));
 
   return (
@@ -26,6 +30,34 @@ export default function MorePage() {
         </p>
 
         <div className="grid">
+          {isAdmin && (
+            <>
+              <Link
+                href="/admin/users"
+                className="card text-decoration-none border-2 border-[#087F3E] bg-[#EAF7EF]"
+                style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
+              >
+                <div style={{ fontSize: '28px' }}>👥</div>
+                <div>
+                  <strong className="text-[#056B34]">User Management Portal</strong>
+                  <div className="subtle text-[#056B34]">Supervise users, roles & assigned site permissions</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/admin/audit"
+                className="card text-decoration-none border-2 border-purple-500 bg-purple-50"
+                style={{ display: 'flex', gap: '14px', alignItems: 'center', color: 'inherit', textDecoration: 'none' }}
+              >
+                <div style={{ fontSize: '28px' }}>📋</div>
+                <div>
+                  <strong className="text-purple-900">Activity Audit & Supervision</strong>
+                  <div className="subtle text-purple-700">Monitor all supervised user actions & audit trails</div>
+                </div>
+              </Link>
+            </>
+          )}
+
           {visibleModules.map((item) => (
             <Link
               key={item.title}

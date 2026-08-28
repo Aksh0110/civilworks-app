@@ -159,3 +159,71 @@ export async function createUser(input: CreateUserInput) {
     status: newUser.status
   };
 }
+
+export interface UpdateUserInput {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: UserRole;
+  assignedProjectIds?: string[];
+  status?: 'ACTIVE' | 'INACTIVE';
+}
+
+/**
+ * Updates a user account details, role, status, or assigned project IDs (Admin only)
+ */
+export async function updateUser(id: string, payload: UpdateUserInput, adminUser?: string) {
+  await connectMongoDB();
+
+  const userDoc = await User.findById(id).exec();
+  if (!userDoc) {
+    throw new Error('User not found.');
+  }
+
+  if (payload.email) {
+    const emailLower = payload.email.trim().toLowerCase();
+    const existing = await User.findOne({ email: emailLower, _id: { $ne: id } }).exec();
+    if (existing) {
+      throw new Error(`Email "${emailLower}" is already in use by another account.`);
+    }
+    userDoc.email = emailLower;
+  }
+
+  if (payload.name) userDoc.name = payload.name.trim();
+  if (payload.role) userDoc.role = payload.role;
+  if (payload.status) userDoc.status = payload.status;
+  if (payload.assignedProjectIds !== undefined) {
+    userDoc.assignedProjectIds = payload.assignedProjectIds as any;
+  }
+
+  if (payload.password && payload.password.trim()) {
+    const { hash, salt } = hashPassword(payload.password.trim());
+    userDoc.passwordHash = hash;
+    userDoc.salt = salt;
+  }
+
+  await userDoc.save();
+
+  await logAuditAction({
+    user: adminUser || 'Admin',
+    action: payload.status === 'INACTIVE' ? 'USER_DEACTIVATED' : 'USER_UPDATED',
+    entity: 'User',
+    entityId: id,
+    metadata: {
+      name: userDoc.name,
+      email: userDoc.email,
+      role: userDoc.role,
+      status: userDoc.status,
+      assignedProjectIds: userDoc.assignedProjectIds
+    }
+  });
+
+  return {
+    _id: userDoc._id.toString(),
+    name: userDoc.name,
+    email: userDoc.email,
+    role: userDoc.role,
+    assignedProjectIds: (userDoc.assignedProjectIds || []).map((pId: any) => pId.toString()),
+    status: userDoc.status
+  };
+}

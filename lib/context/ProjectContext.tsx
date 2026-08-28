@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface ProjectSummary {
   _id: string;
@@ -27,6 +28,7 @@ const ProjectContext = createContext<ProjectContextType>({
 });
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,8 +69,14 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    void fetchProjects();
-  }, []);
+    if (user) {
+      void fetchProjects();
+    } else {
+      setProjects([]);
+      setActiveProject(null);
+      setLoading(false);
+    }
+  }, [user?._id, user?.role]);
 
   const handleSelectProject = (id: string | null) => {
     if (!id) {
