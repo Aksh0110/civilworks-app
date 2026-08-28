@@ -370,7 +370,11 @@ export default function VendorProfilePage() {
                 return (
                   <div key={b._id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-900">INV: {b.billNumber}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          {b.materialInwardId ? '📦 Delivery Invoice:' : '📄 Bill:'} {b.billNumber}
+                        </span>
+                      </div>
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
@@ -393,6 +397,12 @@ export default function VendorProfilePage() {
                         </button>
                       </div>
                     </div>
+
+                    {b.remarks && (
+                      <div className="text-xs font-bold text-slate-700 bg-white p-2 rounded-lg border border-slate-100">
+                        {b.remarks}
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-between text-xs text-slate-500">
                       <span>Date: {new Date(b.billDate).toLocaleDateString('en-IN')}</span>

@@ -238,9 +238,13 @@ export async function getVendorProfile(vendorId: string, projectId?: string) {
   const inward = await (MaterialInward as any).find(billQuery).sort({ date: -1 }).lean();
   const payments = await (Payment as any).find(paymentQuery).sort({ paymentDate: -1 }).lean();
 
+  const unlinkedInward = inward.filter(
+    (i: any) => !bills.some((b: any) => b.materialInwardId && b.materialInwardId.toString() === i._id.toString())
+  );
+
   const totalBilled = roundMoney(
     bills.reduce((s: number, b: any) => s + (b.totalAmount || 0), 0) +
-      inward.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0)
+      unlinkedInward.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0)
   );
 
   const vendorPayments = payments.filter((p: any) => p.paymentType === 'VENDOR_PAYMENT');
@@ -259,7 +263,7 @@ export async function getVendorProfile(vendorId: string, projectId?: string) {
     bills
       .filter((b: any) => new Date(b.billDate) >= startOfMonth)
       .reduce((s: number, b: any) => s + (b.totalAmount || 0), 0) +
-      inward
+      unlinkedInward
         .filter((i: any) => new Date(i.date) >= startOfMonth)
         .reduce((s: number, i: any) => s + (i.totalAmount || 0), 0)
   );
@@ -338,11 +342,13 @@ export async function getVendorLedger(vendorId: string, projectId?: string): Pro
   }
 
   for (const i of inward) {
-    if (i.invoiceNumber || i.challanNumber) {
+    // Skip if already linked to a VendorBill
+    const hasBill = bills.some((b: any) => b.materialInwardId && b.materialInwardId.toString() === i._id.toString());
+    if (!hasBill && (i.invoiceNumber || i.challanNumber || i.totalAmount > 0)) {
       rawEntries.push({
         date: new Date(i.date),
         type: 'BILL',
-        label: `Material Inward (${i.invoiceNumber || i.challanNumber})`,
+        label: `Material Inward (${i.invoiceNumber || i.challanNumber || 'Delivery'})`,
         referenceNumber: i.invoiceNumber || i.challanNumber || '',
         amount: i.totalAmount,
         notes: i.remarks

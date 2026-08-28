@@ -290,26 +290,52 @@ export default function PayVendorPage() {
 
                 {vendorDetail.bills.map((b: any) => {
                   const bal = (b.totalAmount || 0) - (b.paidAmount || 0);
+                  const itemsText = Array.isArray(b.items) && b.items.length > 0
+                    ? b.items.map((i: any) => `${i.quantity} ${i.unit} ${i.materialName}`).join(', ')
+                    : b.remarks || '';
+
                   return (
                     <button
                       key={b._id}
                       type="button"
                       onClick={() => handleSelectBill(b)}
-                      className={`p-3 rounded-xl border text-left transition-all ${
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
                         selectedBillId === b._id
-                          ? 'bg-[#EAF7EF] border-[#087F3E] text-slate-900 shadow'
+                          ? 'bg-[#EAF7EF] border-[#087F3E] text-slate-900 shadow-md ring-2 ring-[#087F3E]/20'
                           : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       <div className="flex justify-between items-center text-xs">
-                        <span className="font-bold text-slate-900">Bill: {b.billNumber}</span>
-                        <span className="text-[10px] uppercase font-bold text-amber-700">{b.status}</span>
+                        <span className="font-extrabold text-slate-900">
+                          {b.materialInwardId ? '📦 Invoice:' : '📄 Bill:'} {b.billNumber}
+                        </span>
+                        <span
+                          className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
+                            b.status === 'SETTLED'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : b.status === 'PARTIAL'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {b.status}
+                        </span>
                       </div>
-                      <div className="text-xs text-slate-500 mt-1">
-                        Total: ₹{b.totalAmount.toLocaleString('en-IN')} • Paid: ₹{(b.paidAmount || 0).toLocaleString('en-IN')}
+
+                      {itemsText && (
+                        <div className="text-[11px] font-bold text-slate-700 mt-1 line-clamp-2">
+                          {itemsText}
+                        </div>
+                      )}
+
+                      <div className="text-xs text-slate-500 mt-1 flex justify-between">
+                        <span>Total: ₹{b.totalAmount.toLocaleString('en-IN')}</span>
+                        <span>Paid: ₹{(b.paidAmount || 0).toLocaleString('en-IN')}</span>
                       </div>
-                      <div className="text-sm font-black text-[#087F3E] mt-1">
-                        Balance Due: ₹{bal.toLocaleString('en-IN')}
+
+                      <div className="text-sm font-black text-[#087F3E] mt-1 pt-1 border-t border-slate-200/60 flex justify-between items-center">
+                        <span>Balance Due:</span>
+                        <span>₹{bal.toLocaleString('en-IN')}</span>
                       </div>
                     </button>
                   );

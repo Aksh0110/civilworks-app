@@ -358,6 +358,23 @@ export async function getVendorDetail(projectId: string, vendorId: string) {
     .sort({ date: -1 })
     .lean();
 
+  const inwardMap = new Map<string, any>();
+  inward.forEach((i: any) => inwardMap.set(i._id.toString(), i));
+
+  const enrichedBills = bills.map((b: any) => {
+    let items: any[] = [];
+    if (b.materialInwardId) {
+      const inw = inwardMap.get(b.materialInwardId.toString());
+      if (inw && Array.isArray(inw.items)) {
+        items = inw.items;
+      }
+    }
+    return {
+      ...b,
+      items
+    };
+  });
+
   const recentPayments = await (Payment as any).find({
     projectId: projId,
     recipientId: vId,
@@ -370,7 +387,7 @@ export async function getVendorDetail(projectId: string, vendorId: string) {
   return {
     vendor,
     summary,
-    bills,
+    bills: enrichedBills,
     inward,
     recentPayments
   };
@@ -433,6 +450,33 @@ export async function createVendorPayment(input: CreateVendorPaymentInput) {
         sourceId: bill._id,
         allocatedAmount: roundedAmount
       });
+    }
+  } else {
+    // Auto-allocate payment across open bills from oldest to newest
+    const openBills = await (VendorBill as any)
+      .find({ projectId: input.projectId, vendorId: input.vendorId, status: { $ne: 'SETTLED' } })
+      .sort({ billDate: 1 })
+      .exec();
+
+    let remainingToAllocate = roundedAmount;
+    for (const bill of openBills) {
+      if (remainingToAllocate <= 0) break;
+      const due = roundMoney(bill.totalAmount - (bill.paidAmount || 0));
+      if (due <= 0) continue;
+
+      const alloc = Math.min(remainingToAllocate, due);
+      bill.paidAmount = roundMoney((bill.paidAmount || 0) + alloc);
+      bill.status = bill.paidAmount >= bill.totalAmount ? 'SETTLED' : 'PARTIAL';
+      await bill.save();
+
+      await (PaymentAllocation as any).create({
+        paymentId: payment._id,
+        sourceType: 'VENDOR_BILL',
+        sourceId: bill._id,
+        allocatedAmount: alloc
+      });
+
+      remainingToAllocate = roundMoney(remainingToAllocate - alloc);
     }
   }
 

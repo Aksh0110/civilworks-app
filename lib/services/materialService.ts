@@ -6,6 +6,7 @@ import { MaterialInward } from '../models/MaterialInward';
 import { MaterialIssue } from '../models/MaterialIssue';
 import { StockAdjustment, AdjustmentType } from '../models/StockAdjustment';
 import { Vendor } from '../models/Vendor';
+import { VendorBill } from '../models/VendorBill';
 import { logAuditAction } from './auditService';
 import mongoose from 'mongoose';
 
@@ -239,6 +240,29 @@ export async function receiveMaterialInward(payload: ReceiveInwardPayload, user?
     items: processedItems,
     receivedBy: user || 'Site Supervisor'
   });
+
+  // Auto-generate Vendor Bill if vendorId and totalAmount > 0
+  if (payload.vendorId && mongoose.isValidObjectId(payload.vendorId) && totalAmount > 0) {
+    const billNum =
+      payload.invoiceNumber?.trim() ||
+      payload.challanNumber?.trim() ||
+      `INV-INW-${inward._id.toString().slice(-6).toUpperCase()}`;
+
+    const itemsSummary = processedItems.map((i: any) => `${i.quantity} ${i.unit} ${i.materialName}`).join(', ');
+
+    await VendorBill.create({
+      projectId: payload.projectId,
+      vendorId: payload.vendorId,
+      vendorName,
+      billNumber: billNum,
+      billDate: new Date(payload.date),
+      totalAmount,
+      paidAmount: 0,
+      status: 'OPEN',
+      materialInwardId: inward._id,
+      remarks: payload.remarks?.trim() || `Material Delivery: ${itemsSummary}`
+    });
+  }
 
   // Atomic Stock Increase for each received material item
   const updatedStockList = [];
@@ -730,6 +754,7 @@ export async function deleteMaterialInward(id: string, user?: string) {
   if (!inward) throw new Error('Material inward record not found.');
 
   await (MaterialInward as any).findByIdAndDelete(id).exec();
+  await (VendorBill as any).deleteMany({ materialInwardId: id }).exec();
 
   await logAuditAction({
     user,
