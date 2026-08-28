@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useProject } from '@/lib/context/ProjectContext';
+import { isFeatureEnabled } from '@/lib/config/features';
 import ProjectModal from '@/components/ProjectModal';
 import ConfirmModal from '@/components/ConfirmModal';
 
@@ -12,6 +13,10 @@ export default function ProjectCommandCenterPage() {
   const router = useRouter();
   const projectId = params?.id as string;
   const { setActiveProjectId, refreshProjects } = useProject();
+
+  const showAttendance = isFeatureEnabled('attendance');
+  const showWorkers = isFeatureEnabled('workers');
+  const showLabour = showAttendance || showWorkers;
 
   const [overview, setOverview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -119,14 +124,16 @@ export default function ProjectCommandCenterPage() {
         </div>
 
         {/* Primary Command Actions Grid */}
-        <div className="grid grid-cols-5 gap-2 pt-2 border-t border-slate-100">
-          <Link
-            href="/attendance"
-            className="p-3 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] rounded-xl text-center flex flex-col items-center gap-1 transition-colors"
-          >
-            <span className="text-xl">👷</span>
-            <span className="text-[11px] font-extrabold">Attendance</span>
-          </Link>
+        <div className={`grid ${showAttendance ? 'grid-cols-5' : 'grid-cols-4'} gap-2 pt-2 border-t border-slate-100`}>
+          {showAttendance && (
+            <Link
+              href="/attendance"
+              className="p-3 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] rounded-xl text-center flex flex-col items-center gap-1 transition-colors"
+            >
+              <span className="text-xl">👷</span>
+              <span className="text-[11px] font-extrabold">Attendance</span>
+            </Link>
+          )}
 
           <Link
             href="/materials"
@@ -189,32 +196,34 @@ export default function ProjectCommandCenterPage() {
       )}
 
       {/* Site Health Dashboard Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Labour Health</span>
-          <span
-            className={`text-base font-black mt-1 block ${
-              siteHealth.labour === 'Good' ? 'text-[#087F3E]' : 'text-amber-600'
-            }`}
-          >
-            {siteHealth.labour}
-          </span>
-          <span className="text-[11px] text-slate-400 block mt-1">
-            {labour.presentCount} Present · {labour.absentCount} Absent
-          </span>
-        </div>
+      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} gap-3`}>
+        {showLabour && (
+          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+            <span className="text-xs text-slate-500 block font-semibold">Labour Health</span>
+            <span
+              className={`text-base font-black mt-1 block ${
+                siteHealth?.labour === 'Good' ? 'text-[#087F3E]' : 'text-amber-600'
+              }`}
+            >
+              {siteHealth?.labour}
+            </span>
+            <span className="text-[11px] text-slate-400 block mt-1">
+              {labour?.presentCount || 0} Present · {labour?.absentCount || 0} Absent
+            </span>
+          </div>
+        )}
 
         <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
           <span className="text-xs text-slate-500 block font-semibold">Materials Health</span>
           <span
             className={`text-base font-black mt-1 block ${
-              siteHealth.materials === 'Good' ? 'text-[#087F3E]' : 'text-red-600'
+              siteHealth?.materials === 'Good' ? 'text-[#087F3E]' : 'text-red-600'
             }`}
           >
-            {siteHealth.materials}
+            {siteHealth?.materials}
           </span>
           <span className="text-[11px] text-slate-400 block mt-1">
-            {materials.lowStockCount > 0 ? `${materials.lowStockCount} items low` : 'All stock good'}
+            {materials?.lowStockCount > 0 ? `${materials.lowStockCount} items low` : 'All stock good'}
           </span>
         </div>
 
@@ -222,13 +231,13 @@ export default function ProjectCommandCenterPage() {
           <span className="text-xs text-slate-500 block font-semibold">Payments Health</span>
           <span
             className={`text-base font-black mt-1 block ${
-              siteHealth.payments === 'Good' ? 'text-[#087F3E]' : 'text-amber-600'
+              siteHealth?.payments === 'Good' ? 'text-[#087F3E]' : 'text-amber-600'
             }`}
           >
-            {siteHealth.payments}
+            {siteHealth?.payments}
           </span>
           <span className="text-[11px] text-slate-400 block mt-1">
-            ₹{payments.totalDue.toLocaleString('en-IN')} total due
+            ₹{payments?.totalDue?.toLocaleString('en-IN') || 0} total due
           </span>
         </div>
 
@@ -236,44 +245,46 @@ export default function ProjectCommandCenterPage() {
           <span className="text-xs text-slate-500 block font-semibold">Progress Health</span>
           <span
             className={`text-base font-black mt-1 block ${
-              siteHealth.progress === 'On Track' ? 'text-[#087F3E]' : 'text-amber-600'
+              siteHealth?.progress === 'On Track' ? 'text-[#087F3E]' : 'text-amber-600'
             }`}
           >
-            {siteHealth.progress}
+            {siteHealth?.progress}
           </span>
           <span className="text-[11px] text-slate-400 block mt-1">
-            {progress.completedCount} Done · {progress.openIssuesCount} Issues
+            {progress?.completedCount || 0} Done · {progress?.openIssuesCount || 0} Issues
           </span>
         </div>
       </div>
 
       {/* Feature Summaries Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 ${showLabour ? 'sm:grid-cols-2' : ''} gap-4`}>
         {/* Labour Summary Card */}
-        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span>👷</span> Today Labour Status
-            </h3>
-            <Link href="/attendance" className="text-xs font-bold text-[#087F3E]">
-              Register →
-            </Link>
+        {showLabour && (
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <span>👷</span> Today Labour Status
+              </h3>
+              <Link href="/attendance" className="text-xs font-bold text-[#087F3E]">
+                Register →
+              </Link>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center pt-2">
+              <div className="bg-[#EAF7EF] p-2.5 rounded-xl border border-[#bce6cb]">
+                <span className="text-[10px] text-[#056B34] block font-bold">PRESENT</span>
+                <span className="text-lg font-black text-[#056B34]">{labour?.presentCount || 0}</span>
+              </div>
+              <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+                <span className="text-[10px] text-amber-700 block font-bold">HALF DAY</span>
+                <span className="text-lg font-black text-amber-700">{labour?.halfDayCount || 0}</span>
+              </div>
+              <div className="bg-red-50 p-2.5 rounded-xl border border-red-200">
+                <span className="text-[10px] text-red-700 block font-bold">ABSENT</span>
+                <span className="text-lg font-black text-red-700">{labour?.absentCount || 0}</span>
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center pt-2">
-            <div className="bg-[#EAF7EF] p-2.5 rounded-xl border border-[#bce6cb]">
-              <span className="text-[10px] text-[#056B34] block font-bold">PRESENT</span>
-              <span className="text-lg font-black text-[#056B34]">{labour.presentCount}</span>
-            </div>
-            <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-              <span className="text-[10px] text-amber-700 block font-bold">HALF DAY</span>
-              <span className="text-lg font-black text-amber-700">{labour.halfDayCount}</span>
-            </div>
-            <div className="bg-red-50 p-2.5 rounded-xl border border-red-200">
-              <span className="text-[10px] text-red-700 block font-bold">ABSENT</span>
-              <span className="text-lg font-black text-red-700">{labour.absentCount}</span>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Expenses Summary Card */}
         <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-3">

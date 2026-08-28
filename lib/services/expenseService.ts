@@ -206,11 +206,15 @@ export async function createExpense(payload: CreateExpensePayload, user?: string
     action: 'EXPENSE_CREATED',
     entity: 'Expense',
     entityId: expense._id.toString(),
+    projectId: payload.projectId,
     metadata: {
+      projectId: payload.projectId,
       amount: roundedAmount,
       categoryName: catDoc.name,
       paymentMethod: payload.paymentMethod,
-      expenseDate: payload.expenseDate
+      expenseDate: payload.expenseDate,
+      remark: payload.remark,
+      vendorPerson: payload.vendorPerson
     }
   });
 

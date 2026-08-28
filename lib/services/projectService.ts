@@ -6,6 +6,7 @@ import { getStockOverview } from './materialService';
 import { getExpenseSummary } from './expenseService';
 import { getProjectPaymentSummary, roundMoney } from './paymentService';
 import { getDailyReportData } from './progressService';
+import { isFeatureEnabled } from '../config/features';
 
 export async function getProjects(status?: string) {
   await connectMongoDB();
@@ -164,6 +165,7 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
   if (!project) throw new Error('Project not found');
 
   const todayStr = new Date().toISOString().split('T')[0];
+  const showLabour = isFeatureEnabled('workers') || isFeatureEnabled('attendance');
 
   // Parallel domain query fetching
   const [
@@ -174,12 +176,12 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
     progressReportRes,
     auditLogsRes
   ] = await Promise.all([
-    getAttendanceSummary(projectId, todayStr).catch(() => null),
+    showLabour ? getAttendanceSummary(projectId, todayStr).catch(() => null) : Promise.resolve(null),
     getStockOverview(projectId).catch(() => null),
     getProjectPaymentSummary(projectId).catch(() => null),
     getExpenseSummary(projectId).catch(() => null),
     getDailyReportData(projectId, todayStr).catch(() => null),
-    getAuditLogs(undefined, undefined, 8).catch(() => [])
+    getAuditLogs(undefined, undefined, 10, projectId).catch(() => [])
   ]);
 
   // Labour calculation
@@ -236,11 +238,14 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
   }
 
   if (totalDue > 0) {
+    const paymentMsg = showLabour
+      ? `Total ₹${totalDue.toLocaleString('en-IN')} due (Labour: ₹${totalLabourDue.toLocaleString('en-IN')}, Vendor: ₹${totalVendorDue.toLocaleString('en-IN')})`
+      : `Total ₹${totalDue.toLocaleString('en-IN')} due`;
     alerts.push({
       id: 'alt-payments',
       type: 'ALERT',
       title: 'Outstanding Payments Due',
-      message: `Total ₹${totalDue.toLocaleString('en-IN')} due (Labour: ₹${totalLabourDue.toLocaleString('en-IN')}, Vendor: ₹${totalVendorDue.toLocaleString('en-IN')})`
+      message: paymentMsg
     });
   }
 
@@ -253,7 +258,7 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
     });
   }
 
-  if (absentCount > 0) {
+  if (showLabour && absentCount > 0) {
     alerts.push({
       id: 'alt-absent',
       type: 'INFO',
@@ -262,14 +267,47 @@ export async function getProjectOverview(projectId: string): Promise<ProjectOver
     });
   }
 
-  // Recent Activity Feed
-  const recentActivity: ProjectOverviewPayload['recentActivity'] = auditLogsRes.map((log: any, idx: number) => ({
-    id: log._id ? log._id.toString() : `act-${idx}`,
-    timestamp: log.timestamp ? new Date(log.timestamp) : new Date(),
-    title: log.action.replace(/_/g, ' '),
-    subtitle: `${log.entity} • by ${log.user}`,
-    icon: log.action.includes('MATERIAL') ? '📦' : log.action.includes('PAYMENT') ? '💳' : log.action.includes('EXPENSE') ? '💸' : '📋'
-  }));
+  // Recent Activity Feed - Project Specific & Meaningful Format
+  let recentActivity: ProjectOverviewPayload['recentActivity'] = auditLogsRes.map((log: any) => formatAuditLogToActivity(log));
+
+  // Fallback domain activity items if audit logs are empty/sparse for this project site
+  if (recentActivity.length < 5) {
+    const fallbackActivities: ProjectOverviewPayload['recentActivity'] = [];
+
+    if (recentExpenses && recentExpenses.length > 0) {
+      for (const exp of recentExpenses) {
+        fallbackActivities.push({
+          id: `exp-${exp._id}`,
+          timestamp: exp.createdAt ? new Date(exp.createdAt) : new Date(exp.expenseDate || Date.now()),
+          title: `Site Expense: ${exp.categoryName || 'Expense'} (₹${Number(exp.amount || 0).toLocaleString('en-IN')})${exp.remark ? ' - ' + exp.remark : ''}`,
+          subtitle: `Paid via ${exp.paymentMethod || 'Cash'} • by ${exp.createdBy || 'Site Supervisor'}`,
+          icon: '💸'
+        });
+      }
+    }
+
+    if (workItems && workItems.length > 0) {
+      for (const item of workItems.slice(0, 3)) {
+        fallbackActivities.push({
+          id: `work-${item._id || Math.random()}`,
+          timestamp: new Date(),
+          title: `Work Update: ${item.description || item.workType || 'Site Task'} ${item.quantity ? `(${item.quantity} ${item.unit || ''})` : ''}`.trim(),
+          subtitle: `Status: ${item.status || 'IN_PROGRESS'} • by Site Supervisor`,
+          icon: '📋'
+        });
+      }
+    }
+
+    const existingIds = new Set(recentActivity.map((a) => a.id));
+    for (const fb of fallbackActivities) {
+      if (!existingIds.has(fb.id)) {
+        recentActivity.push(fb);
+      }
+    }
+
+    recentActivity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    recentActivity = recentActivity.slice(0, 8);
+  }
 
   return {
     project,
@@ -329,4 +367,128 @@ export async function getProjectsOverviewList(statusTab?: string) {
   );
 
   return results;
+}
+
+export function formatAuditLogToActivity(log: any) {
+  const m = log.metadata || {};
+  const action = log.action || '';
+  const user = log.user || 'Site Supervisor';
+  const entity = log.entity || '';
+
+  let title = action.replace(/_/g, ' ');
+  let subtitle = `${entity} • by ${user}`;
+  let icon = '📋';
+
+  const fmtPayMethod = (pm?: string) => {
+    if (!pm) return 'Cash/UPI';
+    if (pm === 'UPI_ONLINE') return 'UPI Online';
+    if (pm === 'BANK_TRANSFER') return 'Bank Transfer';
+    if (pm === 'CASH') return 'Cash';
+    if (pm === 'ADVANCE') return 'Advance';
+    return pm;
+  };
+
+  if (action.includes('EXPENSE')) {
+    icon = '💸';
+    const amtStr = m.amount ? `₹${Number(m.amount).toLocaleString('en-IN')}` : '';
+    const cat = m.categoryName || m.category || 'Expense';
+    if (action === 'EXPENSE_CREATED') {
+      const detail = m.remark || m.vendorPerson;
+      title = `Added Expense: ${cat}${amtStr ? ' (' + amtStr + ')' : ''}${detail ? ' - ' + detail : ''}`;
+      subtitle = `Paid via ${fmtPayMethod(m.paymentMethod)} • by ${user}`;
+    } else if (action === 'EXPENSE_UPDATED') {
+      title = `Updated Expense Record (${cat})`;
+      subtitle = `Expense details modified • by ${user}`;
+    } else if (action === 'EXPENSE_DELETED' || action === 'EXPENSE_VOIDED') {
+      title = `Deleted Expense: ${cat} ${amtStr}`.trim();
+      subtitle = `Expense record removed • by ${user}`;
+    }
+  } else if (action.includes('MATERIAL') || entity === 'Material') {
+    icon = '📦';
+    const qty = m.quantity || m.inwardQuantity || m.issueQuantity || '';
+    const unit = m.unit || '';
+    const matName = m.materialName || m.name || 'Material';
+    const qtyStr = qty ? `${qty} ${unit}`.trim() : '';
+
+    if (action === 'MATERIAL_INWARD' || action === 'STOCK_ADDED') {
+      title = `Received Inward: ${qtyStr ? qtyStr + ' ' : ''}${matName}`;
+      subtitle = `Vendor: ${m.vendorName || m.supplier || 'Supplier'} • by ${user}`;
+    } else if (action === 'MATERIAL_ISSUED' || action === 'STOCK_ISSUED') {
+      title = `Issued Material: ${qtyStr ? qtyStr + ' ' : ''}${matName}`;
+      subtitle = `Issued to: ${m.issueTo || m.contractor || 'Site Operations'} • by ${user}`;
+    } else if (action === 'MATERIAL_CREATED' || action === 'MATERIAL_ADDED') {
+      title = `New Stock Cataloged: ${matName}`;
+      subtitle = `Material catalog updated • by ${user}`;
+    } else {
+      title = `Material Stock Action: ${matName}`;
+      subtitle = `Stock management • by ${user}`;
+    }
+  } else if (action.includes('PAYMENT') || entity === 'Payment') {
+    icon = '💳';
+    const amtStr = m.amount ? `₹${Number(m.amount).toLocaleString('en-IN')}` : '';
+    const recipient = m.workerName || m.vendorName || m.recipientName || '';
+    const payType = m.paymentType || action;
+
+    if (payType.includes('LABOUR') || action.includes('LABOUR')) {
+      title = `Paid Wage ${amtStr}${recipient ? ' to ' + recipient : ''}`;
+      subtitle = `Labour wage settlement • by ${user}`;
+    } else if (payType.includes('VENDOR') || action.includes('VENDOR')) {
+      title = `Paid Vendor Settlement ${amtStr}${recipient ? ' to ' + recipient : ''}`;
+      subtitle = `Vendor settlement • by ${user}`;
+    } else if (action.includes('VOID')) {
+      title = `Voided Payment ${amtStr}${recipient ? ' (' + recipient + ')' : ''}`;
+      subtitle = `Payment status updated • by ${user}`;
+    } else if (action.includes('ADVANCE')) {
+      title = `Paid Advance ${amtStr}${recipient ? ' to ' + recipient : ''}`;
+      subtitle = `Advance payment • by ${user}`;
+    } else {
+      title = `Processed Payment ${amtStr}${recipient ? ' for ' + recipient : ''}`;
+      subtitle = `Site payment transaction • by ${user}`;
+    }
+  } else if (action.includes('PROGRESS') || action.includes('REPORT') || action.includes('ISSUE') || entity === 'DailyReport') {
+    icon = '📋';
+    if (action.includes('ISSUE')) {
+      title = `Logged Site Issue: ${m.title || m.issueTitle || 'Work Bottleneck'}`;
+      subtitle = `Severity: ${m.severity || 'Medium'} • by ${user}`;
+    } else if (action.includes('WORK_ITEM')) {
+      title = `Work Progress: ${m.itemTitle || m.title || 'Work Task'}`;
+      subtitle = `Location: ${m.location || 'Site Work'} • by ${user}`;
+    } else {
+      title = `Site Diary & Work Progress Updated`;
+      subtitle = `${m.workItemsCount || 0} work item(s) logged • by ${user}`;
+    }
+  } else if (action.includes('ATTENDANCE') || entity === 'Attendance') {
+    icon = '👷';
+    if (action.includes('SAVED') || action.includes('CREATED')) {
+      title = `Marked Attendance (${m.presentCount || 0} Present, ${m.absentCount || 0} Absent)`;
+      subtitle = `Date: ${m.date || 'Today'} • by ${user}`;
+    } else if (action.includes('DELETED')) {
+      title = `Attendance Cleared for ${m.date || 'Date'}`;
+      subtitle = `Daily register reset • by ${user}`;
+    } else {
+      title = `Updated Daily Attendance Register`;
+      subtitle = `Attendance log • by ${user}`;
+    }
+  } else if (action.includes('PROJECT') || entity === 'Project') {
+    icon = '🏗️';
+    if (action === 'PROJECT_CREATED') {
+      title = `Project Site Created: ${m.name || ''} (${m.code || ''})`;
+      subtitle = `Site configuration set • by ${user}`;
+    } else if (action === 'PROJECT_UPDATED') {
+      title = `Updated Site Details`;
+      subtitle = `Project settings saved • by ${user}`;
+    }
+  } else if (action.includes('DOCUMENT') || entity === 'Document') {
+    icon = '📁';
+    title = `${action.includes('UPLOAD') ? 'Uploaded' : 'Removed'} Document: ${m.fileName || m.title || 'File'}`;
+    subtitle = `Category: ${m.category || 'Site Doc'} • by ${user}`;
+  }
+
+  return {
+    id: log._id ? log._id.toString() : `act-${Math.random()}`,
+    timestamp: log.timestamp ? new Date(log.timestamp) : new Date(),
+    title,
+    subtitle,
+    icon
+  };
 }
