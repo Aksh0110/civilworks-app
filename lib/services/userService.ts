@@ -19,13 +19,13 @@ export interface CreateUserInput {
  */
 export async function ensureAdminUserExists() {
   await connectMongoDB();
-  const existingAdmin = await User.findOne({ role: 'ADMIN' }).exec();
+  const existingAdmin = await (User as any).findOne({ role: 'ADMIN' }).exec();
   if (!existingAdmin) {
     const defaultEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@civilworks.com';
     const defaultPass = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin@123';
     const { hash, salt } = hashPassword(defaultPass);
 
-    const admin = await User.create({
+    const admin = await (User as any).create({
       name: 'System Admin',
       email: defaultEmail.toLowerCase(),
       passwordHash: hash,
@@ -57,7 +57,7 @@ export async function authenticateUser(email: string, pass: string) {
   await connectMongoDB();
   await ensureAdminUserExists();
 
-  const userDoc = await User.findOne({ email: email.trim().toLowerCase() }).exec();
+  const userDoc = await (User as any).findOne({ email: email.trim().toLowerCase() }).exec();
   if (!userDoc) {
     throw new Error('Invalid email or password.');
   }
@@ -94,7 +94,7 @@ export async function authenticateUser(email: string, pass: string) {
  */
 export async function getUserById(id: string) {
   await connectMongoDB();
-  const user = await User.findById(id).select('-passwordHash -salt').lean().exec();
+  const user = await (User as any).findById(id).select('-passwordHash -salt').lean().exec();
   if (!user) return null;
   return JSON.parse(JSON.stringify(user));
 }
@@ -105,7 +105,7 @@ export async function getUserById(id: string) {
 export async function getAllUsers() {
   await connectMongoDB();
   await ensureAdminUserExists();
-  const users = await User.find().select('-passwordHash -salt').sort({ createdAt: -1 }).lean().exec();
+  const users = await (User as any).find().select('-passwordHash -salt').sort({ createdAt: -1 }).lean().exec();
   return JSON.parse(JSON.stringify(users));
 }
 
@@ -120,13 +120,13 @@ export async function createUser(input: CreateUserInput) {
   }
 
   const emailLower = input.email.trim().toLowerCase();
-  const existing = await User.findOne({ email: emailLower }).exec();
+  const existing = await (User as any).findOne({ email: emailLower }).exec();
   if (existing) {
     throw new Error(`User with email "${emailLower}" already exists.`);
   }
 
   const { hash, salt } = hashPassword(input.password);
-  const newUser = await User.create({
+  const newUser = await (User as any).create({
     name: input.name.trim(),
     email: emailLower,
     passwordHash: hash,
@@ -175,14 +175,14 @@ export interface UpdateUserInput {
 export async function updateUser(id: string, payload: UpdateUserInput, adminUser?: string) {
   await connectMongoDB();
 
-  const userDoc = await User.findById(id).exec();
+  const userDoc = await (User as any).findById(id).exec();
   if (!userDoc) {
     throw new Error('User not found.');
   }
 
   if (payload.email) {
     const emailLower = payload.email.trim().toLowerCase();
-    const existing = await User.findOne({ email: emailLower, _id: { $ne: id } }).exec();
+    const existing = await (User as any).findOne({ email: emailLower, _id: { $ne: id } }).exec();
     if (existing) {
       throw new Error(`Email "${emailLower}" is already in use by another account.`);
     }

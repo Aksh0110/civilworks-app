@@ -103,7 +103,7 @@ export async function getAuditSummaryStats() {
     timestamp: { $gte: todayStart }
   }).exec();
 
-  const uniqueUsers = await AuditLog.distinct('user').exec();
+  const uniqueUsers = await (AuditLog as any).distinct('user').exec();
 
   return {
     totalActions,
