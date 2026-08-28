@@ -676,3 +676,58 @@ export async function getLowStockCount(projectId: string) {
     totalAttentionCount: lowStockCount + outOfStockCount
   };
 }
+
+export async function deleteMaterialMaster(id: string, user?: string) {
+  await connectMongoDB();
+  const mat = await (Material as any).findById(id).exec();
+  if (!mat) throw new Error('Material not found.');
+
+  await (Material as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'MATERIAL_DELETED',
+    entity: 'Material',
+    entityId: id,
+    metadata: { name: mat.name }
+  });
+
+  return { ok: true, id };
+}
+
+export async function deleteMaterialInward(id: string, user?: string) {
+  await connectMongoDB();
+  const inward = await (MaterialInward as any).findById(id).exec();
+  if (!inward) throw new Error('Material inward record not found.');
+
+  await (MaterialInward as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'MATERIAL_INWARD_DELETED',
+    entity: 'MaterialInward',
+    entityId: id,
+    metadata: { date: inward.date, vendorName: inward.vendorName }
+  });
+
+  return { ok: true, id };
+}
+
+export async function deleteMaterialIssue(id: string, user?: string) {
+  await connectMongoDB();
+  const issue = await (MaterialIssue as any).findById(id).exec();
+  if (!issue) throw new Error('Material issue record not found.');
+
+  await (MaterialIssue as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'MATERIAL_ISSUE_DELETED',
+    entity: 'MaterialIssue',
+    entityId: id,
+    metadata: { date: issue.date, locationWorkArea: issue.locationWorkArea }
+  });
+
+  return { ok: true, id };
+}
+

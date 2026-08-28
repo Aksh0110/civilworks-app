@@ -2,17 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useProject } from '@/lib/context/ProjectContext';
+import ProjectModal from '@/components/ProjectModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function ProjectCommandCenterPage() {
   const params = useParams();
+  const router = useRouter();
   const projectId = params?.id as string;
-  const { setActiveProjectId } = useProject();
+  const { setActiveProjectId, refreshProjects } = useProject();
 
   const [overview, setOverview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Edit / Delete State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (!projectId) return;
@@ -33,6 +40,16 @@ export default function ProjectCommandCenterPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteProject = async () => {
+    const res = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const d = await res.json();
+      throw new Error(d.message || 'Failed to delete project');
+    }
+    await refreshProjects();
+    router.push('/projects');
   };
 
   if (loading) {
@@ -77,12 +94,28 @@ export default function ProjectCommandCenterPage() {
             </p>
           </div>
 
-          <Link
-            href="/projects"
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl shrink-0 self-start sm:self-auto"
-          >
-            Switch Project ▾
-          </Link>
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              onClick={() => setIsDeleteConfirmOpen(true)}
+              className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition-colors"
+            >
+              🗑️ Delete
+            </button>
+
+            <Link
+              href="/projects"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
+            >
+              Switch Project ▾
+            </Link>
+          </div>
         </div>
 
         {/* Primary Command Actions Grid */}
@@ -291,6 +324,25 @@ export default function ProjectCommandCenterPage() {
           </div>
         )}
       </div>
+      {/* Project Edit Modal */}
+      <ProjectModal
+        isOpen={isEditModalOpen}
+        projectToEdit={project}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={loadOverview}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        title="Delete Project Site"
+        message={`Are you sure you want to delete "${project.name}" (${project.code})?`}
+        itemName={`${project.name} [Code: ${project.code}]`}
+        warningText="Deleting this project will permanently remove site configuration metadata."
+        confirmText="Delete Project"
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteProject}
+      />
     </div>
   );
 }

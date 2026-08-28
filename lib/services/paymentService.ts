@@ -707,3 +707,49 @@ export async function getProjectPaymentSummary(projectId: string) {
     outstandingVendorDue: vendorDueTotal
   };
 }
+
+export async function updatePayment(id: string, input: { amount?: number; notes?: string; paymentMethod?: PaymentMethod }, user?: string) {
+  await connectMongoDB();
+  const payment = await (Payment as any).findById(id);
+  if (!payment) throw new Error('Payment transaction not found.');
+
+  if (input.amount !== undefined) {
+    const rounded = roundMoney(input.amount);
+    if (rounded <= 0) throw new Error('Payment amount must be greater than zero.');
+    payment.amount = rounded;
+  }
+
+  if (input.notes !== undefined) payment.notes = input.notes.trim();
+  if (input.paymentMethod !== undefined) payment.paymentMethod = input.paymentMethod;
+
+  await payment.save();
+
+  await logAuditAction({
+    user: user || 'Site Supervisor',
+    action: 'PAYMENT_UPDATED',
+    entity: 'Payment',
+    entityId: id,
+    metadata: { receiptId: payment.receiptId, amount: payment.amount }
+  });
+
+  return payment.toObject ? payment.toObject() : payment;
+}
+
+export async function deletePayment(id: string, user?: string) {
+  await connectMongoDB();
+  const payment = await (Payment as any).findById(id);
+  if (!payment) throw new Error('Payment transaction not found.');
+
+  await (Payment as any).findByIdAndDelete(id);
+
+  await logAuditAction({
+    user: user || 'Site Supervisor',
+    action: 'PAYMENT_DELETED',
+    entity: 'Payment',
+    entityId: id,
+    metadata: { receiptId: payment.receiptId, amount: payment.amount }
+  });
+
+  return { ok: true, id };
+}
+

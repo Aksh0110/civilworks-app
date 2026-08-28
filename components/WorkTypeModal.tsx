@@ -1,19 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface WorkTypeModalProps {
   isOpen: boolean;
+  workTypeToEdit?: any | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function WorkTypeModal({ isOpen, onClose, onSuccess }: WorkTypeModalProps) {
+export default function WorkTypeModal({ isOpen, workTypeToEdit, onClose, onSuccess }: WorkTypeModalProps) {
   const [name, setName] = useState('');
   const [defaultUnit, setDefaultUnit] = useState('Sq.ft');
   const [icon, setIcon] = useState('🏗️');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (workTypeToEdit) {
+      setName(workTypeToEdit.name || '');
+      setDefaultUnit(workTypeToEdit.defaultUnit || 'Sq.ft');
+      setIcon(workTypeToEdit.icon || '🏗️');
+    } else {
+      setName('');
+      setDefaultUnit('Sq.ft');
+      setIcon('🏗️');
+    }
+  }, [workTypeToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -27,8 +40,11 @@ export default function WorkTypeModal({ isOpen, onClose, onSuccess }: WorkTypeMo
     setError('');
 
     try {
-      const res = await fetch('/api/progress/work-types', {
-        method: 'POST',
+      const url = workTypeToEdit ? `/api/progress/work-types/${workTypeToEdit._id}` : '/api/progress/work-types';
+      const method = workTypeToEdit ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -39,7 +55,7 @@ export default function WorkTypeModal({ isOpen, onClose, onSuccess }: WorkTypeMo
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to add work type');
+        throw new Error(data.message || `Failed to ${workTypeToEdit ? 'update' : 'add'} work type`);
       }
 
       setName('');
@@ -57,7 +73,7 @@ export default function WorkTypeModal({ isOpen, onClose, onSuccess }: WorkTypeMo
       <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>🏗️</span> Add Work Type
+            <span>🏗️</span> {workTypeToEdit ? 'Edit Work Type' : 'Add Work Type'}
           </h2>
           <button
             onClick={onClose}

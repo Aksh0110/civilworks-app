@@ -90,9 +90,30 @@ export async function updateWorker(id: string, data: Partial<IWorker>, user?: st
   return JSON.parse(JSON.stringify(worker));
 }
 
+export async function deleteWorker(id: string, user?: string) {
+  await connectMongoDB();
+  const worker = await (Worker as any).findById(id).exec();
+  if (!worker) {
+    throw new Error('Worker not found.');
+  }
+
+  await (Worker as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'WORKER_DELETED',
+    entity: 'Worker',
+    entityId: id,
+    metadata: { name: worker.name, category: worker.category }
+  });
+
+  return { ok: true, id };
+}
+
 export async function getWorkerCategories() {
   await connectMongoDB();
   const customCategories = await WorkerCategory.find().sort({ name: 1 }).exec();
   const names = Array.from(new Set([...DEFAULT_WORKER_CATEGORIES, ...customCategories.map((c: any) => c.name)]));
   return names;
 }
+

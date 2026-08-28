@@ -483,3 +483,82 @@ export async function createVendorBillService(input: {
 
   return bill.toObject ? bill.toObject() : bill;
 }
+
+export async function deleteVendor(id: string, user?: string) {
+  await connectMongoDB();
+  const vendor = await (VendorModel as any).findById(id);
+  if (!vendor) throw new Error('Vendor not found');
+
+  await (VendorModel as any).findByIdAndDelete(id);
+
+  await logAuditAction({
+    user: user || 'Site Supervisor',
+    action: 'VENDOR_DELETED',
+    entity: 'Vendor',
+    entityId: id,
+    metadata: { name: vendor.name }
+  });
+
+  return { ok: true, id };
+}
+
+export async function updateVendorContact(contactId: string, input: { name?: string; role?: string; phone?: string; email?: string; isPrimary?: boolean }) {
+  await connectMongoDB();
+  const contact = await (VendorContact as any).findById(contactId);
+  if (!contact) throw new Error('Vendor contact not found');
+
+  if (input.name) contact.name = input.name.trim();
+  if (input.role !== undefined) contact.role = input.role.trim();
+  if (input.phone !== undefined) contact.phone = input.phone.trim();
+  if (input.email !== undefined) contact.email = input.email.trim().toLowerCase();
+  if (input.isPrimary !== undefined) contact.isPrimary = !!input.isPrimary;
+
+  await contact.save();
+  return contact.toObject ? contact.toObject() : contact;
+}
+
+export async function updateVendorBillService(billId: string, input: { billNumber?: string; billDate?: Date; totalAmount?: number; remarks?: string }, user?: string) {
+  await connectMongoDB();
+  const bill = await (VendorBill as any).findById(billId);
+  if (!bill) throw new Error('Vendor bill not found');
+
+  if (input.billNumber) bill.billNumber = input.billNumber.trim();
+  if (input.billDate) bill.billDate = new Date(input.billDate);
+  if (input.totalAmount !== undefined) {
+    const rounded = roundMoney(input.totalAmount);
+    if (rounded <= 0) throw new Error('Bill total must be greater than zero');
+    bill.totalAmount = rounded;
+  }
+  if (input.remarks !== undefined) bill.remarks = input.remarks.trim();
+
+  await bill.save();
+
+  await logAuditAction({
+    user: user || 'Site Supervisor',
+    action: 'VENDOR_BILL_UPDATED',
+    entity: 'VendorBill',
+    entityId: billId,
+    metadata: { billNumber: bill.billNumber, totalAmount: bill.totalAmount }
+  });
+
+  return bill.toObject ? bill.toObject() : bill;
+}
+
+export async function deleteVendorBillService(billId: string, user?: string) {
+  await connectMongoDB();
+  const bill = await (VendorBill as any).findById(billId);
+  if (!bill) throw new Error('Vendor bill not found');
+
+  await (VendorBill as any).findByIdAndDelete(billId);
+
+  await logAuditAction({
+    user: user || 'Site Supervisor',
+    action: 'VENDOR_BILL_DELETED',
+    entity: 'VendorBill',
+    entityId: billId,
+    metadata: { billNumber: bill.billNumber }
+  });
+
+  return { ok: true, id: billId };
+}
+

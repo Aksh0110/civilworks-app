@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { updateMaterial } from '@/lib/services/materialService';
+import { updateMaterial, deleteMaterialMaster } from '@/lib/services/materialService';
 
 export async function PUT(
   request: Request,
@@ -17,3 +17,20 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const res = await deleteMaterialMaster(id, 'Site Supervisor');
+    return NextResponse.json({ data: res });
+  } catch (error) {
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : 'Failed to delete material' },
+      { status: 400 }
+    );
+  }
+}
+

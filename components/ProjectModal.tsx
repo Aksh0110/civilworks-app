@@ -5,11 +5,12 @@ import { useProject } from '@/lib/context/ProjectContext';
 
 interface ProjectModalProps {
   isOpen: boolean;
+  projectToEdit?: any | null;
   onClose: () => void;
   onSuccess?: () => void;
 }
 
-export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModalProps) {
+export default function ProjectModal({ isOpen, projectToEdit, onClose, onSuccess }: ProjectModalProps) {
   const { refreshProjects, setActiveProjectId } = useProject();
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -18,6 +19,22 @@ export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModa
   const [siteContact, setSiteContact] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    if (projectToEdit) {
+      setName(projectToEdit.name || '');
+      setCode(projectToEdit.code || '');
+      setLocation(projectToEdit.location || '');
+      setStatus(projectToEdit.status || 'ACTIVE');
+      setSiteContact(projectToEdit.siteContact || '');
+    } else {
+      setName('');
+      setCode('');
+      setLocation('');
+      setStatus('ACTIVE');
+      setSiteContact('');
+    }
+  }, [projectToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -31,8 +48,11 @@ export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModa
     try {
       setSaving(true);
       setError('');
-      const res = await fetch('/api/projects', {
-        method: 'POST',
+      const url = projectToEdit ? `/api/projects/${projectToEdit._id}` : '/api/projects';
+      const method = projectToEdit ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -45,15 +65,14 @@ export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModa
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to create project');
+        throw new Error(data.message || `Failed to ${projectToEdit ? 'update' : 'create'} project`);
       }
 
       await refreshProjects();
-      if (data.data?._id) {
+      if (!projectToEdit && data.data?._id) {
         setActiveProjectId(data.data._id);
       }
 
-      // Reset form
       setName('');
       setCode('');
       setLocation('');
@@ -71,7 +90,7 @@ export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModa
     <div className="modal-backdrop">
       <div className="modal-card">
         <div className="modal-header">
-          <h3>Create New Project</h3>
+          <h3>{projectToEdit ? 'Edit Project' : 'Create New Project'}</h3>
           <button className="icon-btn" onClick={onClose}>✕</button>
         </div>
         <form onSubmit={handleSubmit} className="modal-body">
@@ -133,7 +152,7 @@ export default function ProjectModal({ isOpen, onClose, onSuccess }: ProjectModa
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? 'Creating...' : 'Create Project'}
+              {saving ? 'Saving...' : projectToEdit ? 'Save Changes' : 'Create Project'}
             </button>
           </div>
         </form>

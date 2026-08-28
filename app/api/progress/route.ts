@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDailyProgressByDate, createOrUpdateDailyProgress } from '@/lib/services/progressService';
+import { getDailyProgressByDate, createOrUpdateDailyProgress, deleteDailyProgressByDate } from '@/lib/services/progressService';
 
 export async function GET(request: Request) {
   try {
@@ -37,3 +37,24 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const projectId = searchParams.get('projectId');
+    const date = searchParams.get('date');
+
+    if (!projectId || !date) {
+      return NextResponse.json({ message: 'projectId and date are required' }, { status: 400 });
+    }
+
+    const res = await deleteDailyProgressByDate(projectId, date, 'Site Supervisor');
+    return NextResponse.json({ data: res });
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error.message || 'Failed to delete daily progress report' },
+      { status: 400 }
+    );
+  }
+}
+

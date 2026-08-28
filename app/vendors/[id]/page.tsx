@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useProject } from '@/lib/context/ProjectContext';
+import VendorModal from '@/components/VendorModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function VendorProfilePage() {
   const params = useParams();
+  const router = useRouter();
   const vendorId = params?.id as string;
   const { activeProject } = useProject();
 
@@ -14,6 +17,16 @@ export default function VendorProfilePage() {
   const [ledger, setLedger] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'BILLS' | 'PAYMENTS' | 'LEDGER' | 'CONTACTS' | 'DOCUMENTS'>('OVERVIEW');
   const [loading, setLoading] = useState(true);
+
+  // Edit / Delete Vendor State
+  const [isEditVendorModalOpen, setIsEditVendorModalOpen] = useState(false);
+  const [isDeleteVendorConfirmOpen, setIsDeleteVendorConfirmOpen] = useState(false);
+
+  // Edit / Delete Bill State
+  const [billToDelete, setBillToDelete] = useState<any | null>(null);
+
+  // Delete Contact State
+  const [contactToDelete, setContactToDelete] = useState<any | null>(null);
 
   // Modals state
   const [showAddBillModal, setShowAddBillModal] = useState(false);
@@ -51,6 +64,26 @@ export default function VendorProfilePage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteVendor = async () => {
+    const res = await fetch(`/api/vendors/${vendorId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete vendor');
+    router.push('/vendors');
+  };
+
+  const handleDeleteBill = async () => {
+    if (!billToDelete) return;
+    const res = await fetch(`/api/vendors/bills/${billToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete bill');
+    loadProfileData();
+  };
+
+  const handleDeleteContact = async () => {
+    if (!contactToDelete) return;
+    const res = await fetch(`/api/vendors/${vendorId}/contacts/${contactToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete contact');
+    loadProfileData();
   };
 
   const handleAddBill = async (e: React.FormEvent) => {
@@ -161,12 +194,28 @@ export default function VendorProfilePage() {
             {vendor.address && <p className="text-xs text-slate-500 mt-1">📍 {vendor.address}</p>}
           </div>
 
-          <Link
-            href="/vendors"
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl self-start sm:self-auto transition-colors"
-          >
-            ← Back to Vendors
-          </Link>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => setIsEditVendorModalOpen(true)}
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              onClick={() => setIsDeleteVendorConfirmOpen(true)}
+              className="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition-colors"
+            >
+              🗑️ Delete
+            </button>
+
+            <Link
+              href="/vendors"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              ← Back to Vendors
+            </Link>
+          </div>
         </div>
 
         {/* Quick Action Buttons */}
@@ -322,17 +371,27 @@ export default function VendorProfilePage() {
                   <div key={b._id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-bold text-slate-900">INV: {b.billNumber}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
-                          b.status === 'SETTLED'
-                            ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                            : b.status === 'PARTIAL'
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                            : 'bg-red-50 text-red-700 border border-red-200'
-                        }`}
-                      >
-                        {b.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
+                            b.status === 'SETTLED'
+                              ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
+                              : b.status === 'PARTIAL'
+                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                              : 'bg-red-50 text-red-700 border border-red-200'
+                          }`}
+                        >
+                          {b.status}
+                        </span>
+
+                        <button
+                          onClick={() => setBillToDelete(b)}
+                          className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                          title="Delete Bill"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-500">
@@ -465,7 +524,16 @@ export default function VendorProfilePage() {
               <div key={c._id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-900">{c.name}</span>
-                  <span className="text-[10px] text-[#087F3E] font-bold">{c.role}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-[#087F3E] font-bold">{c.role}</span>
+                    <button
+                      onClick={() => setContactToDelete(c)}
+                      className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      title="Delete Contact"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
                 {c.phone && <div className="text-xs text-slate-500">📞 {c.phone}</div>}
               </div>
@@ -697,6 +765,49 @@ export default function VendorProfilePage() {
           </div>
         </div>
       )}
+
+      {/* Vendor Edit Modal */}
+      <VendorModal
+        isOpen={isEditVendorModalOpen}
+        vendorToEdit={vendor}
+        onClose={() => setIsEditVendorModalOpen(false)}
+        onSuccess={loadProfileData}
+      />
+
+      {/* Delete Vendor Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteVendorConfirmOpen}
+        title="Delete Vendor Profile"
+        message={`Are you sure you want to delete vendor "${vendor?.name}"?`}
+        itemName={vendor?.name}
+        warningText="Vendor profile and linked contacts will be permanently deleted."
+        confirmText="Delete Vendor"
+        onClose={() => setIsDeleteVendorConfirmOpen(false)}
+        onConfirm={handleDeleteVendor}
+      />
+
+      {/* Delete Vendor Bill Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!billToDelete}
+        title="Delete Vendor Bill"
+        message={`Are you sure you want to delete bill #${billToDelete?.billNumber}?`}
+        itemName={billToDelete ? `Bill #${billToDelete.billNumber} - ₹${billToDelete.totalAmount}` : undefined}
+        warningText="Deleting this bill will recalculate vendor outstanding balance."
+        confirmText="Delete Bill"
+        onClose={() => setBillToDelete(null)}
+        onConfirm={handleDeleteBill}
+      />
+
+      {/* Delete Vendor Contact Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!contactToDelete}
+        title="Delete Vendor Contact"
+        message={`Are you sure you want to delete contact "${contactToDelete?.name}"?`}
+        itemName={contactToDelete?.name}
+        confirmText="Delete Contact"
+        onClose={() => setContactToDelete(null)}
+        onConfirm={handleDeleteContact}
+      />
     </div>
   );
 }

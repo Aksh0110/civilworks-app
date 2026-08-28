@@ -63,6 +63,85 @@ export async function createExpenseCategory(data: { name: string; icon?: string;
   return JSON.parse(JSON.stringify(cat));
 }
 
+export async function updateExpenseCategory(id: string, data: { name?: string; icon?: string }, user?: string) {
+  await connectMongoDB();
+  const cat = await (ExpenseCategory as any).findById(id).exec();
+  if (!cat) throw new Error('Expense category not found.');
+
+  if (data.name?.trim()) cat.name = data.name.trim();
+  if (data.icon?.trim()) cat.icon = data.icon.trim();
+
+  await cat.save();
+
+  await logAuditAction({
+    user,
+    action: 'EXPENSE_CATEGORY_UPDATED',
+    entity: 'ExpenseCategory',
+    entityId: id,
+    metadata: { updates: data }
+  });
+
+  return JSON.parse(JSON.stringify(cat));
+}
+
+export async function deleteExpenseCategory(id: string, user?: string) {
+  await connectMongoDB();
+  const cat = await (ExpenseCategory as any).findById(id).exec();
+  if (!cat) throw new Error('Expense category not found.');
+
+  await (ExpenseCategory as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'EXPENSE_CATEGORY_DELETED',
+    entity: 'ExpenseCategory',
+    entityId: id,
+    metadata: { name: cat.name }
+  });
+
+  return { ok: true, id };
+}
+
+export async function updateExpense(id: string, projectId: string, payload: Partial<CreateExpensePayload>, user?: string) {
+  await connectMongoDB();
+  const expense = await (Expense as any).findOne({ _id: id, projectId }).exec();
+  if (!expense) throw new Error('Expense record not found.');
+
+  if (payload.amount !== undefined) {
+    const amt = Number(payload.amount);
+    if (isNaN(amt) || amt <= 0) throw new Error('Expense amount must be a positive number.');
+    expense.amount = Math.round(amt * 100) / 100;
+  }
+
+  if (payload.categoryId) {
+    const catDoc = await (ExpenseCategory as any).findById(payload.categoryId).exec();
+    if (catDoc) {
+      expense.categoryId = payload.categoryId;
+      expense.categoryName = catDoc.name;
+      expense.categoryIcon = catDoc.icon || '💸';
+    }
+  }
+
+  if (payload.paymentMethod) expense.paymentMethod = payload.paymentMethod;
+  if (payload.expenseDate) expense.expenseDate = new Date(payload.expenseDate);
+  if (payload.vendorPerson !== undefined) expense.vendorPerson = payload.vendorPerson.trim();
+  if (payload.referenceNumber !== undefined) expense.referenceNumber = payload.referenceNumber.trim();
+  if (payload.remark !== undefined) expense.remark = payload.remark.trim();
+
+  await expense.save();
+
+  await logAuditAction({
+    user,
+    action: 'EXPENSE_UPDATED',
+    entity: 'Expense',
+    entityId: expense._id.toString(),
+    metadata: { updates: payload }
+  });
+
+  return JSON.parse(JSON.stringify(expense));
+}
+
+
 export interface CreateExpensePayload {
   projectId: string;
   categoryId: string;

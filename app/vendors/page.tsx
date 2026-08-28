@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 import { DEFAULT_VENDOR_CATEGORIES } from '@/lib/constants/vendorCategories';
 
+import VendorModal from '@/components/VendorModal';
+import ConfirmModal from '@/components/ConfirmModal';
+
 interface VendorListItem {
   _id: string;
   name: string;
@@ -14,6 +17,7 @@ interface VendorListItem {
   outstandingAmount: number;
   advanceAmount: number;
   vendorStatus: 'DUE' | 'ADVANCE' | 'SETTLED';
+  address?: string;
 }
 
 export default function VendorsListPage() {
@@ -24,6 +28,11 @@ export default function VendorsListPage() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
+
+  // Edit / Delete State
+  const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
+  const [vendorToEdit, setVendorToEdit] = useState<VendorListItem | null>(null);
+  const [vendorToDelete, setVendorToDelete] = useState<VendorListItem | null>(null);
 
   useEffect(() => {
     loadVendors();
@@ -43,6 +52,16 @@ export default function VendorsListPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteVendor = async () => {
+    if (!vendorToDelete) return;
+    const res = await fetch(`/api/vendors/${vendorToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete vendor');
+    }
+    loadVendors();
   };
 
   const filteredVendors = vendors.filter((v) => {
@@ -71,12 +90,15 @@ export default function VendorsListPage() {
           </p>
         </div>
 
-        <Link
-          href="/vendors/add"
+        <button
+          onClick={() => {
+            setVendorToEdit(null);
+            setIsVendorModalOpen(true);
+          }}
           className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
         >
           <span>+</span> Add Vendor
-        </Link>
+        </button>
       </div>
 
       {/* Filter Bar & Tabs */}
@@ -132,26 +154,31 @@ export default function VendorsListPage() {
           <div className="text-3xl">🏬</div>
           <h3 className="text-sm font-bold text-slate-900">No vendors found</h3>
           <p className="text-xs text-slate-500">Add suppliers to track bills, payments, and outstanding balances.</p>
-          <Link
-            href="/vendors/add"
+          <button
+            onClick={() => {
+              setVendorToEdit(null);
+              setIsVendorModalOpen(true);
+            }}
             className="inline-block px-4 py-2 bg-[#087F3E] text-white text-xs font-bold rounded-xl"
           >
             + Add Vendor
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredVendors.map((v) => (
-            <Link
+            <div
               key={v._id}
-              href={`/vendors/${v._id}`}
-              className="p-5 rounded-2xl bg-white hover:border-[#087F3E] border border-slate-200 text-left transition-all shadow-sm flex flex-col justify-between group space-y-4"
+              className="p-5 rounded-2xl bg-white border border-slate-200 text-left shadow-sm flex flex-col justify-between space-y-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="text-base font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                  <Link
+                    href={`/vendors/${v._id}`}
+                    className="text-base font-bold text-slate-900 hover:text-[#087F3E] transition-colors block"
+                  >
                     {v.name}
-                  </div>
+                  </Link>
                   <div className="text-xs text-slate-500">
                     {v.category} {v.contactPerson ? `• ${v.contactPerson}` : ''}
                   </div>
@@ -160,18 +187,38 @@ export default function VendorsListPage() {
                   )}
                 </div>
 
-                {/* Status Badge */}
-                <span
-                  className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shrink-0 ${
-                    v.vendorStatus === 'DUE'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                      : v.vendorStatus === 'ADVANCE'
-                      ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                      : 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                  }`}
-                >
-                  {v.vendorStatus}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shrink-0 ${
+                      v.vendorStatus === 'DUE'
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : v.vendorStatus === 'ADVANCE'
+                        ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                        : 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
+                    }`}
+                  >
+                    {v.vendorStatus}
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setVendorToEdit(v);
+                      setIsVendorModalOpen(true);
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                    title="Edit Vendor"
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    onClick={() => setVendorToDelete(v)}
+                    className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                    title="Delete Vendor"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
@@ -186,19 +233,41 @@ export default function VendorsListPage() {
                   </span>
                 </div>
 
-                {v.advanceAmount > 0 && (
-                  <div className="text-right">
-                    <span className="text-purple-600 text-[11px] block font-semibold">Advance</span>
-                    <span className="text-sm font-bold text-purple-700">
-                      ₹{v.advanceAmount.toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                )}
+                <Link
+                  href={`/vendors/${v._id}`}
+                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors"
+                >
+                  Profile & Ledger →
+                </Link>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
+
+      {/* Vendor Edit/Create Modal */}
+      <VendorModal
+        isOpen={isVendorModalOpen}
+        vendorToEdit={vendorToEdit}
+        onClose={() => {
+          setIsVendorModalOpen(false);
+          setVendorToEdit(null);
+        }}
+        onSuccess={loadVendors}
+      />
+
+      {/* Delete Vendor Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!vendorToDelete}
+        title="Delete Vendor Profile"
+        message={`Are you sure you want to delete vendor "${vendorToDelete?.name}"?`}
+        itemName={vendorToDelete?.name}
+        warningText="Vendor profile will be removed."
+        confirmText="Delete Vendor"
+        onClose={() => setVendorToDelete(null)}
+        onConfirm={handleDeleteVendor}
+      />
     </div>
   );
 }
+

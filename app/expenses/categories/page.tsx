@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ExpenseCategoryModal from '@/components/ExpenseCategoryModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface CategoryItem {
   _id: string;
@@ -16,6 +17,8 @@ export default function ExpenseCategoriesPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryItem | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryItem | null>(null);
 
   useEffect(() => {
     loadCategories();
@@ -29,6 +32,16 @@ export default function ExpenseCategoriesPage() {
         if (d.data?.categories) setCategories(d.data.categories);
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+    const res = await fetch(`/api/expenses/categories/${categoryToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete expense category');
+    }
+    loadCategories();
   };
 
   return (
@@ -51,7 +64,10 @@ export default function ExpenseCategoriesPage() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setCategoryToEdit(null);
+            setIsModalOpen(true);
+          }}
           className="px-4 h-10 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1"
         >
           <span>+</span> Category
@@ -75,9 +91,26 @@ export default function ExpenseCategoriesPage() {
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]">
-                ACTIVE
-              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setCategoryToEdit(c);
+                    setIsModalOpen(true);
+                  }}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                  title="Edit Category"
+                >
+                  ✏️
+                </button>
+
+                <button
+                  onClick={() => setCategoryToDelete(c)}
+                  className="p-1.5 text-slate-400 hover:text-red-600 text-xs font-bold"
+                  title="Delete Category"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -85,9 +118,25 @@ export default function ExpenseCategoriesPage() {
 
       <ExpenseCategoryModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        categoryToEdit={categoryToEdit}
+        onClose={() => {
+          setIsModalOpen(false);
+          setCategoryToEdit(null);
+        }}
         onSuccess={() => loadCategories()}
+      />
+
+      <ConfirmModal
+        isOpen={!!categoryToDelete}
+        title="Delete Expense Category"
+        message={`Are you sure you want to delete category "${categoryToDelete?.name}"?`}
+        itemName={categoryToDelete?.name}
+        warningText="Category will be removed from future expense entries."
+        confirmText="Delete Category"
+        onClose={() => setCategoryToDelete(null)}
+        onConfirm={handleDeleteCategory}
       />
     </div>
   );
 }
+

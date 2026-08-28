@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import AppShell from '@/components/AppShell';
 import { useProject } from '@/lib/context/ProjectContext';
 
+import ConfirmModal from '@/components/ConfirmModal';
+
 type AttendanceStatus = 'PRESENT' | 'HALF_DAY' | 'ABSENT';
 
 interface WorkerItem {
@@ -28,9 +30,20 @@ export default function AttendancePage() {
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [history, setHistory] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
+
+  const handleDeleteAttendance = async () => {
+    if (!activeProject?._id || !date) return;
+    const res = await fetch(`/api/attendance?projectId=${activeProject._id}&date=${date}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete attendance record');
+    }
+    loadAttendanceData();
+  };
 
   // Load active workers and existing attendance for selected date & project
   const loadAttendanceData = async () => {
@@ -197,13 +210,20 @@ export default function AttendancePage() {
               {activeProject ? activeProject.name : 'Select project site'}
             </p>
           </div>
-          <div className="date-picker-wrap">
+          <div className="date-picker-wrap flex items-center gap-2">
             <input
               type="date"
               className="date-input"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold rounded-xl transition-colors"
+              title="Delete attendance for this date"
+            >
+              🗑️ Clear Date
+            </button>
           </div>
         </div>
 
@@ -433,6 +453,17 @@ export default function AttendancePage() {
             )}
           </div>
         )}
+
+        <ConfirmModal
+          isOpen={isDeleteModalOpen}
+          title="Clear Attendance Register"
+          message={`Are you sure you want to clear attendance and wage records for ${date}?`}
+          itemName={`Attendance Records for ${date}`}
+          warningText="All attendance markings and daily wages for this date will be deleted."
+          confirmText="Clear Attendance"
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDeleteAttendance}
+        />
       </main>
     </AppShell>
   );

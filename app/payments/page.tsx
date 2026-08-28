@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
+import ConfirmModal from '@/components/ConfirmModal';
+
 interface PaymentSummary {
   todayLabourPaid: number;
   todayVendorPaid: number;
@@ -33,11 +35,24 @@ export default function PaymentsMainPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
+  // Delete State
+  const [paymentToDelete, setPaymentToDelete] = useState<PaymentHistoryRecord | null>(null);
+
   // Voiding Modal state
   const [selectedPaymentToVoid, setSelectedPaymentToVoid] = useState<PaymentHistoryRecord | null>(null);
   const [voidReason, setVoidReason] = useState('');
   const [voiding, setVoiding] = useState(false);
   const [voidError, setVoidError] = useState('');
+
+  const handleDeletePayment = async () => {
+    if (!paymentToDelete) return;
+    const res = await fetch(`/api/payments/${paymentToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete payment transaction');
+    }
+    loadData();
+  };
 
   useEffect(() => {
     if (!activeProject?._id) return;
@@ -342,6 +357,14 @@ export default function PaymentsMainPage() {
                         Void
                       </button>
                     )}
+
+                    <button
+                      onClick={() => setPaymentToDelete(item)}
+                      className="p-1.5 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      title="Delete Record"
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </div>
               </div>
@@ -406,6 +429,18 @@ export default function PaymentsMainPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Payment Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!paymentToDelete}
+        title="Delete Payment Transaction"
+        message={`Are you sure you want to delete payment receipt ${paymentToDelete?.receiptId}?`}
+        itemName={paymentToDelete ? `Receipt: ${paymentToDelete.receiptId} (${paymentToDelete.recipientName} - ₹${paymentToDelete.amount})` : undefined}
+        warningText="Transaction record will be removed from payment ledger."
+        confirmText="Delete Payment"
+        onClose={() => setPaymentToDelete(null)}
+        onConfirm={handleDeletePayment}
+      />
     </div>
   );
 }

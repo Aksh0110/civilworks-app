@@ -1,20 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface VendorModalProps {
   isOpen: boolean;
+  vendorToEdit?: any | null;
   onClose: () => void;
   onSuccess: (vendor: any) => void;
 }
 
-export default function VendorModal({ isOpen, onClose, onSuccess }: VendorModalProps) {
+export default function VendorModal({ isOpen, vendorToEdit, onClose, onSuccess }: VendorModalProps) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [category, setCategory] = useState('Material Supplier');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (vendorToEdit) {
+      setName(vendorToEdit.name || '');
+      setMobile(vendorToEdit.mobile || '');
+      setCategory(vendorToEdit.category || 'Material Supplier');
+      setAddress(vendorToEdit.address || '');
+    } else {
+      setName('');
+      setMobile('');
+      setCategory('Material Supplier');
+      setAddress('');
+    }
+  }, [vendorToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -28,8 +43,11 @@ export default function VendorModal({ isOpen, onClose, onSuccess }: VendorModalP
     setError('');
 
     try {
-      const res = await fetch('/api/vendors', {
-        method: 'POST',
+      const url = vendorToEdit ? `/api/vendors/${vendorToEdit._id}` : '/api/vendors';
+      const method = vendorToEdit ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -41,7 +59,7 @@ export default function VendorModal({ isOpen, onClose, onSuccess }: VendorModalP
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to add vendor');
+        throw new Error(data.message || `Failed to ${vendorToEdit ? 'update' : 'add'} vendor`);
       }
 
       setName('');
@@ -61,7 +79,7 @@ export default function VendorModal({ isOpen, onClose, onSuccess }: VendorModalP
       <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>🚚</span> Add Vendor / Supplier
+            <span>🚚</span> {vendorToEdit ? 'Edit Vendor / Supplier' : 'Add Vendor / Supplier'}
           </h2>
           <button
             onClick={onClose}

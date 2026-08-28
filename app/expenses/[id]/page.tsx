@@ -80,6 +80,56 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
     );
   }
 
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editAmount, setEditAmount] = useState('');
+  const [editVendor, setEditVendor] = useState('');
+  const [editRemark, setEditRemark] = useState('');
+  const [editRef, setEditRef] = useState('');
+  const [editMethod, setEditMethod] = useState('CASH');
+  const [editLoading, setEditLoading] = useState(false);
+
+  const openEditModal = () => {
+    if (!expense) return;
+    setEditAmount(String(expense.amount || ''));
+    setEditVendor(expense.vendorPerson || '');
+    setEditRemark(expense.remark || '');
+    setEditRef(expense.referenceNumber || '');
+    setEditMethod(expense.paymentMethod || 'CASH');
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editAmount || Number(editAmount) <= 0) return;
+    setEditLoading(true);
+
+    try {
+      const res = await fetch(`/api/expenses/${expenseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: activeProject?._id,
+          amount: Number(editAmount),
+          vendorPerson: editVendor.trim(),
+          remark: editRemark.trim(),
+          referenceNumber: editRef.trim(),
+          paymentMethod: editMethod
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to update expense');
+
+      setIsEditModalOpen(false);
+      loadExpense();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-xl mx-auto space-y-6 pb-20">
       {/* Top Header */}
@@ -101,13 +151,22 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {expense.status === 'ACTIVE' && (
-          <button
-            onClick={() => setIsVoidModalOpen(true)}
-            className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold rounded-xl transition-colors"
-          >
-            Void Expense
-          </button>
+        {expense?.status === 'ACTIVE' && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={openEditModal}
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              onClick={() => setIsVoidModalOpen(true)}
+              className="px-3 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              Void Expense
+            </button>
+          </div>
         )}
       </div>
 
@@ -240,6 +299,99 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
                   className="flex-1 h-11 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
                 >
                   {voidLoading ? 'Voiding...' : 'Confirm Void Expense'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Controlled Edit Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900">Edit Expense Record</h3>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateExpense} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-slate-600 uppercase mb-1">Amount (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={editAmount}
+                  onChange={(e) => setEditAmount(e.target.value)}
+                  className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-[#087F3E]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-600 uppercase mb-1">Payment Method</label>
+                <select
+                  value={editMethod}
+                  onChange={(e) => setEditMethod(e.target.value)}
+                  className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                >
+                  <option value="CASH">Cash</option>
+                  <option value="UPI_ONLINE">UPI / Online</option>
+                  <option value="BANK_TRANSFER">Bank Transfer</option>
+                  <option value="ADVANCE">Advance</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-600 uppercase mb-1">Vendor / Payee Person</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Ramesh Tool Store"
+                  value={editVendor}
+                  onChange={(e) => setEditVendor(e.target.value)}
+                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-600 uppercase mb-1">Reference No.</label>
+                <input
+                  type="text"
+                  placeholder="e.g. UPI-987234"
+                  value={editRef}
+                  onChange={(e) => setEditRef(e.target.value)}
+                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-600 uppercase mb-1">Remark / Note</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Fuel for generator"
+                  value={editRemark}
+                  onChange={(e) => setEditRemark(e.target.value)}
+                  className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                />
+              </div>
+
+              <div className="pt-2 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 h-11 rounded-xl bg-slate-100 text-slate-700 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="flex-1 h-11 rounded-xl bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold shadow"
+                >
+                  {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>

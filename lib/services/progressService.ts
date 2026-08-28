@@ -62,6 +62,70 @@ export async function createWorkType(data: { name: string; defaultUnit: string; 
   return JSON.parse(JSON.stringify(wt));
 }
 
+export async function updateWorkType(id: string, data: { name?: string; defaultUnit?: string; icon?: string }, user?: string) {
+  await connectMongoDB();
+  const wt = await (WorkType as any).findById(id).exec();
+  if (!wt) throw new Error('Work type not found.');
+
+  if (data.name?.trim()) wt.name = data.name.trim();
+  if (data.defaultUnit?.trim()) wt.defaultUnit = data.defaultUnit.trim();
+  if (data.icon?.trim()) wt.icon = data.icon.trim();
+
+  await wt.save();
+
+  await logAuditAction({
+    user,
+    action: 'WORK_TYPE_UPDATED',
+    entity: 'WorkType',
+    entityId: id,
+    metadata: { updates: data }
+  });
+
+  return JSON.parse(JSON.stringify(wt));
+}
+
+export async function deleteWorkType(id: string, user?: string) {
+  await connectMongoDB();
+  const wt = await (WorkType as any).findById(id).exec();
+  if (!wt) throw new Error('Work type not found.');
+
+  await (WorkType as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'WORK_TYPE_DELETED',
+    entity: 'WorkType',
+    entityId: id,
+    metadata: { name: wt.name }
+  });
+
+  return { ok: true, id };
+}
+
+export async function deleteDailyProgressByDate(projectId: string, date: string, user?: string) {
+  await connectMongoDB();
+  if (!mongoose.isValidObjectId(projectId)) throw new Error('Invalid projectId.');
+  const targetDate = new Date(date);
+  const normalizedDate = new Date(Date.UTC(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), targetDate.getUTCDate()));
+
+  const query = { projectId, date: normalizedDate };
+  const existing = await (DailyProgress as any).findOne(query).exec();
+  if (!existing) throw new Error('Daily progress report not found for specified date.');
+
+  await (DailyProgress as any).deleteOne(query).exec();
+
+  await logAuditAction({
+    user,
+    action: 'DAILY_PROGRESS_DELETED',
+    entity: 'DailyProgress',
+    entityId: existing._id.toString(),
+    metadata: { projectId, date }
+  });
+
+  return { ok: true, projectId, date };
+}
+
+
 export interface SaveDailyProgressPayload {
   projectId: string;
   date: string; // YYYY-MM-DD

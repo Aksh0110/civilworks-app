@@ -192,3 +192,25 @@ export async function getAttendanceSummary(projectId: string, dateStr: string) {
     ...summary
   };
 }
+
+export async function deleteAttendanceByDate(projectId: string, dateStr: string, user?: string) {
+  await connectMongoDB();
+  if (!mongoose.isValidObjectId(projectId)) throw new Error('Invalid projectId');
+
+  const range = dateQueryRange(dateStr);
+  const query: any = { projectId, date: range };
+
+  await Attendance.deleteMany(query).exec();
+  await WageEntry.deleteMany(query).exec();
+
+  await logAuditAction({
+    user,
+    action: 'ATTENDANCE_DELETED',
+    entity: 'Attendance',
+    entityId: `${projectId}_${dateStr}`,
+    metadata: { projectId, dateStr }
+  });
+
+  return { ok: true, projectId, dateStr };
+}
+

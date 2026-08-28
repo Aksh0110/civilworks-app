@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { updatePayment, deletePayment } from '@/lib/services/paymentService';
+import { updateExpenseCategory, deleteExpenseCategory } from '@/lib/services/expenseService';
 
 export async function PATCH(
   request: Request,
@@ -8,11 +8,11 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const updated = await updatePayment(id, body, body.user || 'Site Supervisor');
+    const updated = await updateExpenseCategory(id, body, body.user || 'Site Supervisor');
     return NextResponse.json({ data: updated });
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message || 'Failed to update payment record' },
+      { message: error.message || 'Failed to update category' },
       { status: 400 }
     );
   }
@@ -24,11 +24,11 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const res = await deletePayment(id, 'Site Supervisor');
+    const res = await deleteExpenseCategory(id, 'Site Supervisor');
     return NextResponse.json({ data: res });
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message || 'Failed to delete payment record' },
+      { message: error.message || 'Failed to delete category' },
       { status: 400 }
     );
   }

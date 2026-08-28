@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getVendorProfile, updateVendor } from '@/lib/services/vendorService';
+import { getVendorProfile, updateVendor, deleteVendor } from '@/lib/services/vendorService';
 
 export async function GET(
   request: Request,
@@ -37,3 +37,20 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const res = await deleteVendor(id, 'Site Supervisor');
+    return NextResponse.json({ data: res });
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error.message || 'Failed to delete vendor' },
+      { status: 400 }
+    );
+  }
+}
+

@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
+import ProjectModal from '@/components/ProjectModal';
+import ConfirmModal from '@/components/ConfirmModal';
+
 interface ProjectListItem {
   _id: string;
   name: string;
@@ -15,15 +18,21 @@ interface ProjectListItem {
   todayExpense: number;
   totalDue: number;
   lowStockCount: number;
+  siteContact?: string;
 }
 
 export default function ProjectsDirectoryPage() {
-  const { setActiveProjectId } = useProject();
+  const { setActiveProjectId, refreshProjects } = useProject();
 
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [activeTab, setActiveTab] = useState<'ALL' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED'>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Edit / Delete State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [projectToEdit, setProjectToEdit] = useState<ProjectListItem | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<ProjectListItem | null>(null);
 
   useEffect(() => {
     loadProjects();
@@ -41,6 +50,17 @@ export default function ProjectsDirectoryPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+    const res = await fetch(`/api/projects/${projectToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const d = await res.json();
+      throw new Error(d.message || 'Failed to delete project');
+    }
+    await refreshProjects();
+    loadProjects();
   };
 
   const filteredProjects = projects.filter((p) => {
@@ -67,12 +87,15 @@ export default function ProjectsDirectoryPage() {
           </p>
         </div>
 
-        <Link
-          href="/projects/create"
+        <button
+          onClick={() => {
+            setProjectToEdit(null);
+            setIsEditModalOpen(true);
+          }}
           className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
         >
           <span>+</span> Create Project
-        </Link>
+        </button>
       </div>
 
       {/* Filter Bar & Status Tabs */}
@@ -111,12 +134,15 @@ export default function ProjectsDirectoryPage() {
           <div className="text-3xl">🏗️</div>
           <h3 className="text-sm font-bold text-slate-900">No projects found</h3>
           <p className="text-xs text-slate-500">Create a construction project to start tracking site operations.</p>
-          <Link
-            href="/projects/create"
+          <button
+            onClick={() => {
+              setProjectToEdit(null);
+              setIsEditModalOpen(true);
+            }}
             className="inline-block px-4 py-2 bg-[#087F3E] text-white text-xs font-bold rounded-xl"
           >
             + Create Project
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -136,17 +162,38 @@ export default function ProjectsDirectoryPage() {
                   </div>
                 </div>
 
-                <span
-                  className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shrink-0 ${
-                    p.status === 'ACTIVE'
-                      ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                      : p.status === 'ON_HOLD'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                      : 'bg-slate-100 text-slate-700 border border-slate-200'
-                  }`}
-                >
-                  {p.status}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shrink-0 ${
+                      p.status === 'ACTIVE'
+                        ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
+                        : p.status === 'ON_HOLD'
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : 'bg-slate-100 text-slate-700 border border-slate-200'
+                    }`}
+                  >
+                    {p.status}
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setProjectToEdit(p);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                    title="Edit Project"
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    onClick={() => setProjectToDelete(p)}
+                    className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                    title="Delete Project"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
 
               {/* Metrics Bar */}
@@ -196,6 +243,30 @@ export default function ProjectsDirectoryPage() {
           ))}
         </div>
       )}
+
+      {/* Project Create/Edit Modal */}
+      <ProjectModal
+        isOpen={isEditModalOpen}
+        projectToEdit={projectToEdit}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setProjectToEdit(null);
+        }}
+        onSuccess={loadProjects}
+      />
+
+      {/* Confirmation Modal for Project Deletion */}
+      <ConfirmModal
+        isOpen={!!projectToDelete}
+        title="Delete Project Site"
+        message={`Are you sure you want to delete "${projectToDelete?.name}" (${projectToDelete?.code})?`}
+        itemName={projectToDelete ? `${projectToDelete.name} [Code: ${projectToDelete.code}]` : undefined}
+        warningText="Deleting this project will permanently remove site configuration metadata."
+        confirmText="Delete Project"
+        onClose={() => setProjectToDelete(null)}
+        onConfirm={handleDeleteProject}
+      />
     </div>
   );
 }
+

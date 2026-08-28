@@ -89,6 +89,27 @@ export async function updateProject(id: string, data: Partial<IProject>, user?: 
   return JSON.parse(JSON.stringify(project));
 }
 
+export async function deleteProject(id: string, user?: string) {
+  await connectMongoDB();
+  const project = await (Project as any).findById(id).exec();
+  if (!project) {
+    throw new Error('Project not found.');
+  }
+
+  await (Project as any).findByIdAndDelete(id).exec();
+
+  await logAuditAction({
+    user,
+    action: 'PROJECT_DELETED',
+    entity: 'Project',
+    entityId: id,
+    metadata: { name: project.name, code: project.code }
+  });
+
+  return { ok: true, id };
+}
+
+
 // ----------------------------------------------------
 // MILESTONE 7: AGGREGATED COMMAND CENTER OVERVIEW
 // ----------------------------------------------------

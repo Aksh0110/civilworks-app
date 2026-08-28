@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import MaterialModal from '@/components/MaterialModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface MaterialMasterItem {
   _id: string;
@@ -21,7 +22,11 @@ export default function MaterialMasterPage() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Edit / Delete State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [materialToEdit, setMaterialToEdit] = useState<MaterialMasterItem | null>(null);
+  const [materialToDelete, setMaterialToDelete] = useState<MaterialMasterItem | null>(null);
 
   useEffect(() => {
     fetch('/api/materials/categories')
@@ -42,6 +47,16 @@ export default function MaterialMasterPage() {
       .then((r) => r.json())
       .then((d) => setMaterials(d.data || []))
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteMaterial = async () => {
+    if (!materialToDelete) return;
+    const res = await fetch(`/api/materials/${materialToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete material');
+    }
+    loadMaterials();
   };
 
   const filteredMaterials = materials.filter((m) => {
@@ -70,7 +85,10 @@ export default function MaterialMasterPage() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setMaterialToEdit(null);
+            setIsModalOpen(true);
+          }}
           className="px-4 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2"
         >
           <span>+</span> Add New Material
@@ -128,9 +146,31 @@ export default function MaterialMasterPage() {
                   <h3 className="text-base font-bold text-slate-900">{m.name}</h3>
                   <span className="text-xs text-[#087F3E] font-semibold">{m.category}</span>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                  Unit: {m.unit}
-                </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                    Unit: {m.unit}
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      setMaterialToEdit(m);
+                      setIsModalOpen(true);
+                    }}
+                    className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                    title="Edit Material"
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    onClick={() => setMaterialToDelete(m)}
+                    className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                    title="Delete Material"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -144,11 +184,27 @@ export default function MaterialMasterPage() {
 
       <MaterialModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        materialToEdit={materialToEdit}
+        onClose={() => {
+          setIsModalOpen(false);
+          setMaterialToEdit(null);
+        }}
         onSuccess={() => loadMaterials()}
         categories={categories}
         units={units}
       />
+
+      <ConfirmModal
+        isOpen={!!materialToDelete}
+        title="Delete Material Item"
+        message={`Are you sure you want to delete material "${materialToDelete?.name}"?`}
+        itemName={materialToDelete ? `${materialToDelete.name} (${materialToDelete.category})` : undefined}
+        warningText="Material definition will be removed from master catalog."
+        confirmText="Delete Material"
+        onClose={() => setMaterialToDelete(null)}
+        onConfirm={handleDeleteMaterial}
+      />
     </div>
   );
 }
+

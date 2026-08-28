@@ -1,18 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ExpenseCategoryModalProps {
   isOpen: boolean;
+  categoryToEdit?: any | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function ExpenseCategoryModal({ isOpen, onClose, onSuccess }: ExpenseCategoryModalProps) {
+export default function ExpenseCategoryModal({ isOpen, categoryToEdit, onClose, onSuccess }: ExpenseCategoryModalProps) {
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('💸');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (categoryToEdit) {
+      setName(categoryToEdit.name || '');
+      setIcon(categoryToEdit.icon || '💸');
+    } else {
+      setName('');
+      setIcon('💸');
+    }
+  }, [categoryToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -26,8 +37,11 @@ export default function ExpenseCategoryModal({ isOpen, onClose, onSuccess }: Exp
     setError('');
 
     try {
-      const res = await fetch('/api/expenses/categories', {
-        method: 'POST',
+      const url = categoryToEdit ? `/api/expenses/categories/${categoryToEdit._id}` : '/api/expenses/categories';
+      const method = categoryToEdit ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -37,7 +51,7 @@ export default function ExpenseCategoryModal({ isOpen, onClose, onSuccess }: Exp
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to add category');
+        throw new Error(data.message || `Failed to ${categoryToEdit ? 'update' : 'add'} category`);
       }
 
       setName('');
@@ -55,7 +69,7 @@ export default function ExpenseCategoryModal({ isOpen, onClose, onSuccess }: Exp
       <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>🏷️</span> Add Expense Category
+            <span>🏷️</span> {categoryToEdit ? 'Edit Expense Category' : 'Add Expense Category'}
           </h2>
           <button
             onClick={onClose}

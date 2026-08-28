@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProjectById, updateProject } from '@/lib/services/projectService';
+import { getProjectById, updateProject, deleteProject } from '@/lib/services/projectService';
 
 export async function GET(
   request: Request,
@@ -37,3 +37,20 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const res = await deleteProject(id, 'Site Supervisor');
+    return NextResponse.json({ data: res });
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error.message || 'Failed to delete project' },
+      { status: 400 }
+    );
+  }
+}
+

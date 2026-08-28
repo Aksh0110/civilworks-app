@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface MaterialModalProps {
   isOpen: boolean;
+  materialToEdit?: any | null;
   onClose: () => void;
   onSuccess: () => void;
   categories: string[];
   units: string[];
 }
 
-export default function MaterialModal({ isOpen, onClose, onSuccess, categories, units }: MaterialModalProps) {
+export default function MaterialModal({ isOpen, materialToEdit, onClose, onSuccess, categories, units }: MaterialModalProps) {
   const [name, setName] = useState('');
   const [category, setCategory] = useState(categories[0] || 'Cement');
   const [unit, setUnit] = useState(units[0] || 'Bags');
@@ -18,6 +19,22 @@ export default function MaterialModal({ isOpen, onClose, onSuccess, categories, 
   const [defaultRate, setDefaultRate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (materialToEdit) {
+      setName(materialToEdit.name || '');
+      setCategory(materialToEdit.category || categories[0] || 'Cement');
+      setUnit(materialToEdit.unit || units[0] || 'Bags');
+      setMinStockLevel(String(materialToEdit.minStockLevel ?? 50));
+      setDefaultRate(String(materialToEdit.defaultRate ?? ''));
+    } else {
+      setName('');
+      setCategory(categories[0] || 'Cement');
+      setUnit(units[0] || 'Bags');
+      setMinStockLevel('50');
+      setDefaultRate('');
+    }
+  }, [materialToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -31,8 +48,11 @@ export default function MaterialModal({ isOpen, onClose, onSuccess, categories, 
     setError('');
 
     try {
-      const res = await fetch('/api/materials', {
-        method: 'POST',
+      const url = materialToEdit ? `/api/materials/${materialToEdit._id}` : '/api/materials';
+      const method = materialToEdit ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -45,7 +65,7 @@ export default function MaterialModal({ isOpen, onClose, onSuccess, categories, 
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to add material');
+        throw new Error(data.message || `Failed to ${materialToEdit ? 'update' : 'add'} material`);
       }
 
       setName('');
@@ -65,7 +85,7 @@ export default function MaterialModal({ isOpen, onClose, onSuccess, categories, 
       <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>📦</span> Add New Material
+            <span>📦</span> {materialToEdit ? 'Edit Material' : 'Add New Material'}
           </h2>
           <button
             onClick={onClose}

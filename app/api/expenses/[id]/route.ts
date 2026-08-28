@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getExpenseById, voidExpense } from '@/lib/services/expenseService';
+import { getExpenseById, voidExpense, updateExpense } from '@/lib/services/expenseService';
 
 export async function GET(
   request: Request,
@@ -28,6 +28,29 @@ export async function GET(
   }
 }
 
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { projectId, ...payload } = body || {};
+
+    if (!projectId) {
+      return NextResponse.json({ message: 'projectId is required' }, { status: 400 });
+    }
+
+    const updated = await updateExpense(id, projectId, payload, body.user || 'Site Supervisor');
+    return NextResponse.json({ data: updated });
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error.message || 'Failed to update expense' },
+      { status: 400 }
+    );
+  }
+}
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -50,3 +73,4 @@ export async function DELETE(
     );
   }
 }
+

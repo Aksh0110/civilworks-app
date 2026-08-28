@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
+import ConfirmModal from '@/components/ConfirmModal';
+
 interface DocumentItem {
   _id: string;
   documentName: string;
@@ -21,6 +23,9 @@ export default function DocumentsHubPage() {
   const [activeTab, setActiveTab] = useState<string>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Delete State
+  const [docToDelete, setDocToDelete] = useState<DocumentItem | null>(null);
 
   // Add Document Modal state
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -82,15 +87,14 @@ export default function DocumentsHubPage() {
     }
   };
 
-  const handleDeleteDoc = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this document attachment?')) return;
-    try {
-      const res = await fetch(`/api/documents/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete document');
-      loadDocuments();
-    } catch (err: any) {
-      alert(err.message);
+  const handleDeleteDoc = async () => {
+    if (!docToDelete) return;
+    const res = await fetch(`/api/documents/${docToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete document');
     }
+    loadDocuments();
   };
 
   const filteredDocs = documents.filter((d) => {
@@ -204,7 +208,7 @@ export default function DocumentsHubPage() {
                 </a>
 
                 <button
-                  onClick={() => handleDeleteDoc(d._id)}
+                  onClick={() => setDocToDelete(d)}
                   className="px-3 py-2 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 text-xs font-bold rounded-xl transition-colors"
                 >
                   Delete
@@ -293,6 +297,18 @@ export default function DocumentsHubPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Document Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!docToDelete}
+        title="Delete Document"
+        message={`Are you sure you want to delete document "${docToDelete?.documentName}"?`}
+        itemName={docToDelete?.documentName}
+        warningText="Document metadata and link will be permanently removed."
+        confirmText="Delete Document"
+        onClose={() => setDocToDelete(null)}
+        onConfirm={handleDeleteDoc}
+      />
     </div>
   );
 }

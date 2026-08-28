@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import AppShell from '@/components/AppShell';
 import { useProject } from '@/lib/context/ProjectContext';
 import WorkerModal from '@/components/WorkerModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function WorkersPage() {
   const { activeProject } = useProject();
@@ -15,6 +16,7 @@ export default function WorkersPage() {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [workerToEdit, setWorkerToEdit] = useState<any | null>(null);
+  const [workerToDelete, setWorkerToDelete] = useState<any | null>(null);
 
   const fetchWorkers = async () => {
     if (!activeProject?._id) return;
@@ -28,6 +30,16 @@ export default function WorkersPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteWorker = async () => {
+    if (!workerToDelete) return;
+    const res = await fetch(`/api/workers/${workerToDelete._id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete worker');
+    }
+    fetchWorkers();
   };
 
   useEffect(() => {
@@ -131,7 +143,7 @@ export default function WorkersPage() {
                     {worker.mobile && ` · 📞 ${worker.mobile}`}
                   </div>
                 </div>
-                <div className="worker-actions">
+                <div className="worker-actions flex gap-2">
                   <button
                     className="btn btn-secondary btn-sm"
                     onClick={() => {
@@ -140,6 +152,13 @@ export default function WorkersPage() {
                     }}
                   >
                     Edit
+                  </button>
+
+                  <button
+                    className="btn btn-secondary btn-sm text-red-600 hover:bg-red-50"
+                    onClick={() => setWorkerToDelete(worker)}
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
@@ -153,7 +172,19 @@ export default function WorkersPage() {
           onClose={() => setIsModalOpen(false)}
           onSuccess={fetchWorkers}
         />
+
+        <ConfirmModal
+          isOpen={!!workerToDelete}
+          title="Delete Worker Profile"
+          message={`Are you sure you want to delete worker "${workerToDelete?.name}"?`}
+          itemName={workerToDelete ? `${workerToDelete.name} (${workerToDelete.category})` : undefined}
+          warningText="Worker profile will be deleted from master list."
+          confirmText="Delete Worker"
+          onClose={() => setWorkerToDelete(null)}
+          onConfirm={handleDeleteWorker}
+        />
       </main>
     </AppShell>
   );
 }
+
