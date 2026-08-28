@@ -81,16 +81,16 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
   };
 
   if (loading) {
-    return <div className="py-12 text-center text-stone-500 text-sm">Loading material history timeline...</div>;
+    return <div className="py-12 text-center text-slate-500 text-sm">Loading material history timeline...</div>;
   }
 
   if (error || !detail) {
     return (
       <div className="max-w-lg mx-auto py-8 text-center space-y-4">
-        <div className="p-4 rounded-xl bg-amber-950/80 border border-amber-800 text-amber-200 text-sm">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold">
           {error || 'Material not found'}
         </div>
-        <Link href="/materials/stock" className="inline-block px-4 py-2 bg-stone-800 text-stone-200 text-xs font-bold rounded-xl">
+        <Link href="/materials/stock" className="inline-block px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">
           ← Back to Stock
         </Link>
       </div>
@@ -102,69 +102,68 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Top Navigation */}
-      <div className="flex items-center justify-between bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/materials/stock"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100">{material.name}</h1>
-            <p className="text-xs text-stone-400">
-              Category: <span className="text-amber-400 font-semibold">{material.category}</span>
+            <h1 className="text-lg font-bold text-slate-900">{material.name}</h1>
+            <p className="text-xs text-slate-500">
+              Category: <span className="text-[#087F3E] font-semibold">{material.category}</span>
             </p>
           </div>
         </div>
 
         <button
           onClick={() => setIsAdjustModalOpen(true)}
-          className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-bold rounded-xl transition-colors border border-stone-700"
+          className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors border border-slate-200"
         >
           More (Adjust)
         </button>
       </div>
 
       {/* Material Stock Balance Hero Card */}
-      <div className="bg-stone-900 border border-stone-800 p-6 rounded-2xl space-y-4">
+      <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs text-stone-400 block uppercase tracking-wider font-semibold">Available Site Stock</span>
+            <span className="text-xs text-slate-500 block uppercase tracking-wider font-bold">Available Site Stock</span>
             <div className="flex items-baseline gap-2 mt-1">
               <span
-                className={`text-3xl font-extrabold ${
-                  currentStock <= 0 ? 'text-red-400' : status === 'LOW' ? 'text-amber-400' : 'text-emerald-400'
+                className={`text-3xl font-black ${
+                  currentStock <= 0 ? 'text-red-600' : status === 'LOW' ? 'text-amber-600' : 'text-[#087F3E]'
                 }`}
               >
                 {currentStock.toLocaleString('en-IN')}
               </span>
-              <span className="text-sm font-semibold text-stone-300">{material.unit}</span>
+              <span className="text-sm font-semibold text-slate-600">{material.unit}</span>
             </div>
           </div>
 
           <span
-            className={`text-xs px-3 py-1.5 rounded-full font-bold border flex items-center gap-1.5 ${
+            className={`text-xs px-3 py-1.5 rounded-full font-bold uppercase ${
               status === 'GOOD'
-                ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
                 : status === 'LOW'
-                ? 'bg-amber-950 text-amber-300 border-amber-800'
-                : 'bg-red-950 text-red-300 border-red-800'
+                ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                : 'bg-red-50 text-red-700 border border-red-200'
             }`}
           >
-            <span>{status === 'GOOD' ? '🟢' : status === 'LOW' ? '⚠️' : '🚨'}</span>
-            <span>{status === 'GOOD' ? 'Good Stock' : status === 'LOW' ? 'Low Stock' : 'Out of Stock'}</span>
+            {status === 'GOOD' ? 'Good Stock' : status === 'LOW' ? 'Low Stock' : 'Out of Stock'}
           </span>
         </div>
 
-        <div className="pt-4 border-t border-stone-800 grid grid-cols-2 gap-4 text-xs">
+        <div className="pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-xs">
           <div>
-            <span className="text-stone-500 block">Minimum Warning Limit</span>
-            <span className="text-stone-300 font-bold">{material.minStockLevel || 0} {material.unit}</span>
+            <span className="text-slate-500 block">Minimum Warning Limit</span>
+            <span className="text-slate-900 font-bold">{material.minStockLevel || 0} {material.unit}</span>
           </div>
           <div>
-            <span className="text-stone-500 block">Default Unit Rate</span>
-            <span className="text-stone-300 font-bold">₹{material.defaultRate || 0} / {material.unit}</span>
+            <span className="text-slate-500 block">Default Unit Rate</span>
+            <span className="text-slate-900 font-bold">₹{material.defaultRate || 0} / {material.unit}</span>
           </div>
         </div>
 
@@ -172,13 +171,13 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
         <div className="pt-2 flex gap-3">
           <Link
             href="/materials/receive"
-            className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-colors shadow-lg"
+            className="flex-1 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-colors shadow"
           >
             <span>📥</span> Receive Material
           </Link>
           <Link
             href="/materials/issue"
-            className="flex-1 h-11 bg-blue-500 hover:bg-blue-400 text-stone-950 text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-colors shadow-lg"
+            className="flex-1 h-11 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-colors shadow"
           >
             <span>📤</span> Give Material
           </Link>
@@ -186,34 +185,34 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
       </div>
 
       {/* Transaction Timeline History */}
-      <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-        <h2 className="text-sm font-bold text-stone-200 uppercase tracking-wider">Transaction History</h2>
+      <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+        <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Transaction History</h2>
 
         {timeline.length === 0 ? (
-          <div className="py-8 text-center text-xs text-stone-500">No transactions recorded for this material yet.</div>
+          <div className="py-8 text-center text-xs text-slate-500">No transactions recorded for this material yet.</div>
         ) : (
           <div className="space-y-3">
             {timeline.map((item: TimelineEntry) => (
               <div
                 key={item.id}
-                className="p-3.5 bg-stone-950 border border-stone-800 rounded-xl flex items-center justify-between gap-3"
+                className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0 ${
                       item.type === 'INWARD'
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                        ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
                         : item.type === 'ISSUE'
-                        ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                        : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'bg-purple-50 text-purple-700 border border-purple-200'
                     }`}
                   >
                     {item.type === 'INWARD' ? '📥' : item.type === 'ISSUE' ? '📤' : '⚙️'}
                   </div>
 
                   <div>
-                    <h3 className="text-xs font-bold text-stone-200">{item.description}</h3>
-                    <p className="text-[11px] text-stone-500">
+                    <h3 className="text-xs font-bold text-slate-900">{item.description}</h3>
+                    <p className="text-[11px] text-slate-500">
                       {new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       {item.subtext ? ` · ${item.subtext}` : ''}
                     </p>
@@ -221,8 +220,8 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
                 </div>
 
                 <span
-                  className={`text-sm font-extrabold whitespace-nowrap ${
-                    item.type === 'INWARD' ? 'text-emerald-400' : item.type === 'ISSUE' ? 'text-blue-400' : 'text-purple-400'
+                  className={`text-sm font-black whitespace-nowrap ${
+                    item.type === 'INWARD' ? 'text-[#087F3E]' : item.type === 'ISSUE' ? 'text-blue-700' : 'text-purple-700'
                   }`}
                 >
                   {item.change}
@@ -235,22 +234,22 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
 
       {/* Stock Adjustment Modal */}
       {isAdjustModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-stone-900 border border-stone-800 rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-stone-800">
-              <h3 className="text-base font-bold text-stone-100">Stock Adjustment ({material.name})</h3>
-              <button onClick={() => setIsAdjustModalOpen(false)} className="text-stone-400 hover:text-stone-200">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900">Stock Adjustment ({material.name})</h3>
+              <button onClick={() => setIsAdjustModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleStockAdjustment} className="space-y-4">
               <div>
-                <label className="block text-xs text-stone-400 mb-1">Adjustment Action</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Adjustment Action</label>
                 <select
                   value={adjType}
                   onChange={(e) => setAdjType(e.target.value as any)}
-                  className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
                 >
                   <option value="SET">Set Fixed Stock Balance</option>
                   <option value="ADD">Add Stock (+)</option>
@@ -259,7 +258,7 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
               </div>
 
               <div>
-                <label className="block text-xs text-stone-400 mb-1">Quantity ({material.unit})</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Quantity ({material.unit})</label>
                 <input
                   type="number"
                   step="any"
@@ -267,19 +266,19 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
                   placeholder="e.g. 500"
                   value={adjQty}
                   onChange={(e) => setAdjQty(e.target.value)}
-                  className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-stone-400 mb-1">Reason / Note *</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Reason / Note *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Physical site audit reconciliation"
                   value={adjReason}
                   onChange={(e) => setAdjReason(e.target.value)}
-                  className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
@@ -287,14 +286,14 @@ export default function MaterialDetailPage({ params }: { params: Promise<{ id: s
                 <button
                   type="button"
                   onClick={() => setIsAdjustModalOpen(false)}
-                  className="flex-1 h-11 rounded-xl border border-stone-800 text-stone-300 text-xs font-bold"
+                  className="flex-1 h-11 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={adjLoading}
-                  className="flex-1 h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold"
+                  className="flex-1 h-11 rounded-xl bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold shadow"
                 >
                   {adjLoading ? 'Adjusting...' : 'Confirm Adjustment'}
                 </button>

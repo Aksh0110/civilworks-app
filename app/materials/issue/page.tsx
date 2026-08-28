@@ -102,39 +102,39 @@ export default function IssueMaterialPage() {
   if (successResult) {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
-        <div className="bg-blue-950/80 border border-blue-800/80 p-6 rounded-2xl text-center space-y-4">
-          <div className="w-16 h-16 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-xl font-bold text-blue-100">Material Issued Successfully!</h2>
-            <p className="text-xs text-blue-300/80 mt-1">
+            <h2 className="text-xl font-extrabold text-blue-950">Material Issued Successfully!</h2>
+            <p className="text-xs text-slate-600 mt-1">
               Stock balance has been automatically reduced for{' '}
-              <span className="font-semibold text-white">{activeProject?.name}</span>.
+              <span className="font-bold text-slate-900">{activeProject?.name}</span>.
             </p>
           </div>
         </div>
 
         {/* Issue Summary Card */}
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-          <h3 className="text-sm font-bold text-stone-200 uppercase tracking-wider">Issue Summary</h3>
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Issue Summary</h3>
 
-          <div className="divide-y divide-stone-800">
+          <div className="divide-y divide-slate-100">
             {successResult.updatedStockList?.map((item: any) => (
               <div key={item.materialId} className="py-3 flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-bold text-stone-100">{item.materialName}</h4>
-                  <span className="text-xs text-stone-400">
-                    Remaining Stock: <strong className="text-amber-400">{item.currentStock} {item.unit}</strong>
+                  <h4 className="text-sm font-bold text-slate-900">{item.materialName}</h4>
+                  <span className="text-xs text-slate-500">
+                    Remaining Stock: <strong className="text-[#087F3E]">{item.currentStock} {item.unit}</strong>
                   </span>
                 </div>
                 <span
-                  className={`text-xs px-2.5 py-1 rounded-full font-bold ${
+                  className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase ${
                     item.status === 'GOOD'
-                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                      ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
                       : item.status === 'LOW'
-                      ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                      : 'bg-red-950 text-red-300 border border-red-800'
+                      ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
                   }`}
                 >
                   {item.status}
@@ -144,9 +144,9 @@ export default function IssueMaterialPage() {
           </div>
 
           {(locationWorkArea || issuedTo) && (
-            <div className="pt-3 border-t border-stone-800 text-xs text-stone-400 space-y-1">
-              {locationWorkArea && <div>Location / Work Area: <strong className="text-stone-200">{locationWorkArea}</strong></div>}
-              {issuedTo && <div>Issued To: <strong className="text-stone-200">{issuedTo}</strong></div>}
+            <div className="pt-3 border-t border-slate-100 text-xs text-slate-500 space-y-1">
+              {locationWorkArea && <div>Location / Work Area: <strong className="text-slate-900">{locationWorkArea}</strong></div>}
+              {issuedTo && <div>Issued To: <strong className="text-slate-900">{issuedTo}</strong></div>}
             </div>
           )}
         </div>
@@ -160,13 +160,13 @@ export default function IssueMaterialPage() {
               setLocationWorkArea('');
               setIssuedTo('');
             }}
-            className="flex-1 h-12 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-sm font-bold transition-colors"
+            className="flex-1 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
           >
             + Give Another Material
           </button>
           <Link
             href="/materials/stock"
-            className="flex-1 h-12 rounded-xl bg-blue-500 hover:bg-blue-400 text-stone-950 text-sm font-bold transition-colors flex items-center justify-center"
+            className="flex-1 h-12 rounded-xl bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold transition-colors flex items-center justify-center shadow"
           >
             View Live Stock →
           </Link>
@@ -178,51 +178,51 @@ export default function IssueMaterialPage() {
   return (
     <div className="max-w-xl mx-auto space-y-6 pb-20">
       {/* Header Bar */}
-      <div className="flex items-center justify-between bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/materials"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100 flex items-center gap-2">
+            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>📤</span> Give Material (Outward)
             </h1>
-            <p className="text-xs text-stone-400">
-              Site: <span className="text-amber-400 font-semibold">{activeProject?.name || 'Select Site'}</span>
+            <p className="text-xs text-slate-500">
+              Site: <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Select Site'}</span>
             </p>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-amber-950/90 border border-amber-800 text-amber-200 text-sm flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-3">
           <span className="text-lg">⚠️</span>
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-blue-400">Issue Material Details</h2>
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">Issue Material Details</h2>
 
           {/* Issue Date */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">Issue Date *</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Issue Date *</label>
             <input
               type="date"
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-blue-500"
+              className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
             />
           </div>
 
           {/* Select Material with Live Balance */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">Select Material *</label>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Select Material *</label>
             <select
               required
               value={selectedMaterialId}
@@ -230,7 +230,7 @@ export default function IssueMaterialPage() {
                 setSelectedMaterialId(e.target.value);
                 setError('');
               }}
-              className="w-full h-12 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-blue-500 font-medium"
+              className="w-full h-12 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E] font-medium"
             >
               <option value="">-- Choose Material from Site Stock --</option>
               {materials.map((m) => (
@@ -243,11 +243,11 @@ export default function IssueMaterialPage() {
 
           {/* Live Available Balance Indicator */}
           {selectedMaterial && (
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between">
-              <span className="text-xs text-stone-400">Available Stock Balance:</span>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <span className="text-xs text-slate-500">Available Stock Balance:</span>
               <span
                 className={`text-sm font-bold ${
-                  availableStock <= 0 ? 'text-red-400' : availableStock < (selectedMaterial.minStockLevel || 0) ? 'text-amber-400' : 'text-emerald-400'
+                  availableStock <= 0 ? 'text-red-600' : availableStock < (selectedMaterial.minStockLevel || 0) ? 'text-amber-600' : 'text-[#087F3E]'
                 }`}
               >
                 {availableStock} {selectedMaterial.unit}
@@ -257,7 +257,7 @@ export default function IssueMaterialPage() {
 
           {/* Quantity Input */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
               Quantity to Issue {selectedMaterial ? `(${selectedMaterial.unit})` : ''} *
             </label>
             <input
@@ -271,15 +271,15 @@ export default function IssueMaterialPage() {
                 setQuantity(e.target.value);
                 setError('');
               }}
-              className={`w-full h-12 px-4 bg-stone-950 border text-stone-100 text-base font-bold rounded-xl placeholder-stone-600 focus:outline-none ${
-                isInsufficient ? 'border-red-500 text-red-200' : 'border-stone-800 focus:border-blue-500'
+              className={`w-full h-12 px-4 bg-slate-50 border text-slate-900 text-base font-bold rounded-xl placeholder-slate-400 focus:outline-none ${
+                isInsufficient ? 'border-red-500 text-red-600' : 'border-slate-200 focus:border-[#087F3E]'
               }`}
             />
           </div>
 
           {/* Insufficient Stock Red Guard Banner */}
           {isInsufficient && (
-            <div className="p-3 rounded-xl bg-red-950/90 border border-red-800 text-red-200 text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
               <span>🚨</span>
               <span>
                 Insufficient Stock! You are trying to issue <strong>{numericQty} {selectedMaterial?.unit}</strong>, but only <strong>{availableStock} {selectedMaterial?.unit}</strong> is available.
@@ -289,7 +289,7 @@ export default function IssueMaterialPage() {
 
           {/* Location / Work Area */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
               Work Location / Area
             </label>
             <input
@@ -297,13 +297,13 @@ export default function IssueMaterialPage() {
               placeholder="e.g. Block A — 1st Floor Slab"
               value={locationWorkArea}
               onChange={(e) => setLocationWorkArea(e.target.value)}
-              className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-blue-500"
+              className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
             />
           </div>
 
           {/* Issued To */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
               Issued To (Person / Contractor Team)
             </label>
             <input
@@ -311,13 +311,13 @@ export default function IssueMaterialPage() {
               placeholder="e.g. Mason Team Ramesh"
               value={issuedTo}
               onChange={(e) => setIssuedTo(e.target.value)}
-              className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-blue-500"
+              className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
             />
           </div>
 
           {/* Remarks */}
           <div>
-            <label className="block text-xs font-semibold text-stone-400 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
               Optional Remark
             </label>
             <input
@@ -325,7 +325,7 @@ export default function IssueMaterialPage() {
               placeholder="e.g. Approved for casting"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              className="w-full h-11 px-3 bg-stone-950 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-blue-500"
+              className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
             />
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function IssueMaterialPage() {
         <button
           type="submit"
           disabled={submitting || isInsufficient || !selectedMaterialId || numericQty <= 0}
-          className="w-full h-14 bg-blue-500 hover:bg-blue-400 disabled:opacity-40 text-stone-950 font-bold rounded-2xl text-base transition-colors shadow-lg flex items-center justify-center gap-2"
+          className="w-full h-14 bg-[#087F3E] hover:bg-[#056B34] disabled:opacity-40 text-white font-extrabold rounded-2xl text-base transition-colors shadow flex items-center justify-center gap-2"
         >
           {submitting ? 'Issuing Material...' : '📤 Issue Material'}
         </button>

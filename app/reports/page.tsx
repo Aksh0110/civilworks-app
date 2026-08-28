@@ -22,14 +22,14 @@ export default function ReportsHubPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div className="flex items-center gap-2">
           <span className="text-2xl">📊</span>
-          <h1 className="text-xl font-bold text-stone-100">Reports & Analytics Hub</h1>
+          <h1 className="text-xl font-bold text-slate-900">Reports & Analytics Hub</h1>
         </div>
-        <p className="text-xs text-stone-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Structured operational reports and shareable statements for{' '}
-          <span className="text-amber-400 font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+          <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
         </p>
       </div>
 
@@ -39,18 +39,18 @@ export default function ReportsHubPage() {
           <Link
             key={rep.id}
             href={`/reports/${rep.id}`}
-            className="p-5 rounded-2xl bg-stone-900 hover:bg-stone-800/80 border border-stone-800 transition-all shadow-lg flex items-start gap-4 group"
+            className="p-5 rounded-2xl bg-white hover:border-[#087F3E] border border-slate-200 transition-all shadow-sm flex items-start gap-4 group"
           >
-            <div className="text-3xl p-3 bg-stone-950 rounded-xl border border-stone-800 shrink-0">
+            <div className="text-3xl p-3 bg-[#EAF7EF] rounded-xl border border-[#bce6cb] shrink-0 text-[#056B34]">
               {rep.icon}
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-stone-100 group-hover:text-amber-400 transition-colors">
+              <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
                 {rep.title}
               </h3>
-              <p className="text-xs text-stone-400 leading-relaxed">{rep.desc}</p>
-              <span className="inline-block text-[11px] text-amber-400 font-bold mt-2">
+              <p className="text-xs text-slate-500 leading-relaxed">{rep.desc}</p>
+              <span className="inline-block text-[11px] text-[#087F3E] font-bold mt-2">
                 Open Report →
               </span>
             </div>

@@ -61,30 +61,30 @@ export default function AddVendorPage() {
   if (successVendor) {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6">
-        <div className="bg-emerald-950/80 border border-emerald-800/80 p-6 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-emerald-100">Vendor Added Successfully ✓</h2>
-            <p className="text-xs text-emerald-300/80 mt-1">{successVendor.name}</p>
+            <h2 className="text-2xl font-extrabold text-[#056B34]">Vendor Added Successfully ✓</h2>
+            <p className="text-xs text-slate-600 mt-1">{successVendor.name}</p>
           </div>
 
-          <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl space-y-2 text-left text-xs">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 text-left text-xs">
             <div className="flex justify-between">
-              <span className="text-stone-400">Category:</span>
-              <span className="font-semibold text-stone-200">{successVendor.category}</span>
+              <span className="text-slate-500">Category:</span>
+              <span className="font-semibold text-slate-900">{successVendor.category}</span>
             </div>
             {successVendor.contactPerson && (
               <div className="flex justify-between">
-                <span className="text-stone-400">Contact Person:</span>
-                <span className="font-semibold text-stone-200">{successVendor.contactPerson}</span>
+                <span className="text-slate-500">Contact Person:</span>
+                <span className="font-semibold text-slate-900">{successVendor.contactPerson}</span>
               </div>
             )}
             {successVendor.mobile && (
               <div className="flex justify-between">
-                <span className="text-stone-400">Phone:</span>
-                <span className="font-semibold text-stone-200">{successVendor.mobile}</span>
+                <span className="text-slate-500">Phone:</span>
+                <span className="font-semibold text-slate-900">{successVendor.mobile}</span>
               </div>
             )}
           </div>
@@ -92,13 +92,13 @@ export default function AddVendorPage() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href={`/vendors/${successVendor._id}`}
-              className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
             >
               View Vendor
             </Link>
             <Link
               href="/vendors"
-              className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors text-center"
             >
               Done
             </Link>
@@ -111,34 +111,34 @@ export default function AddVendorPage() {
   return (
     <div className="space-y-6 pb-20 max-w-2xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">➕</span>
-            <h1 className="text-xl font-bold text-stone-100">Add New Vendor</h1>
+            <h1 className="text-xl font-bold text-slate-900">Add New Vendor</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">Onboard a material supplier, transporter, or contractor.</p>
+          <p className="text-xs text-slate-500 mt-1">Onboard a material supplier, transporter, or contractor.</p>
         </div>
 
         <Link
           href="/vendors"
-          className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
         >
           ← Back
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-stone-900 border border-stone-800 p-6 rounded-2xl space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-5 shadow-sm">
         {error && (
-          <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-bold">
             {error}
           </div>
         )}
 
         {/* Vendor Name */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-1">
-            Vendor / Company Name <span className="text-amber-400">*</span>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Vendor / Company Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -146,18 +146,18 @@ export default function AddVendorPage() {
             placeholder="e.g. Shree Traders, R.K. Transport"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-sm font-bold text-stone-100 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 
         {/* Category & Contact Person */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">Supply Category</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Supply Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             >
               {DEFAULT_VENDOR_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -168,13 +168,13 @@ export default function AddVendorPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">Contact Person</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Contact Person</label>
             <input
               type="text"
               placeholder="e.g. Amit Sharma (Manager)"
               value={contactPerson}
               onChange={(e) => setContactPerson(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
           </div>
         </div>
@@ -182,24 +182,24 @@ export default function AddVendorPage() {
         {/* Mobile & Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">Phone / WhatsApp</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Phone / WhatsApp</label>
             <input
               type="tel"
               placeholder="e.g. 9876543210"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">Email (Optional)</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Email (Optional)</label>
             <input
               type="email"
               placeholder="e.g. info@shreetraders.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
           </div>
         </div>
@@ -207,44 +207,44 @@ export default function AddVendorPage() {
         {/* GSTIN & Address */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">GSTIN Number (Optional)</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">GSTIN Number (Optional)</label>
             <input
               type="text"
               placeholder="e.g. 27AAAAA0000A1Z5"
               value={gstNumber}
               onChange={(e) => setGstNumber(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 uppercase focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 uppercase focus:outline-none focus:border-[#087F3E]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-300 mb-1">Office / Yard Address (Optional)</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Office / Yard Address (Optional)</label>
             <input
               type="text"
               placeholder="e.g. Plot 12, Industrial Area"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
           </div>
         </div>
 
         {/* Notes */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-1">Notes / Terms (Optional)</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">Notes / Terms (Optional)</label>
           <textarea
             rows={2}
             placeholder="e.g. 30-day payment terms, credit limit ₹2,00,000"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl p-3 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-stone-950 text-base font-extrabold rounded-xl transition-all shadow-lg text-center disabled:opacity-50"
+          className="w-full py-4 bg-[#087F3E] hover:bg-[#056B34] text-white text-base font-extrabold rounded-xl transition-all shadow text-center disabled:opacity-50"
         >
           {submitting ? 'Saving Vendor...' : 'Save Vendor ✓'}
         </button>

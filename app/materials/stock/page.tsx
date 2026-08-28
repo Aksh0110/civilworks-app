@@ -61,22 +61,22 @@ export default function StockOverviewPage() {
   });
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/materials"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100 flex items-center gap-2">
+            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>📊</span> Site Stock Overview
             </h1>
-            <p className="text-xs text-stone-400">
-              Site: <span className="text-amber-400 font-semibold">{activeProject?.name || 'Select Site'}</span>
+            <p className="text-xs text-slate-500">
+              Site: <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Select Site'}</span>
             </p>
           </div>
         </div>
@@ -84,13 +84,13 @@ export default function StockOverviewPage() {
         <div className="flex gap-2">
           <Link
             href="/materials/receive"
-            className="px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-bold rounded-xl transition-colors flex items-center gap-1"
+            className="px-3.5 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1 shadow"
           >
             <span>📥</span> Receive
           </Link>
           <Link
             href="/materials/issue"
-            className="px-3 py-2 bg-blue-500 hover:bg-blue-400 text-stone-950 text-xs font-bold rounded-xl transition-colors flex items-center gap-1"
+            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1 shadow"
           >
             <span>📤</span> Give
           </Link>
@@ -100,25 +100,25 @@ export default function StockOverviewPage() {
       {/* Metrics Bar */}
       {metrics && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-stone-900 border border-stone-800 p-3.5 rounded-xl text-center">
-            <span className="text-xs text-stone-400 block">Total Materials</span>
-            <span className="text-lg font-bold text-stone-100">{items.length}</span>
+          <div className="bg-white border border-slate-200 p-3.5 rounded-2xl text-center shadow-sm">
+            <span className="text-xs text-slate-500 block font-semibold">Total Materials</span>
+            <span className="text-lg font-black text-slate-900">{items.length}</span>
           </div>
 
           <div
             onClick={() => setStatusFilter('LOW')}
-            className="bg-stone-900 border border-amber-800/60 p-3.5 rounded-xl text-center cursor-pointer hover:bg-amber-950/20 transition-colors"
+            className="bg-white border border-amber-200 p-3.5 rounded-2xl text-center cursor-pointer hover:bg-amber-50 transition-colors shadow-sm"
           >
-            <span className="text-xs text-amber-400 block">Low Stock</span>
-            <span className="text-lg font-bold text-amber-300">{metrics.lowStockCount}</span>
+            <span className="text-xs text-amber-700 block font-semibold">Low Stock</span>
+            <span className="text-lg font-black text-amber-700">{metrics.lowStockCount}</span>
           </div>
 
           <div
             onClick={() => setStatusFilter('OUT_OF_STOCK')}
-            className="bg-stone-900 border border-red-800/60 p-3.5 rounded-xl text-center cursor-pointer hover:bg-red-950/20 transition-colors"
+            className="bg-white border border-red-200 p-3.5 rounded-2xl text-center cursor-pointer hover:bg-red-50 transition-colors shadow-sm"
           >
-            <span className="text-xs text-red-400 block">Out of Stock</span>
-            <span className="text-lg font-bold text-red-300">{metrics.outOfStockCount}</span>
+            <span className="text-xs text-red-700 block font-semibold">Out of Stock</span>
+            <span className="text-lg font-black text-red-700">{metrics.outOfStockCount}</span>
           </div>
         </div>
       )}
@@ -131,13 +131,13 @@ export default function StockOverviewPage() {
             placeholder="Search material name or category..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-10 pr-4 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-sm placeholder-stone-600 focus:outline-none focus:border-amber-500"
+            className="w-full h-11 pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-[#087F3E]"
           />
-          <span className="absolute left-3.5 top-3 text-stone-500 text-sm">🔍</span>
+          <span className="absolute left-3.5 top-3 text-slate-400 text-sm">🔍</span>
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-3 top-3 text-xs text-stone-400 hover:text-stone-200"
+              className="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-900"
             >
               Clear
             </button>
@@ -148,40 +148,40 @@ export default function StockOverviewPage() {
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setStatusFilter('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               statusFilter === 'ALL'
-                ? 'bg-amber-500 text-stone-950'
-                : 'bg-stone-900 text-stone-400 border border-stone-800 hover:text-stone-200'
+                ? 'bg-[#087F3E] text-white shadow'
+                : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900'
             }`}
           >
             All Stock ({items.length})
           </button>
           <button
             onClick={() => setStatusFilter('GOOD')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               statusFilter === 'GOOD'
-                ? 'bg-emerald-500 text-stone-950'
-                : 'bg-stone-900 text-stone-400 border border-stone-800 hover:text-stone-200'
+                ? 'bg-[#087F3E] text-white shadow'
+                : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900'
             }`}
           >
             🟢 Good Stock
           </button>
           <button
             onClick={() => setStatusFilter('LOW')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               statusFilter === 'LOW'
-                ? 'bg-amber-500 text-stone-950'
-                : 'bg-stone-900 text-amber-400 border border-amber-900/60 hover:text-amber-300'
+                ? 'bg-amber-500 text-white shadow'
+                : 'bg-white text-amber-700 border border-amber-200 hover:text-amber-800'
             }`}
           >
             ⚠️ Low Stock ({metrics?.lowStockCount || 0})
           </button>
           <button
             onClick={() => setStatusFilter('OUT_OF_STOCK')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               statusFilter === 'OUT_OF_STOCK'
-                ? 'bg-red-500 text-stone-950'
-                : 'bg-stone-900 text-red-400 border border-red-900/60 hover:text-red-300'
+                ? 'bg-red-600 text-white shadow'
+                : 'bg-white text-red-700 border border-red-200 hover:text-red-800'
             }`}
           >
             🚨 Out of Stock ({metrics?.outOfStockCount || 0})
@@ -191,12 +191,12 @@ export default function StockOverviewPage() {
 
       {/* Material Stock List Cards */}
       {loading ? (
-        <div className="py-12 text-center text-stone-500 text-sm">Loading site stock balance...</div>
+        <div className="py-12 text-center text-slate-500 text-sm">Loading site stock balance...</div>
       ) : filteredItems.length === 0 ? (
-        <div className="bg-stone-900 border border-stone-800 p-8 rounded-2xl text-center space-y-3">
+        <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
           <span className="text-3xl">📦</span>
-          <h3 className="text-base font-bold text-stone-200">No Materials Match Filter</h3>
-          <p className="text-xs text-stone-500">
+          <h3 className="text-base font-bold text-slate-900">No Materials Match Filter</h3>
+          <p className="text-xs text-slate-500">
             {search || statusFilter !== 'ALL'
               ? 'Try clearing your search or filter pills.'
               : 'Add materials to material master or receive deliveries.'}
@@ -208,51 +208,50 @@ export default function StockOverviewPage() {
             <Link
               key={item.materialId}
               href={`/materials/stock/${item.materialId}`}
-              className="group bg-stone-900 border border-stone-800 hover:border-amber-500/50 p-4 rounded-2xl transition-all duration-200 flex flex-col justify-between"
+              className="group bg-white border border-slate-200 hover:border-[#087F3E] p-4 rounded-2xl transition-all duration-200 flex flex-col justify-between shadow-sm"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-bold text-stone-100 group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
                       {item.name}
                     </h3>
-                    <span className="text-xs text-stone-500">{item.category}</span>
+                    <span className="text-xs text-slate-500">{item.category}</span>
                   </div>
 
                   <span
-                    className={`text-xs px-2.5 py-1 rounded-full font-bold border flex items-center gap-1 shrink-0 ${
+                    className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase shrink-0 ${
                       item.status === 'GOOD'
-                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+                        ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
                         : item.status === 'LOW'
-                        ? 'bg-amber-950/80 text-amber-300 border-amber-800 animate-pulse'
-                        : 'bg-red-950/80 text-red-300 border-red-800'
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                   >
-                    <span>{item.status === 'GOOD' ? '🟢' : item.status === 'LOW' ? '⚠️' : '🚨'}</span>
-                    <span>{item.status === 'GOOD' ? 'Good' : item.status === 'LOW' ? 'Low Stock' : 'Out of Stock'}</span>
+                    {item.status === 'GOOD' ? 'Good' : item.status === 'LOW' ? 'Low Stock' : 'Out of Stock'}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-stone-500 block">Current Stock</span>
+                  <span className="text-xs text-slate-500 block">Current Stock</span>
                   <span
-                    className={`text-xl font-extrabold ${
+                    className={`text-xl font-black ${
                       item.currentStock <= 0
-                        ? 'text-red-400'
+                        ? 'text-red-600'
                         : item.status === 'LOW'
-                        ? 'text-amber-400'
-                        : 'text-stone-100'
+                        ? 'text-amber-600'
+                        : 'text-slate-900'
                     }`}
                   >
-                    {item.currentStock.toLocaleString('en-IN')} <span className="text-xs font-semibold text-stone-400">{item.unit}</span>
+                    {item.currentStock.toLocaleString('en-IN')} <span className="text-xs font-semibold text-slate-500">{item.unit}</span>
                   </span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-stone-500 block">Min Threshold</span>
-                  <span className="text-xs font-bold text-stone-400">
+                  <span className="text-xs text-slate-500 block">Min Threshold</span>
+                  <span className="text-xs font-bold text-slate-600">
                     {item.minStockLevel || 0} {item.unit}
                   </span>
                 </div>

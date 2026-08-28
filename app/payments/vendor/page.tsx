@@ -119,33 +119,33 @@ export default function PayVendorPage() {
   if (successResult) {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6">
-        <div className="bg-blue-950/80 border border-blue-800/80 p-6 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-16 h-16 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-blue-100">Vendor Payment Successful ✓</h2>
-            <p className="text-xs text-blue-300/80 mt-1">Receipt ID: {successResult.receiptId}</p>
+            <h2 className="text-2xl font-extrabold text-[#056B34]">Vendor Payment Successful ✓</h2>
+            <p className="text-xs text-slate-600 mt-1">Receipt ID: {successResult.receiptId}</p>
           </div>
 
-          <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl space-y-2 text-left text-xs">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 text-left text-xs shadow-sm">
             <div className="flex justify-between">
-              <span className="text-stone-400">Paid To Vendor:</span>
-              <span className="font-bold text-stone-100">{selectedVendor?.name}</span>
+              <span className="text-slate-500">Paid To Vendor:</span>
+              <span className="font-bold text-slate-900">{selectedVendor?.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Amount Paid:</span>
-              <span className="font-bold text-emerald-400 text-sm">
+              <span className="text-slate-500">Amount Paid:</span>
+              <span className="font-extrabold text-[#087F3E] text-sm">
                 ₹{successResult.amount.toLocaleString('en-IN')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Payment Mode:</span>
-              <span className="font-semibold text-stone-200">{successResult.paymentMethod}</span>
+              <span className="text-slate-500">Payment Mode:</span>
+              <span className="font-semibold text-slate-900">{successResult.paymentMethod}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Date:</span>
-              <span className="text-stone-300">
+              <span className="text-slate-500">Date:</span>
+              <span className="text-slate-700">
                 {new Date(successResult.paymentDate).toLocaleString('en-IN')}
               </span>
             </div>
@@ -154,13 +154,13 @@ export default function PayVendorPage() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href={`/payments/receipt/${successResult._id}`}
-              className="flex-1 py-3 bg-blue-500 hover:bg-blue-400 text-stone-950 font-extrabold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
             >
               View Receipt
             </Link>
             <Link
               href="/payments"
-              className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors text-center"
             >
               Done
             </Link>
@@ -173,21 +173,21 @@ export default function PayVendorPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏬</span>
-            <h1 className="text-xl font-bold text-stone-100">Pay Vendor Bill</h1>
+            <h1 className="text-xl font-bold text-slate-900">Pay Vendor Bill</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Review vendor outstanding balances, select open bills, and record payments for{' '}
-            <span className="text-amber-400 font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
 
         <Link
           href="/payments"
-          className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl self-start sm:self-auto"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl self-start sm:self-auto"
         >
           ← Back to Payments
         </Link>
@@ -195,44 +195,44 @@ export default function PayVendorPage() {
 
       {!selectedVendor ? (
         /* STEP 1: VENDOR SELECTION */
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-          <h2 className="text-base font-bold text-stone-100">Select Vendor to Pay</h2>
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+          <h2 className="text-base font-bold text-slate-900">Select Vendor to Pay</h2>
 
           <input
             type="text"
             placeholder="Search vendor by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
 
           {loading ? (
-            <div className="text-center py-8 text-xs text-stone-500">Loading vendors...</div>
+            <div className="text-center py-8 text-xs text-slate-500">Loading vendors...</div>
           ) : filteredVendors.length === 0 ? (
-            <div className="text-center py-8 text-xs text-stone-500">No vendors found.</div>
+            <div className="text-center py-8 text-xs text-slate-500">No vendors found.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {filteredVendors.map((v) => (
                 <button
                   key={v.vendorId}
                   onClick={() => handleSelectVendor(v)}
-                  className="p-4 rounded-2xl bg-stone-950 hover:bg-stone-800/60 border border-stone-800 text-left transition-all flex items-center justify-between gap-3 group"
+                  className="p-4 rounded-2xl bg-slate-50 hover:bg-[#EAF7EF] border border-slate-200 text-left transition-all flex items-center justify-between gap-3 group shadow-sm"
                 >
                   <div className="space-y-1">
-                    <div className="font-bold text-stone-100 group-hover:text-blue-400 transition-colors">
+                    <div className="font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
                       {v.name}
                     </div>
-                    <div className="text-xs text-stone-400">{v.category || 'Vendor Supplier'}</div>
-                    <div className="text-[11px] text-stone-500">
+                    <div className="text-xs text-slate-500">{v.category || 'Vendor Supplier'}</div>
+                    <div className="text-[11px] text-slate-500">
                       Billed: ₹{v.totalBilled.toLocaleString('en-IN')} • Open Bills: {v.openBillsCount}
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="text-xs text-stone-400">Outstanding</div>
+                    <div className="text-xs text-slate-500">Outstanding</div>
                     <div
                       className={`text-base font-extrabold ${
-                        v.outstandingAmount > 0 ? 'text-amber-400' : 'text-emerald-400'
+                        v.outstandingAmount > 0 ? 'text-amber-600' : 'text-[#087F3E]'
                       }`}
                     >
                       ₹{v.outstandingAmount.toLocaleString('en-IN')}
@@ -246,17 +246,17 @@ export default function PayVendorPage() {
       ) : (
         /* STEP 2: VENDOR DETAIL & BILL PAYMENT */
         <div className="space-y-6">
-          <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl flex items-center justify-between">
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl flex items-center justify-between shadow-sm">
             <div>
-              <span className="text-xs text-blue-400 font-bold uppercase tracking-wider block">Selected Vendor</span>
-              <h2 className="text-xl font-extrabold text-stone-100">{selectedVendor.name}</h2>
-              <p className="text-xs text-stone-400">
+              <span className="text-xs text-[#087F3E] font-bold uppercase tracking-wider block">Selected Vendor</span>
+              <h2 className="text-xl font-extrabold text-slate-900">{selectedVendor.name}</h2>
+              <p className="text-xs text-slate-500">
                 Outstanding Balance: ₹{selectedVendor.outstandingAmount.toLocaleString('en-IN')}
               </p>
             </div>
             <button
               onClick={() => setSelectedVendor(null)}
-              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
             >
               Change Vendor
             </button>
@@ -264,8 +264,8 @@ export default function PayVendorPage() {
 
           {/* Open Bills Selection (if available) */}
           {vendorDetail && vendorDetail.bills && vendorDetail.bills.length > 0 && (
-            <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">
                 Select Specific Open Bill (Optional)
               </h3>
 
@@ -278,12 +278,12 @@ export default function PayVendorPage() {
                   }}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     !selectedBillId
-                      ? 'bg-blue-950/60 border-blue-500 text-stone-100'
-                      : 'bg-stone-950 border-stone-800 text-stone-400 hover:border-stone-700'
+                      ? 'bg-[#EAF7EF] border-[#087F3E] text-slate-900 shadow'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
                   }`}
                 >
                   <div className="text-xs font-bold">Pay Total Outstanding Balance</div>
-                  <div className="text-sm font-extrabold text-amber-400 mt-1">
+                  <div className="text-sm font-extrabold text-[#087F3E] mt-1">
                     ₹{selectedVendor.outstandingAmount.toLocaleString('en-IN')}
                   </div>
                 </button>
@@ -297,18 +297,18 @@ export default function PayVendorPage() {
                       onClick={() => handleSelectBill(b)}
                       className={`p-3 rounded-xl border text-left transition-all ${
                         selectedBillId === b._id
-                          ? 'bg-blue-950/60 border-blue-500 text-stone-100'
-                          : 'bg-stone-950 border-stone-800 text-stone-400 hover:border-stone-700'
+                          ? 'bg-[#EAF7EF] border-[#087F3E] text-slate-900 shadow'
+                          : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       <div className="flex justify-between items-center text-xs">
-                        <span className="font-bold text-stone-200">Bill: {b.billNumber}</span>
-                        <span className="text-[10px] uppercase font-bold text-amber-400">{b.status}</span>
+                        <span className="font-bold text-slate-900">Bill: {b.billNumber}</span>
+                        <span className="text-[10px] uppercase font-bold text-amber-700">{b.status}</span>
                       </div>
-                      <div className="text-xs text-stone-400 mt-1">
+                      <div className="text-xs text-slate-500 mt-1">
                         Total: ₹{b.totalAmount.toLocaleString('en-IN')} • Paid: ₹{(b.paidAmount || 0).toLocaleString('en-IN')}
                       </div>
-                      <div className="text-sm font-extrabold text-blue-400 mt-1">
+                      <div className="text-sm font-black text-[#087F3E] mt-1">
                         Balance Due: ₹{bal.toLocaleString('en-IN')}
                       </div>
                     </button>
@@ -319,19 +319,19 @@ export default function PayVendorPage() {
           )}
 
           {/* Payment Form Entry */}
-          <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">Enter Payment Details</h3>
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">Enter Payment Details</h3>
 
             {error && (
-              <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl font-medium">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-bold">
                 {error}
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">
-                  Payment Amount (₹) <span className="text-amber-400">*</span>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Payment Amount (₹) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -340,13 +340,13 @@ export default function PayVendorPage() {
                   placeholder="Enter amount to pay..."
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-lg font-bold text-blue-400 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-[#087F3E] focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
               {/* Payment Method Chips */}
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-2">Payment Method</label>
+                <label className="block text-xs font-bold text-slate-700 mb-2">Payment Method</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {(
                     [
@@ -362,8 +362,8 @@ export default function PayVendorPage() {
                       onClick={() => setPaymentMethod(m.id)}
                       className={`p-3 rounded-xl border text-xs font-bold transition-all ${
                         paymentMethod === m.id
-                          ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-md'
-                          : 'bg-stone-950 text-stone-300 border-stone-800 hover:border-stone-700'
+                          ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
                       }`}
                     >
                       {m.label}
@@ -373,13 +373,13 @@ export default function PayVendorPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">Notes / Remark (Optional)</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Notes / Remark (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Bill payment against cement delivery"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
@@ -394,7 +394,7 @@ export default function PayVendorPage() {
                   setError('');
                   setShowConfirmModal(true);
                 }}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-stone-950 text-base font-extrabold rounded-xl transition-all shadow-lg text-center"
+                className="w-full py-4 bg-[#087F3E] hover:bg-[#056B34] text-white text-base font-extrabold rounded-xl transition-all shadow text-center"
               >
                 Review & Confirm Vendor Payment →
               </button>
@@ -405,33 +405,33 @@ export default function PayVendorPage() {
 
       {/* Confirmation Modal */}
       {showConfirmModal && selectedVendor && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-stone-900 border border-stone-800 w-full max-w-md p-6 rounded-2xl space-y-5">
-            <h3 className="text-lg font-bold text-stone-100 border-b border-stone-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-5 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-3">
               Confirm Vendor Payment
             </h3>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Vendor:</span>
-                <span className="font-bold text-stone-100">{selectedVendor.name}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Vendor:</span>
+                <span className="font-bold text-slate-900">{selectedVendor.name}</span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Payment Amount:</span>
-                <span className="font-extrabold text-blue-400 text-sm">
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Payment Amount:</span>
+                <span className="font-black text-[#087F3E] text-sm">
                   ₹{parseFloat(paymentAmount).toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Payment Method:</span>
-                <span className="font-semibold text-stone-200">{paymentMethod}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Payment Method:</span>
+                <span className="font-semibold text-slate-900">{paymentMethod}</span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Project Site:</span>
-                <span className="text-stone-300 font-semibold">{activeProject?.name}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Project Site:</span>
+                <span className="text-slate-900 font-semibold">{activeProject?.name}</span>
               </div>
             </div>
 
@@ -439,7 +439,7 @@ export default function PayVendorPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2.5 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+                className="px-4 py-2.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
               >
                 Cancel
               </button>
@@ -447,7 +447,7 @@ export default function PayVendorPage() {
                 type="button"
                 disabled={submitting}
                 onClick={handleConfirmPay}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-stone-950 text-xs font-extrabold rounded-xl transition-all disabled:opacity-50"
+                className="px-6 py-2.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl transition-all disabled:opacity-50 shadow"
               >
                 {submitting ? 'Processing Payment...' : 'Confirm & Pay ✓'}
               </button>

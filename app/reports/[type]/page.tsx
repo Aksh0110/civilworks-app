@@ -81,35 +81,35 @@ export default function DynamicReportPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner & Quick Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl print:bg-white print:border-none print:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm print:bg-white print:border-none print:p-0">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl print:hidden">📊</span>
-            <h1 className="text-xl font-bold text-stone-100 print:text-black">{getReportTitle()}</h1>
+            <h1 className="text-xl font-bold text-slate-900 print:text-black">{getReportTitle()}</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1 print:text-gray-600">
-            Site: <span className="text-amber-400 font-semibold print:text-black">{activeProject?.name || 'Selected Site'}</span> • Generated: {new Date().toLocaleDateString('en-IN')}
+          <p className="text-xs text-slate-500 mt-1 print:text-gray-600">
+            Site: <span className="text-[#087F3E] font-semibold print:text-black">{activeProject?.name || 'Selected Site'}</span> • Generated: {new Date().toLocaleDateString('en-IN')}
           </p>
         </div>
 
         <div className="flex items-center gap-2 print:hidden">
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5"
           >
             <span>🖨️</span> Print / PDF
           </button>
           {reportData?.records && (
             <button
               onClick={handleDownloadCSV}
-              className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-extrabold rounded-xl transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow"
             >
               <span>📥</span> Export CSV
             </button>
           )}
           <Link
             href="/reports"
-            className="px-3.5 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
           >
             ← Back
           </Link>
@@ -117,32 +117,32 @@ export default function DynamicReportPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-stone-900 border border-stone-800 p-4 rounded-2xl space-y-3 print:hidden">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-3 shadow-sm print:hidden">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label className="block text-[11px] font-bold text-stone-400 mb-1">From Date</label>
+            <label className="block text-[11px] font-bold text-slate-600 mb-1">From Date</label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-stone-400 mb-1">To Date</label>
+            <label className="block text-[11px] font-bold text-slate-600 mb-1">To Date</label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
             />
           </div>
 
           <div className="flex items-end gap-2">
             <button
               onClick={loadReport}
-              className="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold rounded-xl"
+              className="flex-1 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl shadow"
             >
               Apply Filter
             </button>
@@ -153,7 +153,7 @@ export default function DynamicReportPage() {
                 setCategory('ALL');
                 loadReport();
               }}
-              className="px-3 py-2 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+              className="px-3 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
             >
               Reset
             </button>
@@ -163,9 +163,9 @@ export default function DynamicReportPage() {
 
       {/* Report Data Display */}
       {loading ? (
-        <div className="text-center py-12 text-xs text-stone-500">Generating report...</div>
+        <div className="text-center py-12 text-xs text-slate-500">Generating report...</div>
       ) : !reportData ? (
-        <div className="text-center py-12 text-xs text-stone-500">No data found for selected period.</div>
+        <div className="text-center py-12 text-xs text-slate-500">No data found for selected period.</div>
       ) : (
         <div className="space-y-6">
           {/* Summary Cards */}
@@ -174,12 +174,12 @@ export default function DynamicReportPage() {
               {Object.entries(reportData.summary).map(([k, v]: [string, any]) => {
                 if (typeof v === 'object') return null; // Skip nested objects for cards
                 return (
-                  <div key={k} className="bg-stone-900 border border-stone-800 p-4 rounded-2xl print:bg-gray-100 print:border-gray-300">
-                    <span className="text-stone-400 text-[11px] block font-semibold capitalize print:text-gray-700">
+                  <div key={k} className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm print:bg-gray-100 print:border-gray-300">
+                    <span className="text-slate-500 text-[11px] block font-semibold capitalize print:text-gray-700">
                       {k.replace(/([A-Z])/g, ' $1')}
                     </span>
-                    <span className="text-xl font-black text-amber-400 mt-1 block print:text-black">
-                      {typeof v === 'number' && k.toLowerCase().includes('cost') || k.toLowerCase().includes('wage') || k.toLowerCase().includes('amount') || k.toLowerCase().includes('due') || k.toLowerCase().includes('outflow')
+                    <span className="text-xl font-black text-[#087F3E] mt-1 block print:text-black">
+                      {typeof v === 'number' && (k.toLowerCase().includes('cost') || k.toLowerCase().includes('wage') || k.toLowerCase().includes('amount') || k.toLowerCase().includes('due') || k.toLowerCase().includes('outflow'))
                         ? `₹${v.toLocaleString('en-IN')}`
                         : v}
                     </span>
@@ -191,18 +191,18 @@ export default function DynamicReportPage() {
 
           {/* Project Cost Summary Explanatory Note */}
           {type === 'cost-summary' && reportData.note && (
-            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl text-xs text-stone-300 space-y-2 print:bg-gray-50">
-              <div className="font-bold text-amber-400">💡 Cost Model Note:</div>
-              <p className="text-stone-400 print:text-black">{reportData.note}</p>
+            <div className="p-4 bg-white border border-slate-200 rounded-2xl text-xs text-slate-700 space-y-2 shadow-sm print:bg-gray-50">
+              <div className="font-bold text-[#087F3E]">💡 Cost Model Note:</div>
+              <p className="text-slate-600 print:text-black">{reportData.note}</p>
             </div>
           )}
 
           {/* Data Table / Cards List */}
           {reportData.records && reportData.records.length > 0 && (
-            <div className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden print:border-gray-300 print:bg-white">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm print:border-gray-300 print:bg-white">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-stone-200 print:text-black">
-                  <thead className="bg-stone-950 text-stone-400 border-b border-stone-800 uppercase text-[10px] print:bg-gray-200 print:text-black">
+                <table className="w-full text-left text-xs text-slate-800 print:text-black">
+                  <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase text-[10px] print:bg-gray-200 print:text-black">
                     <tr>
                       {Object.keys(reportData.records[0]).map((k) => (
                         <th key={k} className="px-4 py-3 font-bold">
@@ -211,9 +211,9 @@ export default function DynamicReportPage() {
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-800/60 print:divide-gray-300">
+                  <tbody className="divide-y divide-slate-100 print:divide-gray-300">
                     {reportData.records.map((r: any, idx: number) => (
-                      <tr key={idx} className="hover:bg-stone-800/40">
+                      <tr key={idx} className="hover:bg-slate-50">
                         {Object.entries(r).map(([k, val]: [string, any], cIdx: number) => (
                           <td key={cIdx} className="px-4 py-3">
                             {typeof val === 'number' && (k.toLowerCase().includes('amount') || k.toLowerCase().includes('wage') || k.toLowerCase().includes('due') || k.toLowerCase().includes('outstanding'))

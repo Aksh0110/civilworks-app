@@ -26,7 +26,7 @@ export default function PaymentReceiptPage() {
 
   if (loading) {
     return (
-      <div className="max-w-lg mx-auto py-12 text-center text-xs text-stone-500">
+      <div className="max-w-lg mx-auto py-12 text-center text-xs text-slate-500">
         Loading receipt...
       </div>
     );
@@ -35,10 +35,10 @@ export default function PaymentReceiptPage() {
   if (error || !receipt) {
     return (
       <div className="max-w-lg mx-auto py-12 text-center space-y-4">
-        <div className="text-red-400 text-sm font-bold">{error || 'Receipt unavailable'}</div>
+        <div className="text-red-600 text-sm font-bold">{error || 'Receipt unavailable'}</div>
         <Link
           href="/payments"
-          className="inline-block px-4 py-2 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+          className="inline-block px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
         >
           Back to Payments
         </Link>
@@ -52,76 +52,76 @@ export default function PaymentReceiptPage() {
       <div className="flex items-center justify-between print:hidden">
         <Link
           href="/payments"
-          className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
         >
           ← Back to Payments
         </Link>
         <button
           onClick={() => window.print()}
-          className="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-extrabold rounded-xl shadow transition-colors"
+          className="px-4 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl shadow transition-colors"
         >
           🖨️ Print / Save PDF
         </button>
       </div>
 
       {/* Printable Receipt Card */}
-      <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 space-y-6 shadow-2xl print:bg-white print:text-black print:border-black">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-6 shadow-sm print:shadow-none print:border-black">
         {/* Header */}
-        <div className="text-center border-b border-stone-800 print:border-stone-300 pb-5 space-y-1">
-          <div className="flex items-center justify-center gap-2 text-xl font-black text-emerald-400 print:text-emerald-700">
+        <div className="text-center border-b border-slate-100 print:border-slate-300 pb-5 space-y-1">
+          <div className="flex items-center justify-center gap-2 text-xl font-extrabold text-[#087F3E]">
             <span>🏗️</span> CivilWorks
           </div>
-          <h1 className="text-xs font-extrabold uppercase tracking-widest text-stone-400 print:text-stone-600">
+          <h1 className="text-xs font-extrabold uppercase tracking-widest text-slate-500">
             OFFICIAL PAYMENT RECEIPT
           </h1>
-          <div className="text-xs font-bold text-amber-400 print:text-amber-700 mt-2">
+          <div className="text-xs font-bold text-[#087F3E] mt-2">
             Receipt ID: {receipt.receiptId}
           </div>
         </div>
 
         {/* Receipt Key-Value Details */}
         <div className="space-y-3 text-xs">
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Project Site:</span>
-            <span className="font-bold text-stone-100 print:text-black">{receipt.projectName}</span>
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Project Site:</span>
+            <span className="font-bold text-slate-900">{receipt.projectName}</span>
           </div>
 
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Paid To ({receipt.recipientType}):</span>
-            <span className="font-bold text-stone-100 print:text-black text-sm">{receipt.recipientName}</span>
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Paid To ({receipt.recipientType}):</span>
+            <span className="font-bold text-slate-900 text-sm">{receipt.recipientName}</span>
           </div>
 
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Transaction Type:</span>
-            <span className="font-bold text-stone-200 print:text-black">
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Transaction Type:</span>
+            <span className="font-bold text-slate-900">
               {receipt.paymentType.replace('_', ' ')}
             </span>
           </div>
 
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Payment Mode:</span>
-            <span className="font-semibold text-stone-200 print:text-black">{receipt.paymentMethod}</span>
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Payment Mode:</span>
+            <span className="font-semibold text-slate-900">{receipt.paymentMethod}</span>
           </div>
 
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Date & Time:</span>
-            <span className="text-stone-300 print:text-black">
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Date & Time:</span>
+            <span className="text-slate-800">
               {new Date(receipt.paymentDate).toLocaleString('en-IN')}
             </span>
           </div>
 
           {receipt.notes && (
-            <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-              <span className="text-stone-400 print:text-stone-600">Remarks:</span>
-              <span className="text-stone-300 print:text-black italic">{receipt.notes}</span>
+            <div className="flex justify-between py-1.5 border-b border-slate-100">
+              <span className="text-slate-500">Remarks:</span>
+              <span className="text-slate-800 italic">{receipt.notes}</span>
             </div>
           )}
 
-          <div className="flex justify-between py-1.5 border-b border-stone-800/80 print:border-stone-200">
-            <span className="text-stone-400 print:text-stone-600">Status:</span>
+          <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <span className="text-slate-500">Status:</span>
             <span
               className={`font-extrabold ${
-                receipt.status === 'COMPLETED' ? 'text-emerald-400 print:text-emerald-700' : 'text-red-400'
+                receipt.status === 'COMPLETED' ? 'text-[#087F3E]' : 'text-red-600'
               }`}
             >
               {receipt.status}
@@ -130,17 +130,17 @@ export default function PaymentReceiptPage() {
         </div>
 
         {/* Total Amount Banner */}
-        <div className="bg-stone-950 print:bg-stone-100 p-4 rounded-xl text-center space-y-1 border border-stone-800 print:border-stone-300">
-          <span className="text-[11px] font-bold text-stone-400 print:text-stone-600 uppercase tracking-wider">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-4 rounded-xl text-center space-y-1 shadow-sm">
+          <span className="text-[11px] font-bold text-[#056B34] uppercase tracking-wider">
             Total Amount Settled
           </span>
-          <div className="text-3xl font-black text-emerald-400 print:text-emerald-700">
+          <div className="text-3xl font-black text-[#087F3E]">
             ₹{receipt.amount.toLocaleString('en-IN')}
           </div>
         </div>
 
         {/* Footer info */}
-        <div className="pt-2 text-center text-[10px] text-stone-500 print:text-stone-600">
+        <div className="pt-2 text-center text-[10px] text-slate-400 print:text-slate-600">
           Generated By: {receipt.createdBy} • CivilWorks Mobile Construction Management System
         </div>
       </div>

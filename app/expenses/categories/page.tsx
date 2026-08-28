@@ -34,48 +34,48 @@ export default function ExpenseCategoriesPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/expenses"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100 flex items-center gap-2">
+            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>🏷️</span> Expense Categories
             </h1>
-            <p className="text-xs text-stone-400">Configure trade and site operational expense types</p>
+            <p className="text-xs text-slate-500">Configure trade and site operational expense types</p>
           </div>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 h-10 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold rounded-xl transition-colors shadow-lg flex items-center gap-1"
+          className="px-4 h-10 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1"
         >
           <span>+</span> Category
         </button>
       </div>
 
       {loading ? (
-        <div className="py-12 text-center text-stone-500 text-sm">Loading expense categories...</div>
+        <div className="py-12 text-center text-slate-500 text-sm">Loading expense categories...</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {categories.map((c) => (
             <div
               key={c._id}
-              className="bg-stone-900 border border-stone-800 p-4 rounded-xl flex items-center justify-between"
+              className="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm"
             >
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{c.icon || '💸'}</span>
                 <div>
-                  <h3 className="text-sm font-bold text-stone-100">{c.name}</h3>
-                  <span className="text-[11px] text-stone-500">{c.isDefault ? 'Default Category' : 'Custom Category'}</span>
+                  <h3 className="text-sm font-bold text-slate-900">{c.name}</h3>
+                  <span className="text-[11px] text-slate-500">{c.isDefault ? 'Default Category' : 'Custom Category'}</span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]">
                 ACTIVE
               </span>
             </div>

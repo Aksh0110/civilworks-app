@@ -53,25 +53,25 @@ export default function MaterialMasterPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/materials"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100 flex items-center gap-2">
+            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>⚙️</span> Material Master Catalog
             </h1>
-            <p className="text-xs text-stone-400">Configure construction items, trade categories, and min stock thresholds</p>
+            <p className="text-xs text-slate-500">Configure construction items, trade categories, and min stock thresholds</p>
           </div>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 h-11 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2"
+          className="px-4 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2"
         >
           <span>+</span> Add New Material
         </button>
@@ -84,14 +84,14 @@ export default function MaterialMasterPage() {
           placeholder="Search materials..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full h-11 px-4 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-sm focus:outline-none focus:border-amber-500"
+          className="w-full h-11 px-4 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
         />
 
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setSelectedCategory('ALL')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-              selectedCategory === 'ALL' ? 'bg-amber-500 text-stone-950' : 'bg-stone-900 text-stone-400 border border-stone-800'
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+              selectedCategory === 'ALL' ? 'bg-[#087F3E] text-white shadow' : 'bg-white text-slate-600 border border-slate-200'
             }`}
           >
             All Categories ({materials.length})
@@ -100,8 +100,8 @@ export default function MaterialMasterPage() {
             <button
               key={c}
               onClick={() => setSelectedCategory(c)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-                selectedCategory === c ? 'bg-amber-500 text-stone-950' : 'bg-stone-900 text-stone-400 border border-stone-800'
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+                selectedCategory === c ? 'bg-[#087F3E] text-white shadow' : 'bg-white text-slate-600 border border-slate-200'
               }`}
             >
               {c}
@@ -112,30 +112,30 @@ export default function MaterialMasterPage() {
 
       {/* Material Master Cards */}
       {loading ? (
-        <div className="py-12 text-center text-stone-500 text-sm">Loading material catalog...</div>
+        <div className="py-12 text-center text-slate-500 text-sm">Loading material catalog...</div>
       ) : filteredMaterials.length === 0 ? (
-        <div className="bg-stone-900 border border-stone-800 p-8 rounded-2xl text-center space-y-3">
+        <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
           <span className="text-3xl">📦</span>
-          <h3 className="text-base font-bold text-stone-200">No Materials Found</h3>
-          <p className="text-xs text-stone-500">Click &quot;+ Add New Material&quot; to define a new material.</p>
+          <h3 className="text-base font-bold text-slate-900">No Materials Found</h3>
+          <p className="text-xs text-slate-500">Click &quot;+ Add New Material&quot; to define a new material.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredMaterials.map((m) => (
-            <div key={m._id} className="bg-stone-900 border border-stone-800 p-4 rounded-2xl space-y-3">
+            <div key={m._id} className="bg-white border border-slate-200 p-4 rounded-2xl space-y-3 shadow-sm">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-stone-100">{m.name}</h3>
-                  <span className="text-xs text-amber-400 font-medium">{m.category}</span>
+                  <h3 className="text-base font-bold text-slate-900">{m.name}</h3>
+                  <span className="text-xs text-[#087F3E] font-semibold">{m.category}</span>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-stone-800 text-stone-300">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
                   Unit: {m.unit}
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-stone-800/80 flex items-center justify-between text-xs text-stone-400">
-                <div>Min Warning: <strong className="text-stone-200">{m.minStockLevel || 0} {m.unit}</strong></div>
-                <div>Default Rate: <strong className="text-amber-400">₹{m.defaultRate || 0}</strong></div>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <div>Min Warning: <strong className="text-slate-900">{m.minStockLevel || 0} {m.unit}</strong></div>
+                <div>Default Rate: <strong className="text-[#087F3E]">₹{m.defaultRate || 0}</strong></div>
               </div>
             </div>
           ))}

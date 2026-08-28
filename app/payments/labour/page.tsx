@@ -113,33 +113,33 @@ export default function PayLabourPage() {
   if (successResult) {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6">
-        <div className="bg-emerald-950/80 border border-emerald-800/80 p-6 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-emerald-100">Payment Successful ✓</h2>
-            <p className="text-xs text-emerald-300/80 mt-1">Receipt ID: {successResult.receiptId}</p>
+            <h2 className="text-2xl font-extrabold text-[#056B34]">Payment Successful ✓</h2>
+            <p className="text-xs text-slate-600 mt-1">Receipt ID: {successResult.receiptId}</p>
           </div>
 
-          <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl space-y-2 text-left text-xs">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 text-left text-xs shadow-sm">
             <div className="flex justify-between">
-              <span className="text-stone-400">Paid To:</span>
-              <span className="font-bold text-stone-100">{selectedWorker?.name}</span>
+              <span className="text-slate-500">Paid To:</span>
+              <span className="font-bold text-slate-900">{selectedWorker?.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Amount Paid:</span>
-              <span className="font-bold text-emerald-400 text-sm">
+              <span className="text-slate-500">Amount Paid:</span>
+              <span className="font-extrabold text-[#087F3E] text-sm">
                 ₹{successResult.amount.toLocaleString('en-IN')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Payment Mode:</span>
-              <span className="font-semibold text-stone-200">{successResult.paymentMethod}</span>
+              <span className="text-slate-500">Payment Mode:</span>
+              <span className="font-semibold text-slate-900">{successResult.paymentMethod}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Date:</span>
-              <span className="text-stone-300">
+              <span className="text-slate-500">Date:</span>
+              <span className="text-slate-700">
                 {new Date(successResult.paymentDate).toLocaleString('en-IN')}
               </span>
             </div>
@@ -148,13 +148,13 @@ export default function PayLabourPage() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href={`/payments/receipt/${successResult._id}`}
-              className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-extrabold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
             >
               View Receipt
             </Link>
             <Link
               href="/payments"
-              className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors text-center"
             >
               Done
             </Link>
@@ -167,21 +167,21 @@ export default function PayLabourPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">👷</span>
-            <h1 className="text-xl font-bold text-stone-100">Pay Labour Wage</h1>
+            <h1 className="text-xl font-bold text-slate-900">Pay Labour Wage</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Calculate worked days, review amount due, and pay workers for{' '}
-            <span className="text-amber-400 font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
 
         <Link
           href="/payments"
-          className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl self-start sm:self-auto"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl self-start sm:self-auto"
         >
           ← Back to Payments
         </Link>
@@ -189,17 +189,17 @@ export default function PayLabourPage() {
 
       {!selectedWorker ? (
         /* STEP 1: WORKER SELECTION */
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 className="text-base font-bold text-stone-100">Select Worker to Pay</h2>
+            <h2 className="text-base font-bold text-slate-900">Select Worker to Pay</h2>
 
             <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer bg-stone-950 px-3 py-1.5 rounded-xl border border-stone-800">
+              <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
                 <input
                   type="checkbox"
                   checked={dueOnly}
                   onChange={(e) => setDueOnly(e.target.checked)}
-                  className="rounded border-stone-700 text-amber-500 focus:ring-0"
+                  className="rounded border-slate-300 text-[#087F3E] focus:ring-0"
                 />
                 <span>Show Due Only ({workers.filter((w) => w.amountDue > 0).length})</span>
               </label>
@@ -213,13 +213,13 @@ export default function PayLabourPage() {
               placeholder="Search worker by name or code..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-stone-950 border border-stone-800 rounded-xl px-4 py-2 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
 
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-stone-950 border border-stone-800 rounded-xl px-4 py-2 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             >
               <option value="ALL">All Categories ({categories.length})</option>
               {categories.map((cat) => (
@@ -232,34 +232,34 @@ export default function PayLabourPage() {
 
           {/* Worker Cards List */}
           {loading ? (
-            <div className="text-center py-8 text-xs text-stone-500">Loading worker wage details...</div>
+            <div className="text-center py-8 text-xs text-slate-500">Loading worker wage details...</div>
           ) : filteredWorkers.length === 0 ? (
-            <div className="text-center py-8 text-xs text-stone-500">No workers match your filter.</div>
+            <div className="text-center py-8 text-xs text-slate-500">No workers match your filter.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {filteredWorkers.map((w) => (
                 <button
                   key={w.workerId}
                   onClick={() => handleSelectWorker(w)}
-                  className="p-4 rounded-2xl bg-stone-950 hover:bg-stone-800/60 border border-stone-800 text-left transition-all flex items-center justify-between gap-3 group"
+                  className="p-4 rounded-2xl bg-slate-50 hover:bg-[#EAF7EF] border border-slate-200 text-left transition-all flex items-center justify-between gap-3 group shadow-sm"
                 >
                   <div className="space-y-1">
-                    <div className="font-bold text-stone-100 group-hover:text-amber-400 transition-colors">
+                    <div className="font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
                       {w.name}
                     </div>
-                    <div className="text-xs text-stone-400">
+                    <div className="text-xs text-slate-500">
                       {w.category} • ₹{w.dailyRate}/day
                     </div>
-                    <div className="text-[11px] text-stone-500">
+                    <div className="text-[11px] text-slate-500">
                       Worked: {w.workedDays} days ({w.presentDays}P / {w.halfDays}HD)
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="text-xs text-stone-400">Due Amount</div>
+                    <div className="text-xs text-slate-500">Due Amount</div>
                     <div
                       className={`text-base font-extrabold ${
-                        w.amountDue > 0 ? 'text-amber-400' : 'text-emerald-400'
+                        w.amountDue > 0 ? 'text-amber-600' : 'text-[#087F3E]'
                       }`}
                     >
                       ₹{w.amountDue.toLocaleString('en-IN')}
@@ -274,64 +274,64 @@ export default function PayLabourPage() {
         /* STEP 2: WAGE SUMMARY & PAYMENT ENTRY */
         <div className="space-y-6">
           {/* Worker Selected Header */}
-          <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl flex items-center justify-between">
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl flex items-center justify-between shadow-sm">
             <div>
-              <span className="text-xs text-amber-400 font-bold uppercase tracking-wider block">Selected Worker</span>
-              <h2 className="text-xl font-extrabold text-stone-100">{selectedWorker.name}</h2>
-              <p className="text-xs text-stone-400">
+              <span className="text-xs text-[#087F3E] font-bold uppercase tracking-wider block">Selected Worker</span>
+              <h2 className="text-xl font-extrabold text-slate-900">{selectedWorker.name}</h2>
+              <p className="text-xs text-slate-500">
                 {selectedWorker.category} • Rate: ₹{selectedWorker.dailyRate}/day
               </p>
             </div>
             <button
               onClick={() => setSelectedWorker(null)}
-              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
             >
               Change Worker
             </button>
           </div>
 
           {/* Wage Breakdown Summary Card */}
-          <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">Automatic Wage Calculation</h3>
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">Automatic Wage Calculation</h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl">
-                <span className="text-stone-400 block">Worked Days</span>
-                <span className="text-sm font-bold text-stone-100 mt-1 block">
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-slate-500 block">Worked Days</span>
+                <span className="text-sm font-bold text-slate-900 mt-1 block">
                   {selectedWorker.workedDays} Days
                 </span>
-                <span className="text-[10px] text-stone-500">
+                <span className="text-[10px] text-slate-500">
                   {selectedWorker.presentDays} Present, {selectedWorker.halfDays} Half Day
                 </span>
               </div>
 
-              <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl">
-                <span className="text-stone-400 block">Gross Wage</span>
-                <span className="text-sm font-bold text-stone-100 mt-1 block">
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-slate-500 block">Gross Wage</span>
+                <span className="text-sm font-bold text-slate-900 mt-1 block">
                   ₹{selectedWorker.grossWage.toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl">
-                <span className="text-stone-400 block">Advances Taken</span>
-                <span className="text-sm font-bold text-amber-400 mt-1 block">
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-slate-500 block">Advances Taken</span>
+                <span className="text-sm font-bold text-amber-600 mt-1 block">
                   ₹{selectedWorker.advances.toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl">
-                <span className="text-stone-400 block">Previous Paid</span>
-                <span className="text-sm font-bold text-emerald-400 mt-1 block">
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-slate-500 block">Previous Paid</span>
+                <span className="text-sm font-bold text-[#087F3E] mt-1 block">
                   ₹{selectedWorker.previousPaid.toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
 
             {/* Current Amount Due Box */}
-            <div className="bg-amber-950/40 border border-amber-800/80 p-4 rounded-xl flex items-center justify-between">
+            <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold text-amber-300">Net Current Amount Due</span>
-                <div className="text-2xl font-black text-amber-400">
+                <span className="text-xs font-bold text-amber-800">Net Current Amount Due</span>
+                <div className="text-2xl font-black text-amber-800">
                   ₹{selectedWorker.amountDue.toLocaleString('en-IN')}
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function PayLabourPage() {
               <button
                 type="button"
                 onClick={() => setPaymentAmount(String(selectedWorker.amountDue))}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs rounded-xl shadow transition-colors"
+                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white font-extrabold text-xs rounded-xl shadow transition-colors"
               >
                 Use Amount Due
               </button>
@@ -347,19 +347,19 @@ export default function PayLabourPage() {
           </div>
 
           {/* Payment Form Entry */}
-          <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">Enter Payment Details</h3>
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">Enter Payment Details</h3>
 
             {error && (
-              <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl font-medium">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-bold">
                 {error}
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">
-                  Payment Amount (₹) <span className="text-amber-400">*</span>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Payment Amount (₹) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -368,10 +368,10 @@ export default function PayLabourPage() {
                   placeholder="Enter amount to pay..."
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-lg font-bold text-emerald-400 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-[#087F3E] focus:outline-none focus:border-[#087F3E]"
                 />
                 {parseFloat(paymentAmount) < selectedWorker.amountDue && parseFloat(paymentAmount) > 0 && (
-                  <p className="text-[11px] text-amber-400/90 mt-1">
+                  <p className="text-[11px] text-amber-700 mt-1 font-semibold">
                     Partial Payment: Remaining due will be ₹
                     {(selectedWorker.amountDue - parseFloat(paymentAmount)).toLocaleString('en-IN')}.
                   </p>
@@ -380,7 +380,7 @@ export default function PayLabourPage() {
 
               {/* Payment Method Chips */}
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-2">Payment Method</label>
+                <label className="block text-xs font-bold text-slate-700 mb-2">Payment Method</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {(
                     [
@@ -396,8 +396,8 @@ export default function PayLabourPage() {
                       onClick={() => setPaymentMethod(m.id)}
                       className={`p-3 rounded-xl border text-xs font-bold transition-all ${
                         paymentMethod === m.id
-                          ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-md'
-                          : 'bg-stone-950 text-stone-300 border-stone-800 hover:border-stone-700'
+                          ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
                       }`}
                     >
                       {m.label}
@@ -407,13 +407,13 @@ export default function PayLabourPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">Notes / Remark (Optional)</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Notes / Remark (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Weekly settlement, Part payment for Mason work"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
@@ -428,7 +428,7 @@ export default function PayLabourPage() {
                   setError('');
                   setShowConfirmModal(true);
                 }}
-                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-base font-extrabold rounded-xl transition-all shadow-lg text-center"
+                className="w-full py-4 bg-[#087F3E] hover:bg-[#056B34] text-white text-base font-extrabold rounded-xl transition-all shadow text-center"
               >
                 Review & Confirm Payment →
               </button>
@@ -439,33 +439,33 @@ export default function PayLabourPage() {
 
       {/* Compact Review Confirmation Modal */}
       {showConfirmModal && selectedWorker && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-stone-900 border border-stone-800 w-full max-w-md p-6 rounded-2xl space-y-5">
-            <h3 className="text-lg font-bold text-stone-100 border-b border-stone-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-5 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-3">
               Confirm Payment
             </h3>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Recipient Worker:</span>
-                <span className="font-bold text-stone-100">{selectedWorker.name}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Recipient Worker:</span>
+                <span className="font-bold text-slate-900">{selectedWorker.name}</span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Payment Amount:</span>
-                <span className="font-extrabold text-emerald-400 text-sm">
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Payment Amount:</span>
+                <span className="font-black text-[#087F3E] text-sm">
                   ₹{parseFloat(paymentAmount).toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Payment Method:</span>
-                <span className="font-semibold text-stone-200">{paymentMethod}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Payment Method:</span>
+                <span className="font-semibold text-slate-900">{paymentMethod}</span>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-stone-800/60">
-                <span className="text-stone-400">Project Site:</span>
-                <span className="text-stone-300 font-semibold">{activeProject?.name}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Project Site:</span>
+                <span className="text-slate-900 font-semibold">{activeProject?.name}</span>
               </div>
             </div>
 
@@ -473,7 +473,7 @@ export default function PayLabourPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2.5 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+                className="px-4 py-2.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
               >
                 Cancel
               </button>
@@ -481,7 +481,7 @@ export default function PayLabourPage() {
                 type="button"
                 disabled={submitting}
                 onClick={handleConfirmPay}
-                className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-stone-950 text-xs font-extrabold rounded-xl transition-all disabled:opacity-50"
+                className="px-6 py-2.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl transition-all disabled:opacity-50 shadow"
               >
                 {submitting ? 'Processing Payment...' : 'Confirm & Pay ✓'}
               </button>

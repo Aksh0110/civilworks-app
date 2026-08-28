@@ -85,7 +85,9 @@ function GiveAdvanceForm() {
       const res = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyPayload)
+        body: JSON.stringify({
+          ...bodyPayload
+        })
       });
 
       const data = await res.json();
@@ -102,42 +104,42 @@ function GiveAdvanceForm() {
   if (successResult) {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6">
-        <div className="bg-amber-950/80 border border-amber-800/80 p-6 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-amber-100">Advance Given Successfully ✓</h2>
-            <p className="text-xs text-amber-300/80 mt-1">Receipt ID: {successResult.receiptId}</p>
+            <h2 className="text-2xl font-extrabold text-[#056B34]">Advance Given Successfully ✓</h2>
+            <p className="text-xs text-slate-600 mt-1">Receipt ID: {successResult.receiptId}</p>
           </div>
 
-          <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl space-y-2 text-left text-xs">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-2 text-left text-xs shadow-sm">
             <div className="flex justify-between">
-              <span className="text-stone-400">Paid To:</span>
-              <span className="font-bold text-stone-100">{successResult.recipientName}</span>
+              <span className="text-slate-500">Paid To:</span>
+              <span className="font-bold text-slate-900">{successResult.recipientName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Advance Amount:</span>
-              <span className="font-bold text-amber-400 text-sm">
+              <span className="text-slate-500">Advance Amount:</span>
+              <span className="font-extrabold text-[#087F3E] text-sm">
                 ₹{successResult.amount.toLocaleString('en-IN')}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-stone-400">Payment Mode:</span>
-              <span className="font-semibold text-stone-200">{successResult.paymentMethod}</span>
+              <span className="text-slate-500">Payment Mode:</span>
+              <span className="font-semibold text-slate-900">{successResult.paymentMethod}</span>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Link
               href={`/payments/receipt/${successResult._id}`}
-              className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
             >
               View Receipt
             </Link>
             <Link
               href="/payments"
-              className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs rounded-xl transition-colors text-center"
+              className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors text-center"
             >
               Done
             </Link>
@@ -150,38 +152,38 @@ function GiveAdvanceForm() {
   return (
     <div className="space-y-6 pb-20 max-w-2xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">💵</span>
-            <h1 className="text-xl font-bold text-stone-100">Give Financial Advance</h1>
+            <h1 className="text-xl font-bold text-slate-900">Give Financial Advance</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Record independent advances for labour or suppliers on{' '}
-            <span className="text-amber-400 font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
 
         <Link
           href="/payments"
-          className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold rounded-xl"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
         >
           ← Back
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-stone-900 border border-stone-800 p-6 rounded-2xl space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-5 shadow-sm">
         {/* Toggle Advance Recipient Type */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-2">Advance Type</label>
+          <label className="block text-xs font-bold text-slate-700 mb-2">Advance Type</label>
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => setAdvanceType('LABOUR')}
               className={`p-3 rounded-xl border text-xs font-bold transition-all ${
                 advanceType === 'LABOUR'
-                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-md'
-                  : 'bg-stone-950 text-stone-300 border-stone-800'
+                  ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
               }`}
             >
               👷 Worker Wage Advance
@@ -191,8 +193,8 @@ function GiveAdvanceForm() {
               onClick={() => setAdvanceType('VENDOR')}
               className={`p-3 rounded-xl border text-xs font-bold transition-all ${
                 advanceType === 'VENDOR'
-                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-md'
-                  : 'bg-stone-950 text-stone-300 border-stone-800'
+                  ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
               }`}
             >
               🏷️ Vendor Supplier Advance
@@ -201,21 +203,21 @@ function GiveAdvanceForm() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-bold">
             {error}
           </div>
         )}
 
         {/* Select Recipient */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-1">
-            Select {advanceType === 'LABOUR' ? 'Worker' : 'Vendor'} <span className="text-amber-400">*</span>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Select {advanceType === 'LABOUR' ? 'Worker' : 'Vendor'} <span className="text-red-500">*</span>
           </label>
           <select
             required
             value={selectedRecipientId}
             onChange={(e) => setSelectedRecipientId(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           >
             <option value="">-- Choose {advanceType === 'LABOUR' ? 'Worker' : 'Vendor'} --</option>
             {advanceType === 'LABOUR'
@@ -234,8 +236,8 @@ function GiveAdvanceForm() {
 
         {/* Amount */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-1">
-            Advance Amount (₹) <span className="text-amber-400">*</span>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Advance Amount (₹) <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
@@ -244,13 +246,13 @@ function GiveAdvanceForm() {
             placeholder="Enter advance amount..."
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-3 text-lg font-bold text-amber-400 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-lg font-bold text-[#087F3E] focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 
         {/* Payment Method */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-2">Payment Method</label>
+          <label className="block text-xs font-bold text-slate-700 mb-2">Payment Method</label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {(
               [
@@ -266,8 +268,8 @@ function GiveAdvanceForm() {
                 onClick={() => setPaymentMethod(m.id)}
                 className={`p-3 rounded-xl border text-xs font-bold transition-all ${
                   paymentMethod === m.id
-                    ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-md'
-                    : 'bg-stone-950 text-stone-300 border-stone-800'
+                    ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {m.label}
@@ -278,20 +280,20 @@ function GiveAdvanceForm() {
 
         {/* Remarks */}
         <div>
-          <label className="block text-xs font-bold text-stone-300 mb-1">Remarks / Reason (Optional)</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">Remarks / Reason (Optional)</label>
           <input
             type="text"
             placeholder="e.g. Festival advance, Site mobilization advance"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-stone-950 text-base font-extrabold rounded-xl transition-all shadow-lg text-center disabled:opacity-50"
+          className="w-full py-4 bg-[#087F3E] hover:bg-[#056B34] text-white text-base font-extrabold rounded-xl transition-all shadow text-center disabled:opacity-50"
         >
           {submitting ? 'Saving Advance...' : 'Confirm & Save Advance →'}
         </button>
@@ -302,7 +304,7 @@ function GiveAdvanceForm() {
 
 export default function GiveAdvancePage() {
   return (
-    <Suspense fallback={<div className="text-center py-12 text-xs text-stone-500">Loading form...</div>}>
+    <Suspense fallback={<div className="text-center py-12 text-xs text-slate-500">Loading form...</div>}>
       <GiveAdvanceForm />
     </Suspense>
   );

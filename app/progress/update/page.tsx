@@ -332,41 +332,41 @@ export default function WorkUpdatePage() {
     return (
       <div className="max-w-lg mx-auto py-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
         {/* Success Confirmation Banner */}
-        <div className="bg-amber-950/90 border border-amber-800/80 p-6 rounded-2xl text-center space-y-4 shadow-xl">
-          <div className="w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
             ✓
           </div>
           <div>
-            <h2 className="text-xl font-bold text-amber-100">Daily Update Saved Successfully!</h2>
-            <p className="text-xs text-amber-300/80 mt-1">
-              Recorded for <span className="font-semibold text-white">{activeProject?.name}</span> on{' '}
+            <h2 className="text-xl font-extrabold text-[#056B34]">Daily Update Saved Successfully!</h2>
+            <p className="text-xs text-slate-600 mt-1">
+              Recorded for <span className="font-bold text-slate-900">{activeProject?.name}</span> on{' '}
               {new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}.
             </p>
           </div>
         </div>
 
         {/* Compact Review Card */}
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
-          <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Summary Breakdown</h3>
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Summary Breakdown</h3>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl space-y-1">
-              <span className="text-xs text-stone-500">Work Items</span>
-              <span className="text-xl font-extrabold text-amber-400 block">
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+              <span className="text-xs text-slate-500">Work Items</span>
+              <span className="text-xl font-black text-[#087F3E] block">
                 {successResult.workItems?.length || 0} Items
               </span>
             </div>
 
-            <div className="p-3 bg-stone-950 border border-stone-800 rounded-xl space-y-1">
-              <span className="text-xs text-stone-500">Status</span>
-              <span className="text-xs font-extrabold text-emerald-400 block">
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+              <span className="text-xs text-slate-500">Status</span>
+              <span className="text-xs font-extrabold text-[#056B34] block">
                 {completedCount} Done · {inProgressCount} In Progress
               </span>
             </div>
           </div>
 
           {successResult.issues?.length > 0 && (
-            <div className="p-3 bg-red-950/80 border border-red-800/80 rounded-xl text-xs text-red-200">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-bold">
               ⚠️ {successResult.issues.length} Site Issues Reported
             </div>
           )}
@@ -375,13 +375,13 @@ export default function WorkUpdatePage() {
         <div className="flex gap-3">
           <Link
             href={`/progress/report?date=${date}`}
-            className="flex-1 h-12 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold transition-colors flex items-center justify-center"
+            className="flex-1 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors flex items-center justify-center"
           >
             View Daily Report →
           </Link>
           <Link
             href="/progress"
-            className="flex-1 h-12 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold transition-colors flex items-center justify-center"
+            className="flex-1 h-12 rounded-xl bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold transition-colors flex items-center justify-center shadow"
           >
             Done ✓
           </Link>
@@ -393,20 +393,20 @@ export default function WorkUpdatePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header Bar */}
-      <div className="flex items-center justify-between bg-stone-900 border border-stone-800 p-4 rounded-2xl">
+      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/progress"
-            className="w-9 h-9 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 flex items-center justify-center text-sm transition-colors"
+            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
           >
             ←
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-stone-100 flex items-center gap-2">
+            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>✏️</span> Work Update Entry
             </h1>
-            <p className="text-xs text-stone-400">
-              Site: <span className="text-amber-400 font-semibold">{activeProject?.name || 'Select Site'}</span>
+            <p className="text-xs text-slate-500">
+              Site: <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Select Site'}</span>
             </p>
           </div>
         </div>
@@ -415,14 +415,14 @@ export default function WorkUpdatePage() {
           type="button"
           onClick={handleCopyYesterday}
           disabled={copyLoading}
-          className="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-amber-400 border border-stone-700 text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1.5 shrink-0"
+          className="px-3 py-2 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1.5 shrink-0"
         >
           <span>📋</span> {copyLoading ? 'Copying...' : 'Copy Yesterday'}
         </button>
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-amber-950/90 border border-amber-800 text-amber-200 text-sm flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-3">
           <span className="text-lg">⚠️</span>
           <span>{error}</span>
         </div>
@@ -430,33 +430,33 @@ export default function WorkUpdatePage() {
 
       {/* Auto-populated Summary Header Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="bg-stone-900 border border-stone-800 p-3.5 rounded-xl">
-          <span className="text-[11px] text-stone-400 uppercase font-semibold block">Date</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">Date</span>
           <input
             type="date"
             required
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 bg-transparent text-stone-100 text-xs font-bold focus:outline-none"
+            className="w-full mt-1 bg-transparent text-slate-900 text-xs font-bold focus:outline-none"
           />
         </div>
 
-        <div className="bg-stone-900 border border-stone-800 p-3.5 rounded-xl">
-          <span className="text-[11px] text-stone-400 uppercase font-semibold block">Workforce Present</span>
-          <span className="text-sm font-extrabold text-emerald-400 mt-1 block">
+        <div className="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">Workforce Present</span>
+          <span className="text-sm font-black text-[#087F3E] mt-1 block">
             {workforceCount} Workers
           </span>
         </div>
 
-        <div className="bg-stone-900 border border-stone-800 p-3.5 rounded-xl col-span-2 sm:col-span-1">
-          <span className="text-[11px] text-stone-400 uppercase font-semibold block">Weather</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm col-span-2 sm:col-span-1">
+          <span className="text-[11px] text-slate-500 uppercase font-bold block">Weather</span>
           <select
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
-            className="w-full mt-1 bg-transparent text-stone-100 text-xs font-bold focus:outline-none"
+            className="w-full mt-1 bg-transparent text-slate-900 text-xs font-bold focus:outline-none"
           >
             {['Sunny / Clear', 'Cloudy', 'Rain / Monsoon', 'Hot / Extreme'].map((w) => (
-              <option key={w} value={w} className="bg-stone-900 text-stone-100">
+              <option key={w} value={w} className="bg-white text-slate-900">
                 {w}
               </option>
             ))}
@@ -466,32 +466,32 @@ export default function WorkUpdatePage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Work Items Section */}
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">
                 Daily Work Items * ({workItems.length})
               </h2>
-              <p className="text-[11px] text-stone-500">Record structured quantity, unit, status & location</p>
+              <p className="text-[11px] text-slate-500">Record structured quantity, unit, status & location</p>
             </div>
 
             <button
               type="button"
               onClick={() => setIsWorkTypeSelectOpen(true)}
-              className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1"
+              className="px-3 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center gap-1"
             >
               <span>+</span> Add Work
             </button>
           </div>
 
           {workItems.length === 0 ? (
-            <div className="py-8 text-center border-2 border-dashed border-stone-800 rounded-xl space-y-2">
+            <div className="py-8 text-center border-2 border-dashed border-slate-200 rounded-xl space-y-2">
               <span className="text-2xl">🏗️</span>
-              <p className="text-xs text-stone-400">No work items added yet.</p>
+              <p className="text-xs text-slate-500">No work items added yet.</p>
               <button
                 type="button"
                 onClick={() => setIsWorkTypeSelectOpen(true)}
-                className="text-xs text-amber-400 font-bold underline"
+                className="text-xs text-[#087F3E] font-bold underline"
               >
                 Click "+ Add Work" or use "Copy Yesterday"
               </button>
@@ -501,10 +501,10 @@ export default function WorkUpdatePage() {
               {workItems.map((item, index) => (
                 <div
                   key={item.id}
-                  className="bg-stone-950 border border-stone-800 p-4 rounded-xl space-y-3 relative"
+                  className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3 relative"
                 >
-                  <div className="flex items-center justify-between pb-2 border-b border-stone-800/80">
-                    <span className="text-xs font-bold text-stone-200 flex items-center gap-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                       <span className="text-base">{item.workTypeIcon}</span>
                       <span>
                         #{index + 1} {item.workTypeName}
@@ -514,7 +514,7 @@ export default function WorkUpdatePage() {
                     <button
                       type="button"
                       onClick={() => removeWorkItem(item.id)}
-                      className="text-stone-500 hover:text-red-400 text-sm"
+                      className="text-slate-400 hover:text-red-600 text-sm"
                     >
                       🗑️
                     </button>
@@ -523,7 +523,7 @@ export default function WorkUpdatePage() {
                   <div className="grid grid-cols-2 gap-3">
                     {/* Quantity Input */}
                     <div>
-                      <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
                         Quantity Completed *
                       </label>
                       <input
@@ -534,19 +534,19 @@ export default function WorkUpdatePage() {
                         placeholder="e.g. 420"
                         value={item.quantity}
                         onChange={(e) => updateWorkItem(item.id, 'quantity', e.target.value)}
-                        className="w-full h-11 px-3 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-base font-extrabold focus:outline-none focus:border-amber-500"
+                        className="w-full h-11 px-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-base font-extrabold focus:outline-none focus:border-[#087F3E]"
                       />
                     </div>
 
                     {/* Unit Selector */}
                     <div>
-                      <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
                         Unit *
                       </label>
                       <select
                         value={item.unit}
                         onChange={(e) => updateWorkItem(item.id, 'unit', e.target.value)}
-                        className="w-full h-11 px-2 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-xs font-bold focus:outline-none focus:border-amber-500"
+                        className="w-full h-11 px-2 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs font-bold focus:outline-none focus:border-[#087F3E]"
                       >
                         {units.map((u) => (
                           <option key={u} value={u}>
@@ -559,14 +559,14 @@ export default function WorkUpdatePage() {
 
                   {/* Status Selection Buttons */}
                   <div>
-                    <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">
+                    <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
                       Status *
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       {[
-                        { id: 'COMPLETED', label: 'Completed ✓', style: 'bg-emerald-500 text-stone-950 font-bold border-emerald-400' },
-                        { id: 'IN_PROGRESS', label: 'In Progress ⏳', style: 'bg-amber-500 text-stone-950 font-bold border-amber-400' },
-                        { id: 'PENDING', label: 'Pending ⏸️', style: 'bg-stone-800 text-stone-200 font-bold border-stone-700' }
+                        { id: 'COMPLETED', label: 'Completed ✓', style: 'bg-[#087F3E] text-white font-bold border-[#087F3E]' },
+                        { id: 'IN_PROGRESS', label: 'In Progress ⏳', style: 'bg-amber-500 text-slate-950 font-bold border-amber-400' },
+                        { id: 'PENDING', label: 'Pending ⏸️', style: 'bg-slate-200 text-slate-800 font-bold border-slate-300' }
                       ].map((st) => (
                         <button
                           type="button"
@@ -575,7 +575,7 @@ export default function WorkUpdatePage() {
                           className={`h-9 rounded-lg border text-xs transition-all ${
                             item.status === st.id
                               ? st.style
-                              : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                              : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900'
                           }`}
                         >
                           {st.label}
@@ -587,7 +587,7 @@ export default function WorkUpdatePage() {
                   {/* Location & Remark */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
                         Location / Block / Floor
                       </label>
                       <input
@@ -595,12 +595,12 @@ export default function WorkUpdatePage() {
                         placeholder="e.g. Block A / First Floor"
                         value={item.location}
                         onChange={(e) => updateWorkItem(item.id, 'location', e.target.value)}
-                        className="w-full h-10 px-3 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-xs focus:outline-none focus:border-amber-500"
+                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-[#087F3E]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
                         Remark / Note
                       </label>
                       <input
@@ -608,7 +608,7 @@ export default function WorkUpdatePage() {
                         placeholder="e.g. Curing in progress"
                         value={item.remark}
                         onChange={(e) => updateWorkItem(item.id, 'remark', e.target.value)}
-                        className="w-full h-10 px-3 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-xs focus:outline-none focus:border-amber-500"
+                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-[#087F3E]"
                       />
                     </div>
                   </div>
@@ -619,31 +619,31 @@ export default function WorkUpdatePage() {
         </div>
 
         {/* Issues Section */}
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">
                 Site Issues / Delays (Optional)
               </h2>
-              <p className="text-[11px] text-stone-500">Log material, labour, or equipment bottlenecks</p>
+              <p className="text-[11px] text-slate-500">Log material, labour, or equipment bottlenecks</p>
             </div>
 
             <button
               type="button"
               onClick={addIssue}
-              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-amber-400 text-xs font-bold rounded-xl border border-stone-700 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition-colors flex items-center gap-1"
             >
               <span>+</span> Add Issue
             </button>
           </div>
 
           {issues.map((iss) => (
-            <div key={iss.id} className="bg-stone-950 border border-stone-800 p-4 rounded-xl space-y-3">
+            <div key={iss.id} className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
               <div className="flex items-center justify-between">
                 <select
                   value={iss.issueType}
                   onChange={(e) => updateIssue(iss.id, 'issueType', e.target.value)}
-                  className="bg-stone-900 border border-stone-800 text-stone-100 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none"
+                  className="bg-white border border-slate-200 text-slate-900 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none"
                 >
                   {[
                     'Material Delay',
@@ -665,26 +665,26 @@ export default function WorkUpdatePage() {
                 <button
                   type="button"
                   onClick={() => removeIssue(iss.id)}
-                  className="text-stone-500 hover:text-red-400 text-xs"
+                  className="text-slate-400 hover:text-red-600 text-xs"
                 >
                   Remove ✕
                 </button>
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold text-stone-400 uppercase mb-1">Severity</label>
+                <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">Severity</label>
                 <div className="flex gap-2">
                   {[
-                    { id: 'HIGH', label: 'High 🔴', style: 'bg-red-950 text-red-300 border-red-800' },
-                    { id: 'MEDIUM', label: 'Medium 🟡', style: 'bg-amber-950 text-amber-300 border-amber-800' },
-                    { id: 'LOW', label: 'Low 🟢', style: 'bg-emerald-950 text-emerald-300 border-emerald-800' }
+                    { id: 'HIGH', label: 'High 🔴', style: 'bg-red-100 text-red-800 border-red-200 font-bold' },
+                    { id: 'MEDIUM', label: 'Medium 🟡', style: 'bg-amber-100 text-amber-800 border-amber-200 font-bold' },
+                    { id: 'LOW', label: 'Low 🟢', style: 'bg-[#EAF7EF] text-[#056B34] border-[#bce6cb] font-bold' }
                   ].map((sev) => (
                     <button
                       type="button"
                       key={sev.id}
                       onClick={() => updateIssue(iss.id, 'severity', sev.id as any)}
                       className={`px-3 py-1 rounded-lg border text-xs font-bold transition-all ${
-                        iss.severity === sev.id ? sev.style : 'bg-stone-900 border-stone-800 text-stone-400'
+                        iss.severity === sev.id ? sev.style : 'bg-white border-slate-200 text-slate-600'
                       }`}
                     >
                       {sev.label}
@@ -699,7 +699,7 @@ export default function WorkUpdatePage() {
                   placeholder="Describe the site issue or delay reason..."
                   value={iss.description}
                   onChange={(e) => updateIssue(iss.id, 'description', e.target.value)}
-                  className="w-full h-10 px-3 bg-stone-900 border border-stone-800 rounded-xl text-stone-100 text-xs focus:outline-none focus:border-amber-500"
+                  className="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
             </div>
@@ -707,40 +707,40 @@ export default function WorkUpdatePage() {
         </div>
 
         {/* Photo Attachment Section */}
-        <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl space-y-4">
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#087F3E]">
                 Site Progress Photos (Optional)
               </h2>
-              <p className="text-[11px] text-stone-500">Attach photo links to document physical site progress</p>
+              <p className="text-[11px] text-slate-500">Attach photo links to document physical site progress</p>
             </div>
 
             <button
               type="button"
               onClick={addPhoto}
-              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-amber-400 text-xs font-bold rounded-xl border border-stone-700 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition-colors flex items-center gap-1"
             >
               <span>📷</span> Add Photo
             </button>
           </div>
 
           {photos.map((ph) => (
-            <div key={ph.id} className="bg-stone-950 border border-stone-800 p-3 rounded-xl flex gap-3 items-center">
+            <div key={ph.id} className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex gap-3 items-center">
               <div className="flex-1 space-y-2">
                 <input
                   type="text"
                   placeholder="Photo URL (e.g. /uploads/slab-concrete-26aug.jpg)"
                   value={ph.url}
                   onChange={(e) => updatePhoto(ph.id, 'url', e.target.value)}
-                  className="w-full h-9 px-3 bg-stone-900 border border-stone-800 rounded-lg text-stone-100 text-xs focus:outline-none focus:border-amber-500"
+                  className="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-slate-900 text-xs focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={() => removePhoto(ph.id)}
-                className="text-stone-500 hover:text-red-400 text-xs shrink-0"
+                className="text-slate-400 hover:text-red-600 text-xs shrink-0"
               >
                 ✕
               </button>
@@ -752,7 +752,7 @@ export default function WorkUpdatePage() {
         <button
           type="submit"
           disabled={submitting || workItems.length === 0}
-          className="w-full h-14 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-bold rounded-2xl text-base transition-colors shadow-lg flex items-center justify-center gap-2"
+          className="w-full h-14 bg-[#087F3E] hover:bg-[#056B34] disabled:opacity-40 text-white font-extrabold rounded-2xl text-base transition-colors shadow flex items-center justify-center gap-2"
         >
           {submitting ? 'Saving Update...' : '💾 Save Today\'s Update'}
         </button>
@@ -760,15 +760,15 @@ export default function WorkUpdatePage() {
 
       {/* Work Type Selection Modal */}
       {isWorkTypeSelectOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-lg bg-stone-900 border border-stone-800 rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom">
-            <div className="flex items-center justify-between pb-3 border-b border-stone-800">
-              <h3 className="text-base font-bold text-stone-100 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="w-full sm:max-w-lg bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span>🏗️</span> Select Work Type
               </h3>
               <button
                 onClick={() => setIsWorkTypeSelectOpen(false)}
-                className="w-8 h-8 rounded-full bg-stone-800 text-stone-400 flex items-center justify-center text-sm"
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-sm"
               >
                 ✕
               </button>
@@ -780,33 +780,32 @@ export default function WorkUpdatePage() {
                   type="button"
                   key={wt._id}
                   onClick={() => addWorkItem(wt)}
-                  className="p-3 bg-stone-950 hover:bg-stone-800 border border-stone-800 rounded-xl text-center flex flex-col items-center justify-center transition-all group"
+                  className="p-3 bg-slate-50 hover:bg-[#EAF7EF] border border-slate-200 rounded-xl text-center flex flex-col items-center justify-center transition-all group"
                 >
                   <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">{wt.icon}</span>
-                  <span className="text-xs font-bold text-stone-200 line-clamp-1">{wt.name}</span>
-                  <span className="text-[10px] text-stone-500 mt-0.5">{wt.defaultUnit}</span>
+                  <span className="text-xs font-bold text-slate-900 line-clamp-1">{wt.name}</span>
+                  <span className="text-[10px] text-slate-500 mt-0.5">{wt.defaultUnit}</span>
                 </button>
               ))}
             </div>
 
-            <div className="pt-3 border-t border-stone-800 flex justify-between items-center">
+            <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
               <button
                 type="button"
                 onClick={() => {
                   setIsWorkTypeSelectOpen(false);
                   setIsWorkTypeModalOpen(true);
                 }}
-                className="text-xs font-bold text-amber-400 hover:underline"
+                className="text-xs font-bold text-[#087F3E] hover:underline"
               >
-                + Create Custom Work Type
+                + Custom Work Type
               </button>
-
               <button
                 type="button"
                 onClick={() => setIsWorkTypeSelectOpen(false)}
-                className="px-4 py-2 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+                className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
               >
-                Close
+                Done
               </button>
             </div>
           </div>

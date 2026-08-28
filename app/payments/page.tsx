@@ -100,45 +100,45 @@ export default function PaymentsMainPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">💳</span>
-            <h1 className="text-xl font-bold text-stone-100">Payment & Settlements</h1>
+            <h1 className="text-xl font-extrabold text-slate-900">Payment & Settlements</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Manage worker wages, vendor bill payments, and advances for{' '}
-            <span className="text-amber-400 font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+            <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
       </div>
 
       {/* Summary Widget */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
-          <span className="text-xs text-stone-400 block font-medium">Today Labour Paid</span>
-          <span className="text-lg font-bold text-emerald-400 mt-1 block">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <span className="text-xs text-slate-500 block font-semibold">Today Labour Paid</span>
+          <span className="text-lg font-black text-[#087F3E] mt-1 block">
             ₹{(summary?.todayLabourPaid || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
-          <span className="text-xs text-stone-400 block font-medium">Today Vendor Paid</span>
-          <span className="text-lg font-bold text-emerald-400 mt-1 block">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <span className="text-xs text-slate-500 block font-semibold">Today Vendor Paid</span>
+          <span className="text-lg font-black text-[#087F3E] mt-1 block">
             ₹{(summary?.todayVendorPaid || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
-          <span className="text-xs text-stone-400 block font-medium">Labour Wage Due</span>
-          <span className="text-lg font-bold text-amber-400 mt-1 block">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <span className="text-xs text-slate-500 block font-semibold">Labour Wage Due</span>
+          <span className="text-lg font-black text-amber-600 mt-1 block">
             ₹{(summary?.outstandingLabourDue || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-stone-900 border border-stone-800 p-4 rounded-xl">
-          <span className="text-xs text-stone-400 block font-medium">Vendor Outstanding</span>
-          <span className="text-lg font-bold text-amber-400 mt-1 block">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <span className="text-xs text-slate-500 block font-semibold">Vendor Outstanding</span>
+          <span className="text-lg font-black text-amber-600 mt-1 block">
             ₹{(summary?.outstandingVendorDue || 0).toLocaleString('en-IN')}
           </span>
         </div>
@@ -149,27 +149,27 @@ export default function PaymentsMainPage() {
         {/* Pay Labour Card */}
         <Link
           href="/payments/labour"
-          className="group bg-stone-900 border border-stone-800 hover:border-emerald-500/50 p-6 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-emerald-950/20 flex flex-col justify-between"
+          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
         >
           <div className="flex items-start justify-between">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <div className="w-14 h-14 rounded-2xl bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
               👷
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#EAF7EF] text-[#056B34]">
               Wage Payment
             </span>
           </div>
 
           <div className="mt-5">
-            <h2 className="text-xl font-bold text-stone-100 group-hover:text-emerald-400 transition-colors">
+            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
               Pay Labour
             </h2>
-            <p className="text-xs text-stone-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Select workers with wage due, review worked days, and settle payments.
             </p>
           </div>
 
-          <div className="mt-6 flex items-center text-xs font-semibold text-emerald-400 gap-1">
+          <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
             <span>Pay Worker Wages</span>
             <span className="text-base">→</span>
           </div>
@@ -178,27 +178,27 @@ export default function PaymentsMainPage() {
         {/* Pay Vendor Card */}
         <Link
           href="/payments/vendor"
-          className="group bg-stone-900 border border-stone-800 hover:border-blue-500/50 p-6 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-blue-950/20 flex flex-col justify-between"
+          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
         >
           <div className="flex items-start justify-between">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
               🏬
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-500/20 text-blue-300">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700">
               Vendor Payment
             </span>
           </div>
 
           <div className="mt-5">
-            <h2 className="text-xl font-bold text-stone-100 group-hover:text-blue-400 transition-colors">
+            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
               Pay Vendor
             </h2>
-            <p className="text-xs text-stone-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Pay outstanding vendor balances or settle specific material bills.
             </p>
           </div>
 
-          <div className="mt-6 flex items-center text-xs font-semibold text-blue-400 gap-1">
+          <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
             <span>Pay Vendor Bills</span>
             <span className="text-base">→</span>
           </div>
@@ -209,46 +209,46 @@ export default function PaymentsMainPage() {
       <div className="grid grid-cols-2 gap-4">
         <Link
           href="/payments/advance?type=LABOUR"
-          className="bg-stone-900 border border-stone-800 p-4 rounded-2xl hover:border-stone-700 transition-colors flex items-center gap-3"
+          className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
             💵
           </div>
           <div>
-            <h3 className="text-sm font-bold text-stone-200">Give Labour Advance</h3>
-            <p className="text-xs text-stone-500">Record wage advance</p>
+            <h3 className="text-sm font-bold text-slate-900">Give Labour Advance</h3>
+            <p className="text-xs text-slate-500">Record wage advance</p>
           </div>
         </Link>
 
         <Link
           href="/payments/advance?type=VENDOR"
-          className="bg-stone-900 border border-stone-800 p-4 rounded-2xl hover:border-stone-700 transition-colors flex items-center gap-3"
+          className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl shrink-0">
             🏷️
           </div>
           <div>
-            <h3 className="text-sm font-bold text-stone-200">Give Vendor Advance</h3>
-            <p className="text-xs text-stone-500">Record supplier advance</p>
+            <h3 className="text-sm font-bold text-slate-900">Give Vendor Advance</h3>
+            <p className="text-xs text-slate-500">Record supplier advance</p>
           </div>
         </Link>
       </div>
 
       {/* Payment History Section */}
-      <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 space-y-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-stone-100">Payment History & Ledger</h2>
+          <h2 className="text-base font-bold text-slate-900">Payment History & Ledger</h2>
 
           {/* Tabs */}
-          <div className="flex bg-stone-950 p-1 rounded-xl gap-1 border border-stone-800">
+          <div className="flex bg-slate-100 p-1 rounded-xl gap-1 border border-slate-200">
             {(['ALL', 'LABOUR', 'VENDOR', 'ADVANCES'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setActiveTab(t)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                   activeTab === t
-                    ? 'bg-amber-500 text-stone-950 shadow'
-                    : 'text-stone-400 hover:text-stone-200'
+                    ? 'bg-[#087F3E] text-white shadow'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {t}
@@ -263,14 +263,14 @@ export default function PaymentsMainPage() {
           placeholder="Search by recipient name, receipt ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
         />
 
         {/* Payment History List */}
         {loading ? (
-          <div className="text-center py-8 text-xs text-stone-500">Loading payment history...</div>
+          <div className="text-center py-8 text-xs text-slate-500">Loading payment history...</div>
         ) : filteredHistory.length === 0 ? (
-          <div className="text-center py-8 text-xs text-stone-500">No payment records found.</div>
+          <div className="text-center py-8 text-xs text-slate-500">No payment records found.</div>
         ) : (
           <div className="space-y-3">
             {filteredHistory.map((item) => (
@@ -278,35 +278,35 @@ export default function PaymentsMainPage() {
                 key={item._id}
                 className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   item.status === 'VOIDED'
-                    ? 'bg-red-950/20 border-red-900/40 opacity-75'
-                    : 'bg-stone-950 border-stone-800/80'
+                    ? 'bg-red-50 border-red-200 opacity-75'
+                    : 'bg-white border-slate-200'
                 }`}
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-stone-100">{item.recipientName}</span>
+                    <span className="text-sm font-bold text-slate-900">{item.recipientName}</span>
 
                     {/* Badge */}
                     <span
-                      className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
                         item.paymentType === 'LABOUR_PAYMENT'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
                           : item.paymentType === 'VENDOR_PAYMENT'
-                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                          : 'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}
                     >
                       {item.paymentType.replace('_', ' ')}
                     </span>
 
                     {item.status === 'VOIDED' && (
-                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
+                      <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
                         VOIDED
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-stone-400">
+                  <div className="flex items-center gap-3 text-xs text-slate-500">
                     <span>Receipt: {item.receiptId}</span>
                     <span>•</span>
                     <span>Method: {item.paymentMethod}</span>
@@ -315,13 +315,13 @@ export default function PaymentsMainPage() {
                   </div>
 
                   {item.status === 'VOIDED' && item.voidReason && (
-                    <div className="text-xs text-red-400 italic">Reason: {item.voidReason}</div>
+                    <div className="text-xs text-red-600 italic">Reason: {item.voidReason}</div>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
                   <div className="text-right">
-                    <div className="text-base font-extrabold text-stone-100">
+                    <div className="text-base font-black text-slate-900">
                       ₹{item.amount.toLocaleString('en-IN')}
                     </div>
                   </div>
@@ -329,7 +329,7 @@ export default function PaymentsMainPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/payments/receipt/${item._id}`}
-                      className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg transition-colors"
+                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors"
                     >
                       Receipt
                     </Link>
@@ -337,7 +337,7 @@ export default function PaymentsMainPage() {
                     {item.status === 'COMPLETED' && (
                       <button
                         onClick={() => setSelectedPaymentToVoid(item)}
-                        className="px-2.5 py-1.5 bg-red-950/60 border border-red-900/60 hover:bg-red-900/80 text-red-300 text-xs font-semibold rounded-lg transition-colors"
+                        className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold rounded-lg transition-colors"
                       >
                         Void
                       </button>
@@ -352,26 +352,26 @@ export default function PaymentsMainPage() {
 
       {/* Void Modal */}
       {selectedPaymentToVoid && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-stone-900 border border-stone-800 w-full max-w-md p-6 rounded-2xl space-y-4">
-            <h3 className="text-lg font-bold text-red-400">Void Payment #{selectedPaymentToVoid.receiptId}</h3>
-            <p className="text-xs text-stone-400">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-xl">
+            <h3 className="text-lg font-bold text-red-600">Void Payment #{selectedPaymentToVoid.receiptId}</h3>
+            <p className="text-xs text-slate-600">
               Are you sure you want to void this payment of{' '}
-              <strong className="text-stone-200">₹{selectedPaymentToVoid.amount.toLocaleString('en-IN')}</strong> to{' '}
-              <strong className="text-stone-200">{selectedPaymentToVoid.recipientName}</strong>? This action will
+              <strong className="text-slate-900">₹{selectedPaymentToVoid.amount.toLocaleString('en-IN')}</strong> to{' '}
+              <strong className="text-slate-900">{selectedPaymentToVoid.recipientName}</strong>? This action will
               restore the outstanding balance.
             </p>
 
             {voidError && (
-              <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl font-medium">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
                 {voidError}
               </div>
             )}
 
             <form onSubmit={handleVoidPayment} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">
-                  Reason for Voiding <span className="text-red-400">*</span>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Reason for Voiding <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -379,7 +379,7 @@ export default function PaymentsMainPage() {
                   placeholder="e.g., Wrong amount entered, Cash refunded"
                   value={voidReason}
                   onChange={(e) => setVoidReason(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100 focus:outline-none focus:border-red-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-red-500"
                 />
               </div>
 
@@ -390,14 +390,14 @@ export default function PaymentsMainPage() {
                     setSelectedPaymentToVoid(null);
                     setVoidReason('');
                   }}
-                  className="px-4 py-2 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={voiding || !voidReason.trim()}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-500 text-stone-950 text-xs font-bold rounded-xl disabled:opacity-50"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl disabled:opacity-50"
                 >
                   {voiding ? 'Voiding...' : 'Confirm Void'}
                 </button>

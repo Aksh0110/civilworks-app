@@ -106,37 +106,37 @@ export default function DocumentsHubPage() {
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl">📂</span>
-            <h1 className="text-xl font-bold text-stone-100">Document Management</h1>
+            <h1 className="text-xl font-bold text-slate-900">Document Management</h1>
           </div>
-          <p className="text-xs text-stone-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Centralized file repository, receipts, bills & agreements for{' '}
-            <span className="text-amber-400 font-semibold">{activeProject?.name || 'All Sites'}</span>.
+            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'All Sites'}</span>.
           </p>
         </div>
 
         <button
           onClick={() => setShowUploadModal(true)}
-          className="px-5 h-12 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
+          className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
         >
           <span>+</span> Add Document
         </button>
       </div>
 
       {/* Filter Bar & Tabs */}
-      <div className="bg-stone-900 border border-stone-800 p-4 rounded-2xl space-y-3">
-        <div className="flex bg-stone-950 p-1 rounded-xl gap-1 overflow-x-auto border border-stone-800">
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-3 shadow-sm">
+        <div className="flex bg-slate-100 p-1 rounded-xl gap-1 overflow-x-auto border border-slate-200">
           {(['ALL', 'BILLS', 'RECEIPTS', 'QUOTATIONS', 'AGREEMENTS', 'DRAWINGS', 'PHOTOS', 'OTHER'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
                 activeTab === t
-                  ? 'bg-amber-500 text-stone-950 shadow'
-                  : 'text-stone-400 hover:text-stone-200'
+                  ? 'bg-[#087F3E] text-white shadow'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {t}
@@ -150,21 +150,21 @@ export default function DocumentsHubPage() {
           placeholder="Search document name, remarks, or uploader..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-amber-500"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
         />
       </div>
 
       {/* Document Cards List */}
       {loading ? (
-        <div className="text-center py-12 text-xs text-stone-500">Loading document repository...</div>
+        <div className="text-center py-12 text-xs text-slate-500">Loading document repository...</div>
       ) : filteredDocs.length === 0 ? (
-        <div className="bg-stone-900 border border-stone-800 p-8 rounded-2xl text-center space-y-3">
+        <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
           <div className="text-3xl">📂</div>
-          <h3 className="text-sm font-bold text-stone-200">No documents found</h3>
-          <p className="text-xs text-stone-400">Attach site drawings, bills, vouchers, or agreement documents.</p>
+          <h3 className="text-sm font-bold text-slate-900">No documents found</h3>
+          <p className="text-xs text-slate-500">Attach site drawings, bills, vouchers, or agreement documents.</p>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="inline-block px-4 py-2 bg-amber-500 text-stone-950 text-xs font-bold rounded-xl"
+            className="inline-block px-4 py-2 bg-[#087F3E] text-white text-xs font-bold rounded-xl"
           >
             + Add Document
           </button>
@@ -174,38 +174,38 @@ export default function DocumentsHubPage() {
           {filteredDocs.map((d) => (
             <div
               key={d._id}
-              className="p-5 rounded-2xl bg-stone-900 border border-stone-800 transition-all shadow-lg flex flex-col justify-between space-y-4"
+              className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-[#087F3E] transition-all shadow-sm flex flex-col justify-between space-y-4"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="text-sm font-extrabold text-stone-100 flex items-center gap-2">
+                  <div className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
                     <span>📄</span>
                     <span>{d.documentName}</span>
                   </div>
-                  {d.remarks && <p className="text-xs text-stone-400">{d.remarks}</p>}
-                  <div className="text-[11px] text-stone-500">
+                  {d.remarks && <p className="text-xs text-slate-500">{d.remarks}</p>}
+                  <div className="text-[11px] text-slate-400">
                     Uploaded by {d.uploadedBy || 'Site Supervisor'} • {new Date(d.createdAt).toLocaleDateString('en-IN')}
                   </div>
                 </div>
 
-                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase shrink-0">
+                <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] uppercase shrink-0">
                   {d.documentType}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-stone-800/80">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                 <a
                   href={d.fileUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-xs rounded-xl transition-colors shadow"
+                  className="px-4 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors shadow"
                 >
                   View Attachment ↗
                 </a>
 
                 <button
                   onClick={() => handleDeleteDoc(d._id)}
-                  className="px-3 py-2 bg-stone-800 hover:bg-red-950 hover:text-red-300 text-stone-400 text-xs font-bold rounded-xl transition-colors"
+                  className="px-3 py-2 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 text-xs font-bold rounded-xl transition-colors"
                 >
                   Delete
                 </button>
@@ -217,28 +217,28 @@ export default function DocumentsHubPage() {
 
       {/* Add Document Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-stone-900 border border-stone-800 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-2xl">
-            <h3 className="text-lg font-bold text-stone-100">Add Document Metadata</h3>
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-xl">
+            <h3 className="text-lg font-bold text-slate-900">Add Document Metadata</h3>
             <form onSubmit={handleUploadSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">Document Name *</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Document Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Structural Drawing Rev-02"
                   value={docName}
                   onChange={(e) => setDocName(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">Document Category</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Document Category</label>
                 <select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
                 >
                   <option value="BILLS">Bills</option>
                   <option value="RECEIPTS">Receipts</option>
@@ -251,25 +251,25 @@ export default function DocumentsHubPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">File URL / Storage Link *</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">File URL / Storage Link *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. https://storage.civilworks.app/docs/drawing.pdf"
                   value={docUrl}
                   onChange={(e) => setDocUrl(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-stone-300 mb-1">Description / Remarks (Optional)</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Description / Remarks (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Approved by structural engineer"
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs text-stone-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"
                 />
               </div>
 
@@ -277,14 +277,14 @@ export default function DocumentsHubPage() {
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 bg-stone-800 text-stone-300 text-xs font-bold rounded-xl"
+                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-amber-500 text-stone-950 text-xs font-extrabold rounded-xl"
+                  className="px-4 py-2 bg-[#087F3E] text-white text-xs font-extrabold rounded-xl shadow"
                 >
                   {submitting ? 'Saving...' : 'Save Document ✓'}
                 </button>
