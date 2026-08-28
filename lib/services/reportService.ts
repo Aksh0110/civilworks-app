@@ -144,17 +144,14 @@ export async function getMaterialStockReport(projectId: string, category?: strin
   const materials = Array.isArray(stockOverview) ? stockOverview : [];
 
   const totalItems = materials.length;
-  const goodCount = materials.filter((m: any) => (m.currentStock || m.availableQuantity || 0) > (m.minStockLevel || 0)).length;
-  const lowCount = materials.filter((m: any) => (m.currentStock || m.availableQuantity || 0) > 0 && (m.currentStock || m.availableQuantity || 0) <= (m.minStockLevel || 0)).length;
+  const goodCount = materials.filter((m: any) => (m.currentStock || m.availableQuantity || 0) > 0).length;
   const outOfStockCount = materials.filter((m: any) => (m.currentStock || m.availableQuantity || 0) <= 0).length;
 
   return {
-    summary: { totalItems, goodCount, lowCount, outOfStockCount },
+    summary: { totalItems, goodCount, outOfStockCount },
     records: materials.map((m: any) => {
       const qty = m.currentStock !== undefined ? m.currentStock : m.availableQuantity || 0;
-      let status: 'Good' | 'Low' | 'Out of Stock' = 'Good';
-      if (qty <= 0) status = 'Out of Stock';
-      else if (qty <= (m.minStockLevel || 0)) status = 'Low';
+      const status: 'Available' | 'Out of Stock' = qty <= 0 ? 'Out of Stock' : 'Available';
 
       return {
         materialId: m.materialId || m._id?.toString(),
@@ -162,7 +159,6 @@ export async function getMaterialStockReport(projectId: string, category?: strin
         category: m.category || 'General',
         availableQuantity: qty,
         unit: m.unit,
-        minStockLevel: m.minStockLevel || 0,
         status
       };
     })

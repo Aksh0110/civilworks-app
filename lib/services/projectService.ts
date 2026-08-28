@@ -128,8 +128,8 @@ export interface ProjectOverviewPayload {
   };
   materials: {
     totalItems: number;
-    lowStockCount: number;
-    lowStockItems: any[];
+    outOfStockCount: number;
+    outOfStockItems: any[];
   };
   payments: {
     todayPaidLabour: number;
@@ -199,8 +199,8 @@ export async function getProjectOverview(projectId: string, allowedProjectIds?: 
 
   // Material calculation
   const stockList = Array.isArray(materialStockRes?.materials) ? materialStockRes.materials : [];
-  const lowStockItems = stockList.filter((m: any) => (m.availableQuantity || 0) <= (m.minStockLevel || 0));
-  const lowStockCount = lowStockItems.length;
+  const outOfStockItems = stockList.filter((m: any) => (m.availableQuantity || 0) <= 0);
+  const outOfStockCount = outOfStockItems.length;
 
   // Payments calculation
   const todayPaidLabour = paymentSummaryRes?.todayPaidLabour || 0;
@@ -227,7 +227,7 @@ export async function getProjectOverview(projectId: string, allowedProjectIds?: 
   // Site Health Rules
   const siteHealth = {
     labour: (absentCount === 0 || presentCount >= absentCount * 3 ? 'Good' : 'Needs Attention') as 'Good' | 'Needs Attention',
-    materials: (lowStockCount === 0 ? 'Good' : 'Needs Attention') as 'Good' | 'Needs Attention',
+    materials: (outOfStockCount === 0 ? 'Good' : 'Needs Attention') as 'Good' | 'Needs Attention',
     payments: (totalDue === 0 ? 'Good' : 'Needs Attention') as 'Good' | 'Needs Attention',
     progress: (openIssuesCount === 0 ? 'On Track' : 'Needs Attention') as 'On Track' | 'Needs Attention'
   };
@@ -235,12 +235,12 @@ export async function getProjectOverview(projectId: string, allowedProjectIds?: 
   // Operational Alerts Engine
   const alerts: ProjectOverviewPayload['alerts'] = [];
 
-  if (lowStockCount > 0) {
+  if (outOfStockCount > 0) {
     alerts.push({
       id: 'alt-stock',
       type: 'WARNING',
-      title: 'Low Material Stock Alert',
-      message: `${lowStockCount} item(s) below minimum stock level (${lowStockItems.map((i: any) => i.name || i.materialName).join(', ')})`
+      title: 'Material Out of Stock Alert',
+      message: `${outOfStockCount} item(s) out of stock (${outOfStockItems.map((i: any) => i.name || i.materialName).join(', ')})`
     });
   }
 
@@ -319,7 +319,7 @@ export async function getProjectOverview(projectId: string, allowedProjectIds?: 
   return {
     project,
     labour: { presentCount, halfDayCount, absentCount, todayCost },
-    materials: { totalItems: stockList.length, lowStockCount, lowStockItems },
+    materials: { totalItems: stockList.length, outOfStockCount, outOfStockItems },
     payments: { todayPaidLabour, todayPaidVendor, totalLabourDue, totalVendorDue, totalDue },
     expenses: { todayExpenses, monthExpenses, recentExpenses },
     progress: { completedCount, inProgressCount, pendingCount, openIssuesCount, photosCount, workItems },
@@ -359,7 +359,7 @@ export async function getProjectsOverviewList(statusTab?: string, allowedProject
       const totalDue = roundMoney((paymentRes?.totalLabourDue || 0) + (paymentRes?.totalVendorDue || 0));
 
       const stockList = Array.isArray(materialRes?.materials) ? materialRes.materials : [];
-      const lowStockCount = stockList.filter((m: any) => (m.availableQuantity || 0) <= (m.minStockLevel || 0)).length;
+      const outOfStockCount = stockList.filter((m: any) => (m.availableQuantity || 0) <= 0).length;
 
       return {
         _id: pId,
@@ -371,7 +371,7 @@ export async function getProjectsOverviewList(statusTab?: string, allowedProject
         presentWorkers,
         todayExpense,
         totalDue,
-        lowStockCount
+        outOfStockCount
       };
     })
   );

@@ -223,7 +223,7 @@ export default function ProjectCommandCenterPage() {
             {siteHealth?.materials}
           </span>
           <span className="text-[11px] text-slate-400 block mt-1">
-            {materials?.lowStockCount > 0 ? `${materials.lowStockCount} items low` : 'All stock good'}
+            {materials?.outOfStockCount > 0 ? `${materials.outOfStockCount} items out of stock` : 'All stock available'}
           </span>
         </div>
 

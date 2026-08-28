@@ -174,7 +174,7 @@ export default function MaterialMasterPage() {
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <div>Min Warning: <strong className="text-slate-900">{m.minStockLevel || 0} {m.unit}</strong></div>
+                <div>Standard Unit: <strong className="text-slate-900">{m.unit}</strong></div>
                 <div>Default Rate: <strong className="text-[#087F3E]">₹{m.defaultRate || 0}</strong></div>
               </div>
             </div>

@@ -120,18 +120,10 @@ export default function StockOverviewPage() {
 
       {/* Metrics Bar */}
       {metrics && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-white border border-slate-200 p-3.5 rounded-2xl text-center shadow-sm">
             <span className="text-xs text-slate-500 block font-semibold">Total Materials</span>
             <span className="text-lg font-black text-slate-900">{items.length}</span>
-          </div>
-
-          <div
-            onClick={() => setStatusFilter('LOW')}
-            className="bg-white border border-amber-200 p-3.5 rounded-2xl text-center cursor-pointer hover:bg-amber-50 transition-colors shadow-sm"
-          >
-            <span className="text-xs text-amber-700 block font-semibold">Low Stock</span>
-            <span className="text-lg font-black text-amber-700">{metrics.lowStockCount}</span>
           </div>
 
           <div
@@ -185,17 +177,7 @@ export default function StockOverviewPage() {
                 : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900'
             }`}
           >
-            🟢 Good Stock
-          </button>
-          <button
-            onClick={() => setStatusFilter('LOW')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-              statusFilter === 'LOW'
-                ? 'bg-amber-500 text-white shadow'
-                : 'bg-white text-amber-700 border border-amber-200 hover:text-amber-800'
-            }`}
-          >
-            ⚠️ Low Stock ({metrics?.lowStockCount || 0})
+            🟢 Available Stock
           </button>
           <button
             onClick={() => setStatusFilter('OUT_OF_STOCK')}
@@ -244,14 +226,12 @@ export default function StockOverviewPage() {
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase shrink-0 ${
-                        item.status === 'GOOD'
+                        item.currentStock > 0
                           ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                          : item.status === 'LOW'
-                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
                           : 'bg-red-50 text-red-700 border border-red-200'
                       }`}
                     >
-                      {item.status === 'GOOD' ? 'Good' : item.status === 'LOW' ? 'Low Stock' : 'Out of Stock'}
+                      {item.currentStock > 0 ? 'Available' : 'Out of Stock'}
                     </span>
 
                     <button
@@ -262,7 +242,6 @@ export default function StockOverviewPage() {
                           name: item.name,
                           category: item.category,
                           unit: item.unit,
-                          minStockLevel: item.minStockLevel,
                           defaultRate: item.defaultRate || 0
                         });
                         setIsModalOpen(true);
@@ -293,21 +272,12 @@ export default function StockOverviewPage() {
                       className={`text-xl font-black ${
                         item.currentStock <= 0
                           ? 'text-red-600'
-                          : item.status === 'LOW'
-                          ? 'text-amber-600'
                           : 'text-slate-900'
                       }`}
                     >
                       {item.currentStock.toLocaleString('en-IN')} <span className="text-xs font-semibold text-slate-500">{item.unit}</span>
                     </span>
                   </Link>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs text-slate-500 block">Min Threshold</span>
-                  <span className="text-xs font-bold text-slate-600">
-                    {item.minStockLevel || 0} {item.unit}
-                  </span>
                 </div>
               </div>
             </div>

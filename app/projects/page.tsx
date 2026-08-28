@@ -19,7 +19,7 @@ interface ProjectListItem {
   presentWorkers: number;
   todayExpense: number;
   totalDue: number;
-  lowStockCount: number;
+  outOfStockCount: number;
   siteContact?: string;
 }
 
@@ -217,9 +217,9 @@ export default function ProjectsDirectoryPage() {
                   </div>
 
                   <div className="bg-white border border-slate-100 p-2 rounded-xl">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Low Stock</span>
-                    <span className={`text-xs font-black ${p.lowStockCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                      {p.lowStockCount}
+                    <span className="text-[10px] text-slate-500 block font-semibold">Out of Stock</span>
+                    <span className={`text-xs font-black ${p.outOfStockCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+                      {p.outOfStockCount || 0}
                     </span>
                   </div>
                 </div>

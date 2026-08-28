@@ -47,26 +47,25 @@ export default function MaterialsPage() {
       </div>
 
       {/* Stock Alerts Widget */}
-      {stockMetrics && stockMetrics.totalAttentionCount > 0 && (
-        <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex items-center justify-between gap-4 shadow-sm">
+      {stockMetrics && stockMetrics.outOfStockCount > 0 && (
+        <div className="bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg font-bold shrink-0">
-              ⚠️
+            <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center text-lg font-bold shrink-0">
+              🚨
             </div>
             <div>
-              <h3 className="text-sm font-bold text-amber-900">
-                {stockMetrics.totalAttentionCount} Materials Need Attention
+              <h3 className="text-sm font-bold text-red-900">
+                {stockMetrics.outOfStockCount} Material(s) Out of Stock
               </h3>
-              <p className="text-xs text-amber-700">
-                {stockMetrics.outOfStockCount > 0 && `${stockMetrics.outOfStockCount} Out of Stock · `}
-                {stockMetrics.lowStockCount} Below Minimum Stock Threshold
+              <p className="text-xs text-red-700">
+                Receive new deliveries to replenish construction site inventory.
               </p>
             </div>
           </div>
 
           <Link
-            href="/materials/stock?status=LOW"
-            className="px-3 py-2 bg-amber-500 text-slate-950 text-xs font-extrabold rounded-xl hover:bg-amber-400 transition-colors whitespace-nowrap shadow"
+            href="/materials/stock?status=OUT_OF_STOCK"
+            className="px-3 py-2 bg-red-600 text-white text-xs font-extrabold rounded-xl hover:bg-red-700 transition-colors whitespace-nowrap shadow"
           >
             Review Stock
           </Link>

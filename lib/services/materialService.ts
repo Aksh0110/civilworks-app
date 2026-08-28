@@ -9,12 +9,9 @@ import { Vendor } from '../models/Vendor';
 import { logAuditAction } from './auditService';
 import mongoose from 'mongoose';
 
-export function calculateStockStatus(currentStock: number, minStockLevel: number): StockStatus {
+export function calculateStockStatus(currentStock: number, minStockLevel?: number): StockStatus {
   if (currentStock <= 0) {
     return 'OUT_OF_STOCK';
-  }
-  if (minStockLevel > 0 && currentStock < minStockLevel) {
-    return 'LOW';
   }
   return 'GOOD';
 }
@@ -521,7 +518,7 @@ export async function getStockMetricsOnly(projectId: string) {
   }
 
   const matQuery: any = { status: 'ACTIVE' };
-  const materials = await Material.find(matQuery).select('_id minStockLevel').lean().exec();
+  const materials = await Material.find(matQuery).select('_id').lean().exec();
 
   const stockQuery: any = { projectId };
   const stocks = await MaterialStock.find(stockQuery).select('materialId currentStock').lean().exec();
@@ -529,23 +526,19 @@ export async function getStockMetricsOnly(projectId: string) {
   const stockMap = new Map<string, number>();
   stocks.forEach((s: any) => stockMap.set(s.materialId.toString(), s.currentStock || 0));
 
-  let lowStockCount = 0;
   let outOfStockCount = 0;
 
   materials.forEach((m: any) => {
     const currentStock = stockMap.get(m._id.toString()) || 0;
-    const minStock = m.minStockLevel || 0;
     if (currentStock <= 0) {
       outOfStockCount++;
-    } else if (minStock > 0 && currentStock < minStock) {
-      lowStockCount++;
     }
   });
 
   return {
-    lowStockCount,
+    lowStockCount: 0,
     outOfStockCount,
-    totalAttentionCount: lowStockCount + outOfStockCount
+    totalAttentionCount: outOfStockCount
   };
 }
 

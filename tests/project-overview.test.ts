@@ -3,9 +3,9 @@ import { formatAuditLogToActivity } from '../lib/services/projectService';
 
 describe('Project Overview & Command Center Unit Tests', () => {
   it('evaluates site health status rules accurately', () => {
-    const calcHealth = (present: number, absent: number, lowStock: number, totalDue: number, openIssues: number) => ({
+    const calcHealth = (present: number, absent: number, outOfStock: number, totalDue: number, openIssues: number) => ({
       labour: absent === 0 || present >= absent * 3 ? 'Good' : 'Needs Attention',
-      materials: lowStock === 0 ? 'Good' : 'Needs Attention',
+      materials: outOfStock === 0 ? 'Good' : 'Needs Attention',
       payments: totalDue === 0 ? 'Good' : 'Needs Attention',
       progress: openIssues === 0 ? 'On Track' : 'Needs Attention'
     });
@@ -24,15 +24,15 @@ describe('Project Overview & Command Center Unit Tests', () => {
   });
 
   it('triggers operational alerts based on thresholds', () => {
-    const generateAlerts = (lowStockCount: number, totalDue: number, openIssues: number) => {
+    const generateAlerts = (outOfStockCount: number, totalDue: number, openIssues: number) => {
       const alerts: string[] = [];
-      if (lowStockCount > 0) alerts.push('Low Stock');
+      if (outOfStockCount > 0) alerts.push('Out of Stock');
       if (totalDue > 0) alerts.push('Payments Due');
       if (openIssues > 0) alerts.push('Open Issues');
       return alerts;
     };
 
-    expect(generateAlerts(3, 50000, 1)).toEqual(['Low Stock', 'Payments Due', 'Open Issues']);
+    expect(generateAlerts(3, 50000, 1)).toEqual(['Out of Stock', 'Payments Due', 'Open Issues']);
     expect(generateAlerts(0, 0, 0)).toEqual([]);
   });
 
