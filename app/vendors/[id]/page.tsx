@@ -580,8 +580,8 @@ export default function VendorProfilePage() {
 
       {/* Add Bill Modal */}
       {showAddBillModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-4 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900">Add Vendor Bill</h3>
             <form onSubmit={handleAddBill} className="space-y-4">
               <div>
@@ -643,8 +643,8 @@ export default function VendorProfilePage() {
 
       {/* Add Contact Modal */}
       {showAddContactModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-4 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900">Add Vendor Contact</h3>
             <form onSubmit={handleAddContact} className="space-y-4">
               <div>
@@ -703,8 +703,8 @@ export default function VendorProfilePage() {
 
       {/* Add Document Metadata Modal */}
       {showAddDocModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-4 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900">Attach Document Metadata</h3>
             <form onSubmit={handleAddDoc} className="space-y-4">
               <div>
