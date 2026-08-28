@@ -69,8 +69,8 @@ export default function WorkTypeModal({ isOpen, workTypeToEdit, onClose, onSucce
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
+    <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+      <div className="w-full sm:max-w-md bg-white border border-slate-200 rounded-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <span>🏗️</span> {workTypeToEdit ? 'Edit Work Type' : 'Add Work Type'}

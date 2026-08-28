@@ -56,8 +56,8 @@ export default function ConfirmModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+    <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl space-y-4 animate-in zoom-in-95">
         <div className="flex items-center justify-between pb-3 border-b border-slate-200">
           <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <span>{confirmVariant === 'danger' ? '⚠️' : '❓'}</span> {title}

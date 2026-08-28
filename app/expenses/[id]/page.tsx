@@ -257,8 +257,8 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
 
       {/* Controlled Void Modal */}
       {isVoidModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h3 className="text-base font-bold text-slate-900">Void Expense Record</h3>
               <button onClick={() => setIsVoidModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -308,8 +308,8 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
 
       {/* Controlled Edit Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 max-h-[85vh] overflow-y-auto shadow-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h3 className="text-base font-bold text-slate-900">Edit Expense Record</h3>
               <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600">
