@@ -57,6 +57,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   {activeProject?._id === proj._id && <span className="check">✓</span>}
                 </button>
               ))}
+
+              {activeProject && (
+                <>
+                  <div className="dropdown-divider" />
+                  <button
+                    className="dropdown-item text-red-600 font-bold"
+                    onClick={() => {
+                      setActiveProjectId(null);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    <span>🚫</span> Clear Active Selection
+                  </button>
+                </>
+              )}
+
               <div className="dropdown-divider" />
               <button
                 className="dropdown-item add-btn"

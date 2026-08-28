@@ -1,19 +1,22 @@
 import AppShell from '@/components/AppShell';
 import Link from 'next/link';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 const modules = [
-  { icon: '📊', title: 'Reports & Analytics', desc: 'Statements, muster registers & cost summaries', href: '/reports' },
-  { icon: '📂', title: 'Documents Hub', desc: 'Centralized site drawings, bills & attachments', href: '/documents' },
-  { icon: '💳', title: 'Payments & Receipts', desc: 'Pay workers & vendors via cash/UPI', href: '/payments' },
-  { icon: '🏬', title: 'Vendor Management', desc: 'Vendor profiles, bills & ledgers', href: '/vendors' },
-  { icon: '📦', title: 'Materials & Stock', desc: 'Receive, issue & track site inventory', href: '/materials' },
-  { icon: '📋', title: 'Daily Work Progress', desc: 'Record work completed & site diary', href: '/progress' },
-  { icon: '💸', title: 'Expenses & Bills', desc: 'Log site operational expenditures', href: '/expenses' },
-  { icon: '👷', title: 'Workers', desc: 'Worker database & rates', href: '/workers' },
-  { icon: '🏗️', title: 'Projects', desc: 'Site projects & locations', href: '/projects' }
+  { key: 'reports', icon: '📊', title: 'Reports & Analytics', desc: 'Statements, muster registers & cost summaries', href: '/reports' },
+  { key: 'documents', icon: '📂', title: 'Documents Hub', desc: 'Centralized site drawings, bills & attachments', href: '/documents' },
+  { key: 'payments', icon: '💳', title: 'Payments & Receipts', desc: 'Pay workers & vendors via cash/UPI', href: '/payments' },
+  { key: 'vendors', icon: '🏬', title: 'Vendor Management', desc: 'Vendor profiles, bills & ledgers', href: '/vendors' },
+  { key: 'materials', icon: '📦', title: 'Materials & Stock', desc: 'Receive, issue & track site inventory', href: '/materials' },
+  { key: 'progress', icon: '📋', title: 'Daily Work Progress', desc: 'Record work completed & site diary', href: '/progress' },
+  { key: 'expenses', icon: '💸', title: 'Expenses & Bills', desc: 'Log site operational expenditures', href: '/expenses' },
+  { key: 'workers', icon: '👷', title: 'Workers', desc: 'Worker database & rates', href: '/workers' },
+  { key: 'projects', icon: '🏗️', title: 'Projects', desc: 'Site projects & locations', href: '/projects' }
 ];
 
 export default function MorePage() {
+  const visibleModules = modules.filter((m) => m.key === 'projects' || isFeatureEnabled(m.key as any));
+
   return (
     <AppShell>
       <main className="content">
@@ -23,7 +26,7 @@ export default function MorePage() {
         </p>
 
         <div className="grid">
-          {modules.map((item) => (
+          {visibleModules.map((item) => (
             <Link
               key={item.title}
               href={item.href}

@@ -5,6 +5,7 @@ import { getStockMetricsOnly } from '@/lib/services/materialService';
 import { getExpenseSummary } from '@/lib/services/expenseService';
 import { getDailyReportData } from '@/lib/services/progressService';
 import { getProjectPaymentSummary } from '@/lib/services/paymentService';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 export async function GET(request: Request) {
   try {
@@ -16,7 +17,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'projectId is required' }, { status: 400 });
     }
 
-    // Execute all backend queries in parallel using Promise.all for sub-50ms execution
+    const showAttendance = isFeatureEnabled('attendance');
+    const showWorkers = isFeatureEnabled('workers');
+
+    // Execute active backend queries in parallel using Promise.all
     const [
       attendanceSummary,
       activeWorkers,
@@ -25,8 +29,8 @@ export async function GET(request: Request) {
       todayProgress,
       paymentSummary
     ] = await Promise.all([
-      getAttendanceSummary(projectId, date).catch(() => null),
-      getWorkers(projectId, { status: 'ACTIVE' }).catch(() => []),
+      showAttendance ? getAttendanceSummary(projectId, date).catch(() => null) : Promise.resolve(null),
+      showWorkers ? getWorkers(projectId, { status: 'ACTIVE' }).catch(() => []) : Promise.resolve([]),
       getStockMetricsOnly(projectId).catch(() => null),
       getExpenseSummary(projectId).catch(() => null),
       getDailyReportData(projectId, date).catch(() => null),

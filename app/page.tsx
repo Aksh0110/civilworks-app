@@ -5,6 +5,8 @@ import AppShell from '@/components/AppShell';
 import { useProject } from '@/lib/context/ProjectContext';
 import Link from 'next/link';
 
+import { isFeatureEnabled } from '@/lib/config/features';
+
 export default function HomePage() {
   const { activeProject } = useProject();
   const [summary, setSummary] = useState<any>(null);
@@ -33,16 +35,18 @@ export default function HomePage() {
       .catch(console.error);
   }, [activeProject?._id]);
 
-  const quick = [
-    { icon: '💳', label: 'Payment', href: '/payments' },
-    { icon: '✓', label: 'Attendance', href: '/attendance' },
-    { icon: '📦', label: 'Material', href: '/materials' },
-    { icon: '📋', label: 'Daily Progress', href: '/progress' },
-    { icon: '💸', label: 'Expenses', href: '/expenses' },
-    { icon: '👷', label: 'Workers', href: '/workers' },
-    { icon: '🏬', label: 'Vendors', href: '/vendors' },
-    { icon: '🏗️', label: 'Projects', href: '/projects' }
+  const allQuickActions = [
+    { key: 'payments', icon: '💳', label: 'Payment', href: '/payments' },
+    { key: 'attendance', icon: '✓', label: 'Attendance', href: '/attendance' },
+    { key: 'materials', icon: '📦', label: 'Material', href: '/materials' },
+    { key: 'progress', icon: '📋', label: 'Daily Progress', href: '/progress' },
+    { key: 'expenses', icon: '💸', label: 'Expenses', href: '/expenses' },
+    { key: 'workers', icon: '👷', label: 'Workers', href: '/workers' },
+    { key: 'vendors', icon: '🏬', label: 'Vendors', href: '/vendors' },
+    { key: 'projects', icon: '🏗️', label: 'Projects', href: '/projects' }
   ];
+
+  const quick = allQuickActions.filter((action) => action.key === 'projects' || isFeatureEnabled(action.key as any));
 
   const completedToday = todayProgress?.workItems?.filter((i: any) => i.status === 'COMPLETED').length || 0;
   const inProgressToday = todayProgress?.workItems?.filter((i: any) => i.status === 'IN_PROGRESS').length || 0;
@@ -57,12 +61,14 @@ export default function HomePage() {
 
         {/* Stats Grid */}
         <section className="grid stats">
-          <div className="card">
-            <div className="subtle font-semibold">Present Today</div>
-            <div className="stat-value text-emerald-400 font-extrabold">
-              {summary ? `${summary.presentCount || 0} / ${workerCount}` : `0 / ${workerCount}`}
+          {isFeatureEnabled('attendance') && (
+            <div className="card">
+              <div className="subtle font-semibold">Present Today</div>
+              <div className="stat-value text-emerald-400 font-extrabold">
+                {summary ? `${summary.presentCount || 0} / ${workerCount}` : `0 / ${workerCount}`}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="card">
             <div className="subtle font-semibold">Today's Progress</div>
@@ -114,15 +120,17 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="list-item flex items-center justify-between">
-            <div>
-              <strong>Daily Attendance Register</strong>
-              <div className="subtle">Operational for {activeProject?.name || 'current site'}</div>
+          {isFeatureEnabled('attendance') && (
+            <div className="list-item flex items-center justify-between">
+              <div>
+                <strong>Daily Attendance Register</strong>
+                <div className="subtle">Operational for {activeProject?.name || 'current site'}</div>
+              </div>
+              <Link href="/attendance" className="btn btn-secondary btn-sm">
+                Open Register
+              </Link>
             </div>
-            <Link href="/attendance" className="btn btn-secondary btn-sm">
-              Open Register
-            </Link>
-          </div>
+          )}
 
           <div className="list-item flex items-center justify-between">
             <div>

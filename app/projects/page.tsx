@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 import ProjectModal from '@/components/ProjectModal';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -22,12 +23,14 @@ interface ProjectListItem {
 }
 
 export default function ProjectsDirectoryPage() {
-  const { setActiveProjectId, refreshProjects } = useProject();
+  const { activeProject, setActiveProjectId, refreshProjects } = useProject();
 
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
-  const [activeTab, setActiveTab] = useState<'ALL' | 'ACTIVE' | 'ON_HOLD' | 'COMPLETED'>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showWorkers = isFeatureEnabled('workers');
 
   // Edit / Delete State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -36,20 +39,25 @@ export default function ProjectsDirectoryPage() {
 
   useEffect(() => {
     loadProjects();
-  }, [activeTab]);
+  }, []);
 
   const loadProjects = () => {
     setLoading(true);
-    const query = new URLSearchParams();
-    if (activeTab !== 'ALL') query.set('statusTab', activeTab);
-
-    fetch(`/api/projects?${query.toString()}`)
+    fetch('/api/projects')
       .then((r) => r.json())
       .then((d) => {
         if (d.data) setProjects(d.data);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  const handleSelectProject = (p: ProjectListItem) => {
+    setActiveProjectId(p._id);
+    setToastMessage(`✅ Active site switched to "${p.name}"`);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2500);
   };
 
   const handleDeleteProject = async () => {
@@ -75,6 +83,13 @@ export default function ProjectsDirectoryPage() {
 
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+      {/* Toast Banner */}
+      {toastMessage && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#087F3E] text-white px-5 py-2.5 rounded-2xl shadow-xl font-bold text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top">
+          {toastMessage}
+        </div>
+      )}
+
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -83,7 +98,8 @@ export default function ProjectsDirectoryPage() {
             <h1 className="text-xl font-bold text-slate-900">Project Directory</h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Construction site command center overview & site project switcher.
+            Current site:{' '}
+            <span className="text-[#087F3E] font-extrabold">{activeProject?.name || 'None Selected'}</span>. Click any site to switch workspace.
           </p>
         </div>
 
@@ -98,25 +114,8 @@ export default function ProjectsDirectoryPage() {
         </button>
       </div>
 
-      {/* Filter Bar & Status Tabs */}
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-3 shadow-sm">
-        <div className="flex bg-slate-100 p-1 rounded-xl gap-1 border border-slate-200">
-          {(['ALL', 'ACTIVE', 'ON_HOLD', 'COMPLETED'] as const).map((t) => (
-            <button
-              key={t}
-              onClick={() => setActiveTab(t)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                activeTab === t
-                  ? 'bg-[#087F3E] text-white shadow'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-
-        {/* Search */}
+      {/* Search Input */}
+      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
         <input
           type="text"
           placeholder="Search project name, code, or location..."
@@ -146,101 +145,101 @@ export default function ProjectsDirectoryPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredProjects.map((p) => (
-            <div
-              key={p._id}
-              className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-[#087F3E] transition-all shadow-sm flex flex-col justify-between space-y-4 group"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="text-base font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
-                    {p.name}
+          {filteredProjects.map((p) => {
+            const isActive = activeProject?._id === p._id;
+
+            return (
+              <div
+                key={p._id}
+                className={`p-5 rounded-2xl transition-all shadow-sm flex flex-col justify-between space-y-4 group ${
+                  isActive
+                    ? 'bg-emerald-50/30 border-2 border-[#087F3E] shadow-md'
+                    : 'bg-white border border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="text-base font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                      {p.name}
+                    </div>
+                    <div className="text-xs font-semibold text-slate-500">
+                      Code: <span className="text-slate-800">{p.code}</span>
+                      {p.location ? ` • ${p.location}` : ''}
+                    </div>
                   </div>
-                  <div className="text-xs font-semibold text-slate-500">
-                    Code: <span className="text-slate-800">{p.code}</span>
-                    {p.location ? ` • ${p.location}` : ''}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setProjectToEdit(p);
+                        setIsEditModalOpen(true);
+                      }}
+                      className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                      title="Edit Project"
+                    >
+                      ✏️
+                    </button>
+
+                    <button
+                      onClick={() => setProjectToDelete(p)}
+                      className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      title="Delete Project"
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase shrink-0 ${
-                      p.status === 'ACTIVE'
-                        ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                        : p.status === 'ON_HOLD'
-                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                        : 'bg-slate-100 text-slate-700 border border-slate-200'
+                {/* Metrics Bar */}
+                <div className={`grid ${showWorkers ? 'grid-cols-4' : 'grid-cols-3'} gap-2 pt-3 border-t border-slate-100 text-center`}>
+                  {showWorkers && (
+                    <div className="bg-white border border-slate-100 p-2 rounded-xl">
+                      <span className="text-[10px] text-slate-500 block font-semibold">Workers</span>
+                      <span className="text-xs font-black text-slate-900">{p.presentWorkers}</span>
+                    </div>
+                  )}
+
+                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
+                    <span className="text-[10px] text-slate-500 block font-semibold">Today Expense</span>
+                    <span className="text-xs font-black text-slate-900">₹{p.todayExpense}</span>
+                  </div>
+
+                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
+                    <span className="text-[10px] text-slate-500 block font-semibold">Total Due</span>
+                    <span className="text-xs font-black text-amber-600">₹{p.totalDue.toLocaleString('en-IN')}</span>
+                  </div>
+
+                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
+                    <span className="text-[10px] text-slate-500 block font-semibold">Low Stock</span>
+                    <span className={`text-xs font-black ${p.lowStockCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+                      {p.lowStockCount}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions Bar */}
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    onClick={() => handleSelectProject(p)}
+                    className={`px-4 py-2 rounded-xl font-extrabold text-xs transition-colors shadow-xs ${
+                      isActive
+                        ? 'bg-[#087F3E] text-white border border-[#087F3E]'
+                        : 'bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb]'
                     }`}
                   >
-                    {p.status}
-                  </span>
-
-                  <button
-                    onClick={() => {
-                      setProjectToEdit(p);
-                      setIsEditModalOpen(true);
-                    }}
-                    className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
-                    title="Edit Project"
-                  >
-                    ✏️
+                    {isActive ? '✓ Selected Site' : 'Select Site'}
                   </button>
 
-                  <button
-                    onClick={() => setProjectToDelete(p)}
-                    className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
-                    title="Delete Project"
+                  <Link
+                    href={`/projects/${p._id}`}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors shadow"
                   >
-                    🗑️
-                  </button>
+                    Overview →
+                  </Link>
                 </div>
               </div>
-
-              {/* Metrics Bar */}
-              <div className="grid grid-cols-4 gap-2 pt-3 border-t border-slate-100 text-center">
-                <div className="bg-slate-50 p-2 rounded-xl">
-                  <span className="text-[10px] text-slate-500 block font-semibold">Workers</span>
-                  <span className="text-xs font-black text-slate-900">{p.presentWorkers}</span>
-                </div>
-
-                <div className="bg-slate-50 p-2 rounded-xl">
-                  <span className="text-[10px] text-slate-500 block font-semibold">Expense</span>
-                  <span className="text-xs font-black text-slate-900">₹{p.todayExpense}</span>
-                </div>
-
-                <div className="bg-slate-50 p-2 rounded-xl">
-                  <span className="text-[10px] text-slate-500 block font-semibold">Total Due</span>
-                  <span className="text-xs font-black text-amber-600">₹{p.totalDue.toLocaleString('en-IN')}</span>
-                </div>
-
-                <div className="bg-slate-50 p-2 rounded-xl">
-                  <span className="text-[10px] text-slate-500 block font-semibold">Low Stock</span>
-                  <span className={`text-xs font-black ${p.lowStockCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                    {p.lowStockCount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Actions Bar */}
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  onClick={() => {
-                    setActiveProjectId(p._id);
-                  }}
-                  className="px-3.5 py-1.5 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] font-bold text-xs rounded-xl transition-colors"
-                >
-                  Set Active Site ✓
-                </button>
-
-                <Link
-                  href={`/projects/${p._id}`}
-                  className="px-3.5 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white font-bold text-xs rounded-xl transition-colors shadow"
-                >
-                  Command Center →
-                </Link>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -269,4 +268,3 @@ export default function ProjectsDirectoryPage() {
     </div>
   );
 }
-

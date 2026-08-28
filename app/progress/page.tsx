@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 interface ProgressHistoryItem {
   _id: string;
@@ -178,7 +179,7 @@ export default function DailyProgressHubPage() {
                   )}
                 </div>
 
-                {rec.workforceCount > 0 && (
+                {isFeatureEnabled('workers') && rec.workforceCount > 0 && (
                   <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-100 flex items-center gap-3">
                     <span>👷 Workforce: {rec.workforceCount} workers present</span>
                     {rec.labourCost > 0 && <span>· Labour Cost: ₹{rec.labourCost.toLocaleString('en-IN')}</span>}
