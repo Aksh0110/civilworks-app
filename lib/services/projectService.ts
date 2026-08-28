@@ -75,6 +75,12 @@ export async function updateProject(id: string, data: Partial<IProject>, user?: 
   if (data.siteContact !== undefined) project.siteContact = data.siteContact.trim();
   if (data.managerName !== undefined) project.managerName = data.managerName.trim();
   if (data.notes !== undefined) project.notes = data.notes.trim();
+  if (data.modules !== undefined) {
+    project.modules = {
+      ...(project.modules || {}),
+      ...data.modules
+    };
+  }
 
   await project.save();
 

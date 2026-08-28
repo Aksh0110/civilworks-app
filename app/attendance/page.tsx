@@ -5,6 +5,7 @@ import AppShell from '@/components/AppShell';
 import { useProject } from '@/lib/context/ProjectContext';
 
 import ConfirmModal from '@/components/ConfirmModal';
+import ModuleGuard from '@/components/ModuleGuard';
 
 type AttendanceStatus = 'PRESENT' | 'HALF_DAY' | 'ABSENT';
 
@@ -202,7 +203,8 @@ export default function AttendancePage() {
 
   return (
     <AppShell>
-      <main className="content">
+      <ModuleGuard module="attendance">
+        <main className="content">
         <div className="page-header">
           <div>
             <h1 className="page-title">Attendance Register</h1>
@@ -465,6 +467,7 @@ export default function AttendancePage() {
           onConfirm={handleDeleteAttendance}
         />
       </main>
+      </ModuleGuard>
     </AppShell>
   );
 }

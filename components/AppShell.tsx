@@ -6,7 +6,9 @@ import BottomNav from './BottomNav';
 import { useProject } from '@/lib/context/ProjectContext';
 import ProjectModal from './ProjectModal';
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+import { ModuleProvider } from '@/lib/context/ModuleContext';
+
+function AppShellContent({ children }: { children: React.ReactNode }) {
   const { projects, activeProject, setActiveProjectId, loading } = useProject();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,6 +69,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <span>➕</span> Create New Project
               </button>
+
+              <Link
+                href="/settings/modules"
+                className="dropdown-item"
+                style={{ color: '#087F3E', fontWeight: 'bold' }}
+                onClick={() => setShowDropdown(false)}
+              >
+                <span>⚙️</span> Module Control Panel
+              </Link>
             </div>
           )}
         </div>
@@ -78,5 +89,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       <ProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
+  );
+}
+
+export default function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <ModuleProvider>
+      <AppShellContent>{children}</AppShellContent>
+    </ModuleProvider>
   );
 }

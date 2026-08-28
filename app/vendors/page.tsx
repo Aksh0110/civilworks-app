@@ -7,6 +7,7 @@ import { DEFAULT_VENDOR_CATEGORIES } from '@/lib/constants/vendorCategories';
 
 import VendorModal from '@/components/VendorModal';
 import ConfirmModal from '@/components/ConfirmModal';
+import ModuleGuard from '@/components/ModuleGuard';
 
 interface VendorListItem {
   _id: string;
@@ -76,7 +77,8 @@ export default function VendorsListPage() {
   });
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <ModuleGuard module="vendors">
+      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -268,6 +270,7 @@ export default function VendorsListPage() {
         onConfirm={handleDeleteVendor}
       />
     </div>
+    </ModuleGuard>
   );
 }
 

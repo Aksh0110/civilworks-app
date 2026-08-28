@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
+import ModuleGuard from '@/components/ModuleGuard';
+
 interface ExpenseItem {
   _id: string;
   categoryName: string;
@@ -65,7 +67,8 @@ export default function ExpensesHubPage() {
   });
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <ModuleGuard module="expenses">
+      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
         <div>
@@ -234,5 +237,6 @@ export default function ExpensesHubPage() {
         </div>
       )}
     </div>
+    </ModuleGuard>
   );
 }
