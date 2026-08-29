@@ -15,7 +15,7 @@ export async function getWorkers(projectId: string, filter?: { category?: string
   if (filter?.status) query.status = filter.status;
   else query.status = 'ACTIVE';
 
-  const workers = await Worker.find(query).sort({ name: 1 }).exec();
+  const workers = await Worker.find(query).sort({ name: 1 }).lean().exec();
   return JSON.parse(JSON.stringify(workers));
 }
 

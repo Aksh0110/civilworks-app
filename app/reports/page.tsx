@@ -2,22 +2,25 @@
 
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 const reportTypes = [
   { id: 'cost-summary', title: 'Project Cost Summary', desc: 'Management summary of labour, materials & site expenses', icon: '📊' },
-  { id: 'attendance', title: 'Labour Attendance Register', desc: 'Daily attendance logs & worker status counts', icon: '👷' },
-  { id: 'wage', title: 'Wage & Earnings Statement', desc: 'Gross wages earned, advances taken & net due', icon: '💰' },
-  { id: 'material-stock', title: 'Material Stock Level Report', desc: 'Current quantities, units & low stock alerts', icon: '📦' },
-  { id: 'material-movement', title: 'Material Inward & Issue Log', desc: 'Chronological inward deliveries & site issues', icon: '🚚' },
-  { id: 'vendor-outstanding', title: 'Vendor Outstanding Statement', desc: 'Unpaid vendor bills & supplier balances', icon: '🏬' },
-  { id: 'vendor-ledger', title: 'Vendor Transaction Ledger', desc: 'Chronological vendor bills & payment ledger', icon: '📒' },
-  { id: 'expense', title: 'Expense Category Breakdown', desc: 'Operational site expenditure vouchers', icon: '💸' },
-  { id: 'payment', title: 'Payment & Advance Register', desc: 'Disbursed labour payments & vendor settlements', icon: '💳' },
-  { id: 'progress', title: 'Daily Progress Site Report', desc: 'Daily work completed, pending items & site photos', icon: '📋' }
+  { id: 'attendance', feature: 'attendance', title: 'Labour Attendance Register', desc: 'Daily attendance logs & worker status counts', icon: '👷' },
+  { id: 'wage', feature: 'attendance', title: 'Wage & Earnings Statement', desc: 'Gross wages earned, advances taken & net due', icon: '💰' },
+  { id: 'material-stock', feature: 'materials', title: 'Material Stock Level Report', desc: 'Current quantities, units & low stock alerts', icon: '📦' },
+  { id: 'material-movement', feature: 'materials', title: 'Material Inward & Issue Log', desc: 'Chronological inward deliveries & site issues', icon: '🚚' },
+  { id: 'vendor-outstanding', feature: 'vendors', title: 'Vendor Outstanding Statement', desc: 'Unpaid vendor bills & supplier balances', icon: '🏬' },
+  { id: 'vendor-ledger', feature: 'vendors', title: 'Vendor Transaction Ledger', desc: 'Chronological vendor bills & payment ledger', icon: '📒' },
+  { id: 'expense', feature: 'expenses', title: 'Expense Category Breakdown', desc: 'Operational site expenditure vouchers', icon: '💸' },
+  { id: 'payment', feature: 'payments', title: 'Payment & Advance Register', desc: 'Disbursed labour payments & vendor settlements', icon: '💳' },
+  { id: 'progress', feature: 'progress', title: 'Daily Progress Site Report', desc: 'Daily work completed, pending items & site photos', icon: '📋' }
 ];
 
 export default function ReportsHubPage() {
   const { activeProject } = useProject();
+
+  const visibleReports = reportTypes.filter((rep) => !rep.feature || isFeatureEnabled(rep.feature as any));
 
   return (
     <div className="space-y-6 pb-20 max-w-4xl mx-auto">
@@ -35,7 +38,7 @@ export default function ReportsHubPage() {
 
       {/* Reports Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {reportTypes.map((rep) => (
+        {visibleReports.map((rep) => (
           <Link
             key={rep.id}
             href={`/reports/${rep.id}`}

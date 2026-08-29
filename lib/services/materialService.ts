@@ -6,15 +6,13 @@ import { MaterialInward } from '../models/MaterialInward';
 import { MaterialIssue } from '../models/MaterialIssue';
 import { StockAdjustment, AdjustmentType } from '../models/StockAdjustment';
 import { Vendor } from '../models/Vendor';
+import { VendorBill } from '../models/VendorBill';
 import { logAuditAction } from './auditService';
 import mongoose from 'mongoose';
 
-export function calculateStockStatus(currentStock: number, minStockLevel: number): StockStatus {
+export function calculateStockStatus(currentStock: number, minStockLevel?: number): StockStatus {
   if (currentStock <= 0) {
     return 'OUT_OF_STOCK';
-  }
-  if (minStockLevel > 0 && currentStock < minStockLevel) {
-    return 'LOW';
   }
   return 'GOOD';
 }
@@ -242,6 +240,29 @@ export async function receiveMaterialInward(payload: ReceiveInwardPayload, user?
     items: processedItems,
     receivedBy: user || 'Site Supervisor'
   });
+
+  // Auto-generate Vendor Bill if vendorId and totalAmount > 0
+  if (payload.vendorId && mongoose.isValidObjectId(payload.vendorId) && totalAmount > 0) {
+    const billNum =
+      payload.invoiceNumber?.trim() ||
+      payload.challanNumber?.trim() ||
+      `INV-INW-${inward._id.toString().slice(-6).toUpperCase()}`;
+
+    const itemsSummary = processedItems.map((i: any) => `${i.quantity} ${i.unit} ${i.materialName}`).join(', ');
+
+    await VendorBill.create({
+      projectId: payload.projectId,
+      vendorId: payload.vendorId,
+      vendorName,
+      billNumber: billNum,
+      billDate: new Date(payload.date),
+      totalAmount,
+      paidAmount: 0,
+      status: 'OPEN',
+      materialInwardId: inward._id,
+      remarks: payload.remarks?.trim() || `Material Delivery: ${itemsSummary}`
+    });
+  }
 
   // Atomic Stock Increase for each received material item
   const updatedStockList = [];
@@ -513,6 +534,38 @@ export async function adjustStock(
   };
 }
 
+// Fast Lightweight Stock Metrics Fetch
+export async function getStockMetricsOnly(projectId: string) {
+  await connectMongoDB();
+  if (!mongoose.isValidObjectId(projectId)) {
+    return { lowStockCount: 0, outOfStockCount: 0, totalAttentionCount: 0 };
+  }
+
+  const matQuery: any = { status: 'ACTIVE' };
+  const materials = await Material.find(matQuery).select('_id').lean().exec();
+
+  const stockQuery: any = { projectId };
+  const stocks = await MaterialStock.find(stockQuery).select('materialId currentStock').lean().exec();
+
+  const stockMap = new Map<string, number>();
+  stocks.forEach((s: any) => stockMap.set(s.materialId.toString(), s.currentStock || 0));
+
+  let outOfStockCount = 0;
+
+  materials.forEach((m: any) => {
+    const currentStock = stockMap.get(m._id.toString()) || 0;
+    if (currentStock <= 0) {
+      outOfStockCount++;
+    }
+  });
+
+  return {
+    lowStockCount: 0,
+    outOfStockCount,
+    totalAttentionCount: outOfStockCount
+  };
+}
+
 // Stock Overview Query
 export async function getStockOverview(
   projectId: string,
@@ -701,6 +754,7 @@ export async function deleteMaterialInward(id: string, user?: string) {
   if (!inward) throw new Error('Material inward record not found.');
 
   await (MaterialInward as any).findByIdAndDelete(id).exec();
+  await (VendorBill as any).deleteMany({ materialInwardId: id }).exec();
 
   await logAuditAction({
     user,

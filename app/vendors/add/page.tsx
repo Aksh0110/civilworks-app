@@ -109,23 +109,16 @@ export default function AddVendorPage() {
   }
 
   return (
-    <div className="space-y-6 pb-20 max-w-2xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-2xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">➕</span>
-            <h1 className="text-xl font-bold text-slate-900">Add New Vendor</h1>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">➕</span>
+            <h1 className="text-base font-extrabold text-slate-900">Add New Vendor</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">Onboard a material supplier, transporter, or contractor.</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Onboard a material supplier, transporter, or contractor.</p>
         </div>
-
-        <Link
-          href="/vendors"
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
-        >
-          ← Back
-        </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-5 shadow-sm">

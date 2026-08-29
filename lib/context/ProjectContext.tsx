@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface ProjectSummary {
   _id: string;
@@ -14,7 +15,7 @@ interface ProjectContextType {
   projects: ProjectSummary[];
   activeProject: ProjectSummary | null;
   loading: boolean;
-  setActiveProjectId: (id: string) => void;
+  setActiveProjectId: (id: string | null) => void;
   refreshProjects: () => Promise<void>;
 }
 
@@ -27,6 +28,7 @@ const ProjectContext = createContext<ProjectContextType>({
 });
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,18 +43,23 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
       setProjects(list);
 
       const savedId = typeof window !== 'undefined' ? localStorage.getItem('civilworks_active_project') : null;
-      let matched = list.find((p) => p._id === savedId);
-      if (!matched && list.length > 0) {
-        matched = list[0];
-      }
-
-      if (matched) {
-        setActiveProject(matched);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('civilworks_active_project', matched._id);
-        }
-      } else {
+      if (savedId === 'NONE') {
         setActiveProject(null);
+      } else {
+        const targetId = activeProject?._id || savedId;
+        let matched = list.find((p) => p._id === targetId);
+        if (!matched && list.length > 0) {
+          matched = list[0];
+        }
+
+        if (matched) {
+          setActiveProject(matched);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('civilworks_active_project', matched._id);
+          }
+        } else {
+          setActiveProject(null);
+        }
       }
     } catch (err) {
       console.error('ProjectContext fetch error:', err);
@@ -62,10 +69,24 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    void fetchProjects();
-  }, []);
+    if (user) {
+      void fetchProjects();
+    } else {
+      setProjects([]);
+      setActiveProject(null);
+      setLoading(false);
+    }
+  }, [user?._id, user?.role]);
 
-  const handleSelectProject = (id: string) => {
+  const handleSelectProject = (id: string | null) => {
+    if (!id) {
+      setActiveProject(null);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('civilworks_active_project', 'NONE');
+      }
+      return;
+    }
+
     const matched = projects.find((p) => p._id === id);
     if (matched) {
       setActiveProject(matched);

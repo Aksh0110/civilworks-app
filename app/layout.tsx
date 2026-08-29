@@ -1,5 +1,6 @@
 import './globals.css';
 import { ProjectProvider } from '@/lib/context/ProjectContext';
+import { AuthProvider } from '@/lib/context/AuthContext';
 
 export const metadata = {
   title: 'CivilWorks — Construction Management',
@@ -10,7 +11,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <ProjectProvider>{children}</ProjectProvider>
+        <AuthProvider>
+          <ProjectProvider>{children}</ProjectProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ export interface IMaterial {
   name: string;
   category: string;
   unit: string;
-  minStockLevel: number;
+  minStockLevel?: number;
   status: 'ACTIVE' | 'INACTIVE';
   defaultRate?: number;
   code?: string;

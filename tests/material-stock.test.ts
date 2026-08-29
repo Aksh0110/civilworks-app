@@ -2,15 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { calculateStockStatus } from '../lib/services/materialService';
 
 describe('Material Stock Engine & Validation Rules', () => {
-  it('should correctly determine stock status (Good, Low, Out of Stock)', () => {
-    expect(calculateStockStatus(100, 50)).toBe('GOOD');
-    expect(calculateStockStatus(50, 50)).toBe('GOOD');
-    expect(calculateStockStatus(49, 50)).toBe('LOW');
-    expect(calculateStockStatus(1, 50)).toBe('LOW');
-    expect(calculateStockStatus(0, 50)).toBe('OUT_OF_STOCK');
-    expect(calculateStockStatus(-5, 50)).toBe('OUT_OF_STOCK');
-    expect(calculateStockStatus(10, 0)).toBe('GOOD');
-    expect(calculateStockStatus(0, 0)).toBe('OUT_OF_STOCK');
+  it('should correctly determine stock status (Good, Out of Stock)', () => {
+    expect(calculateStockStatus(100)).toBe('GOOD');
+    expect(calculateStockStatus(50)).toBe('GOOD');
+    expect(calculateStockStatus(1)).toBe('GOOD');
+    expect(calculateStockStatus(0)).toBe('OUT_OF_STOCK');
+    expect(calculateStockStatus(-5)).toBe('OUT_OF_STOCK');
   });
 
   it('should calculate inward stock increase cleanly', () => {
@@ -18,7 +15,7 @@ describe('Material Stock Engine & Validation Rules', () => {
     const inwardQuantity = 300;
     const newStock = initialStock + inwardQuantity;
     expect(newStock).toBe(300);
-    expect(calculateStockStatus(newStock, 50)).toBe('GOOD');
+    expect(calculateStockStatus(newStock)).toBe('GOOD');
   });
 
   it('should calculate issue stock decrease cleanly', () => {
@@ -26,7 +23,7 @@ describe('Material Stock Engine & Validation Rules', () => {
     const issueQuantity = 100;
     const newStock = initialStock - issueQuantity;
     expect(newStock).toBe(200);
-    expect(calculateStockStatus(newStock, 50)).toBe('GOOD');
+    expect(calculateStockStatus(newStock)).toBe('GOOD');
   });
 
   it('should reject issue when requested quantity exceeds available stock balance', () => {
@@ -47,19 +44,18 @@ describe('Material Stock Engine & Validation Rules', () => {
     );
   });
 
-  it('should correctly transition to LOW and OUT_OF_STOCK when issuing material', () => {
+  it('should correctly transition to OUT_OF_STOCK when issuing material', () => {
     let currentStock = 300;
-    const minStockLevel = 50;
 
-    // Issue 260 bags -> stock becomes 40 (< 50)
+    // Issue 260 bags -> stock becomes 40 (> 0)
     currentStock -= 260;
     expect(currentStock).toBe(40);
-    expect(calculateStockStatus(currentStock, minStockLevel)).toBe('LOW');
+    expect(calculateStockStatus(currentStock)).toBe('GOOD');
 
     // Issue remaining 40 bags -> stock becomes 0
     currentStock -= 40;
     expect(currentStock).toBe(0);
-    expect(calculateStockStatus(currentStock, minStockLevel)).toBe('OUT_OF_STOCK');
+    expect(calculateStockStatus(currentStock)).toBe('OUT_OF_STOCK');
   });
 
   it('should correctly handle stock adjustments (SET, ADD, SUBTRACT)', () => {

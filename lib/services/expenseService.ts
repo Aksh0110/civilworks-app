@@ -206,11 +206,15 @@ export async function createExpense(payload: CreateExpensePayload, user?: string
     action: 'EXPENSE_CREATED',
     entity: 'Expense',
     entityId: expense._id.toString(),
+    projectId: payload.projectId,
     metadata: {
+      projectId: payload.projectId,
       amount: roundedAmount,
       categoryName: catDoc.name,
       paymentMethod: payload.paymentMethod,
-      expenseDate: payload.expenseDate
+      expenseDate: payload.expenseDate,
+      remark: payload.remark,
+      vendorPerson: payload.vendorPerson
     }
   });
 
@@ -279,6 +283,7 @@ export async function getExpenses(projectId: string, filter?: GetExpensesFilter)
     .sort({ expenseDate: -1, createdAt: -1 })
     .skip(skip)
     .limit(limit)
+    .lean()
     .exec();
 
   let plainExpenses = JSON.parse(JSON.stringify(expenses));
@@ -371,7 +376,7 @@ export async function getExpenseSummary(projectId: string) {
   }
 
   const activeQuery: any = { projectId, status: 'ACTIVE' };
-  const allActiveExpenses = await Expense.find(activeQuery).exec();
+  const allActiveExpenses = await Expense.find(activeQuery).lean().exec();
 
   const now = new Date();
   const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));

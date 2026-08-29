@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
 
 import ConfirmModal from '@/components/ConfirmModal';
+import { isFeatureEnabled } from '@/lib/config/features';
 
 interface PaymentSummary {
   todayLabourPaid: number;
@@ -34,6 +35,8 @@ export default function PaymentsMainPage() {
   const [activeTab, setActiveTab] = useState<'ALL' | 'LABOUR' | 'VENDOR' | 'ADVANCES'>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const showLabour = isFeatureEnabled('workers') || isFeatureEnabled('attendance');
 
   // Delete State
   const [paymentToDelete, setPaymentToDelete] = useState<PaymentHistoryRecord | null>(null);
@@ -112,157 +115,167 @@ export default function PaymentsMainPage() {
     );
   });
 
+  const availableTabs = showLabour
+    ? (['ALL', 'LABOUR', 'VENDOR', 'ADVANCES'] as const)
+    : (['ALL', 'VENDOR', 'ADVANCES'] as const);
+
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">💳</span>
-            <h1 className="text-xl font-extrabold text-slate-900">Payment & Settlements</h1>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-lg">💳</span>
+            <h1 className="text-base font-extrabold text-slate-900">Payment & Settlements</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage worker wages, vendor bill payments, and advances for{' '}
-            <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Selected Site'}</span>.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Payments & settlements for <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
       </div>
 
       {/* Summary Widget */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Today Labour Paid</span>
-          <span className="text-lg font-black text-[#087F3E] mt-1 block">
-            ₹{(summary?.todayLabourPaid || 0).toLocaleString('en-IN')}
-          </span>
-        </div>
+      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-4' : 'sm:grid-cols-2'} gap-2`}>
+        {showLabour && (
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+            <span className="text-[11px] text-slate-500 block font-semibold">Today Labour</span>
+            <span className="text-base font-black text-[#087F3E] mt-0.5 block">
+              ₹{(summary?.todayLabourPaid || 0).toLocaleString('en-IN')}
+            </span>
+          </div>
+        )}
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Today Vendor Paid</span>
-          <span className="text-lg font-black text-[#087F3E] mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Today Vendor</span>
+          <span className="text-base font-black text-[#087F3E] mt-0.5 block">
             ₹{(summary?.todayVendorPaid || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Labour Wage Due</span>
-          <span className="text-lg font-black text-amber-600 mt-1 block">
-            ₹{(summary?.outstandingLabourDue || 0).toLocaleString('en-IN')}
-          </span>
-        </div>
+        {showLabour && (
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+            <span className="text-[11px] text-slate-500 block font-semibold">Labour Due</span>
+            <span className="text-base font-black text-amber-600 mt-0.5 block">
+              ₹{(summary?.outstandingLabourDue || 0).toLocaleString('en-IN')}
+            </span>
+          </div>
+        )}
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Vendor Outstanding</span>
-          <span className="text-lg font-black text-amber-600 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Vendor Outstanding</span>
+          <span className="text-base font-black text-amber-600 mt-0.5 block">
             ₹{(summary?.outstandingVendorDue || 0).toLocaleString('en-IN')}
           </span>
         </div>
       </div>
 
-      {/* Primary Action Cards: Pay Labour & Pay Vendor */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Pay Labour Card */}
-        <Link
-          href="/payments/labour"
-          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
-        >
-          <div className="flex items-start justify-between">
-            <div className="w-14 h-14 rounded-2xl bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
-              👷
+      {/* Primary Action Cards */}
+      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-2.5`}>
+        {showLabour && (
+          <Link
+            href="/payments/labour"
+            className="group bg-white border border-slate-200 hover:border-[#087F3E] p-3 rounded-xl transition-all duration-200 shadow-2xs flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-8 h-8 rounded-lg bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] flex items-center justify-center text-lg">
+                👷
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#056B34]">
+                Wage
+              </span>
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#EAF7EF] text-[#056B34]">
-              Wage Payment
-            </span>
-          </div>
 
-          <div className="mt-5">
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
-              Pay Labour
-            </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Select workers with wage due, review worked days, and settle payments.
-            </p>
-          </div>
+            <div className="mt-2">
+              <h2 className="text-xs font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                Pay Labour
+              </h2>
+              <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">
+                Settle worker wages.
+              </p>
+            </div>
 
-          <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
-            <span>Pay Worker Wages</span>
-            <span className="text-base">→</span>
-          </div>
-        </Link>
+            <div className="mt-2 flex items-center text-[11px] font-bold text-[#087F3E] gap-1">
+              <span>Pay Wages</span>
+              <span>→</span>
+            </div>
+          </Link>
+        )}
 
         {/* Pay Vendor Card */}
         <Link
           href="/payments/vendor"
-          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
+          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-3 rounded-xl transition-all duration-200 shadow-2xs flex flex-col justify-between"
         >
-          <div className="flex items-start justify-between">
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center text-lg">
               🏬
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700">
-              Vendor Payment
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+              Vendor
             </span>
           </div>
 
-          <div className="mt-5">
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+          <div className="mt-2">
+            <h2 className="text-xs font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
               Pay Vendor
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Pay outstanding vendor balances or settle specific material bills.
+            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">
+              Settle vendor bills.
             </p>
           </div>
 
-          <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
-            <span>Pay Vendor Bills</span>
-            <span className="text-base">→</span>
+          <div className="mt-2 flex items-center text-[11px] font-bold text-[#087F3E] gap-1">
+            <span>Pay Bills</span>
+            <span>→</span>
           </div>
         </Link>
       </div>
 
       {/* Secondary Quick Actions for Advances */}
-      <div className="grid grid-cols-2 gap-4">
-        <Link
-          href="/payments/advance?type=LABOUR"
-          className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
-        >
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
-            💵
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Give Labour Advance</h3>
-            <p className="text-xs text-slate-500">Record wage advance</p>
-          </div>
-        </Link>
+      <div className={`grid ${showLabour ? 'grid-cols-2' : 'grid-cols-1'} gap-2.5`}>
+        {showLabour && (
+          <Link
+            href="/payments/advance?type=LABOUR"
+            className="bg-white border border-slate-200 p-2.5 rounded-xl hover:border-slate-300 transition-colors shadow-2xs flex items-center gap-2.5"
+          >
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center text-base shrink-0">
+              💵
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xs font-bold text-slate-900 truncate">Labour Advance</h3>
+              <p className="text-[10px] text-slate-500 truncate">Record wage advance</p>
+            </div>
+          </Link>
+        )}
 
         <Link
           href="/payments/advance?type=VENDOR"
-          className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
+          className="bg-white border border-slate-200 p-2.5 rounded-xl hover:border-slate-300 transition-colors shadow-2xs flex items-center gap-2.5"
         >
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-base shrink-0">
             🏷️
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Give Vendor Advance</h3>
-            <p className="text-xs text-slate-500">Record supplier advance</p>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs font-bold text-slate-900 truncate">Vendor Advance</h3>
+            <p className="text-[10px] text-slate-500 truncate">Record supplier advance</p>
           </div>
         </Link>
       </div>
 
       {/* Payment History Section */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-slate-900">Payment History & Ledger</h2>
+      <div className="bg-white border border-slate-200 rounded-xl p-3 space-y-2.5 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h2 className="text-xs font-extrabold text-slate-900">Payment History & Ledger</h2>
 
           {/* Tabs */}
-          <div className="flex bg-slate-100 p-1 rounded-xl gap-1 border border-slate-200">
-            {(['ALL', 'LABOUR', 'VENDOR', 'ADVANCES'] as const).map((t) => (
+          <div className="flex bg-slate-100 p-0.5 rounded-lg gap-1 border border-slate-200">
+            {availableTabs.map((t) => (
               <button
                 key={t}
-                onClick={() => setActiveTab(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                onClick={() => setActiveTab(t as any)}
+                className={`px-2 py-1 rounded-md text-[10px] font-bold transition-colors ${
                   activeTab === t
-                    ? 'bg-[#087F3E] text-white shadow'
+                    ? 'bg-[#087F3E] text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -278,81 +291,71 @@ export default function PaymentsMainPage() {
           placeholder="Search by recipient name, receipt ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
         />
 
         {/* Payment History List */}
         {loading ? (
-          <div className="text-center py-8 text-xs text-slate-500">Loading payment history...</div>
+          <div className="text-center py-6 text-xs text-slate-500">Loading payment history...</div>
         ) : filteredHistory.length === 0 ? (
-          <div className="text-center py-8 text-xs text-slate-500">No payment records found.</div>
+          <div className="text-center py-6 text-xs text-slate-500">No payment records found.</div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {filteredHistory.map((item) => (
               <div
                 key={item._id}
-                className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-2.5 rounded-lg border flex items-center justify-between gap-2 ${
                   item.status === 'VOIDED'
-                    ? 'bg-red-50 border-red-200 opacity-75'
+                    ? 'bg-red-50/50 border-red-200 opacity-75'
                     : 'bg-white border-slate-200'
                 }`}
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-900">{item.recipientName}</span>
-
-                    {/* Badge */}
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-extrabold text-xs text-slate-900 truncate">{item.recipientName}</span>
+                    <span className="text-[10px] font-mono text-slate-500">({item.receiptId})</span>
                     <span
-                      className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
-                        item.paymentType === 'LABOUR_PAYMENT'
-                          ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                          : item.paymentType === 'VENDOR_PAYMENT'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                        item.recipientType === 'WORKER'
+                          ? 'bg-[#EAF7EF] text-[#056B34]'
+                          : 'bg-blue-50 text-blue-700'
                       }`}
                     >
                       {item.paymentType.replace('_', ' ')}
                     </span>
-
                     {item.status === 'VOIDED' && (
-                      <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-red-100 text-red-700">
                         VOIDED
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-500">
-                    <span>Receipt: {item.receiptId}</span>
-                    <span>•</span>
-                    <span>Method: {item.paymentMethod}</span>
-                    <span>•</span>
-                    <span>{new Date(item.paymentDate).toLocaleDateString('en-IN')}</span>
-                  </div>
-
-                  {item.status === 'VOIDED' && item.voidReason && (
-                    <div className="text-xs text-red-600 italic">Reason: {item.voidReason}</div>
-                  )}
+                  <p className="text-[10px] text-slate-500 truncate">
+                    {new Date(item.paymentDate).toLocaleDateString('en-IN', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric'
+                    })}{' '}
+                    · Mode: {item.paymentMethod}
+                    {item.notes ? ` · "${item.notes}"` : ''}
+                    {item.voidReason ? ` · Reason: ${item.voidReason}` : ''}
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-                  <div className="text-right">
-                    <div className="text-base font-black text-slate-900">
-                      ₹{item.amount.toLocaleString('en-IN')}
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs font-black text-slate-900">
+                    ₹{item.amount.toLocaleString('en-IN')}
+                  </span>
 
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/payments/receipt/${item._id}`}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors"
-                    >
-                      Receipt
-                    </Link>
-
-                    {item.status === 'COMPLETED' && (
+                  <div className="flex items-center gap-1">
+                    {item.status !== 'VOIDED' && (
                       <button
-                        onClick={() => setSelectedPaymentToVoid(item)}
-                        className="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 text-xs font-bold rounded-lg transition-colors"
+                        onClick={() => {
+                          setSelectedPaymentToVoid(item);
+                          setVoidReason('');
+                          setVoidError('');
+                        }}
+                        className="px-2 py-0.5 rounded-md border border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 text-[10px] font-bold transition-colors"
                       >
                         Void
                       </button>
@@ -360,8 +363,8 @@ export default function PaymentsMainPage() {
 
                     <button
                       onClick={() => setPaymentToDelete(item)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 text-xs font-bold"
-                      title="Delete Record"
+                      className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      title="Delete Transaction"
                     >
                       🗑️
                     </button>
@@ -373,64 +376,53 @@ export default function PaymentsMainPage() {
         )}
       </div>
 
-      {/* Void Modal */}
+      {/* Void Confirmation Modal */}
       {selectedPaymentToVoid && (
-        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-4 shadow-xl">
-            <h3 className="text-lg font-bold text-red-600">Void Payment #{selectedPaymentToVoid.receiptId}</h3>
-            <p className="text-xs text-slate-600">
-              Are you sure you want to void this payment of{' '}
-              <strong className="text-slate-900">₹{selectedPaymentToVoid.amount.toLocaleString('en-IN')}</strong> to{' '}
-              <strong className="text-slate-900">{selectedPaymentToVoid.recipientName}</strong>? This action will
-              restore the outstanding balance.
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <form
+            onSubmit={handleVoidPayment}
+            className="bg-white border border-slate-200 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-xl"
+          >
+            <h3 className="text-base font-bold text-slate-900">
+              Void Payment Receipt ({selectedPaymentToVoid.receiptId})
+            </h3>
+            <p className="text-xs text-slate-500">
+              Voiding this payment will adjust ledger balances for {selectedPaymentToVoid.recipientName}.
             </p>
 
-            {voidError && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
-                {voidError}
-              </div>
-            )}
+            {voidError && <div className="text-xs text-red-600 font-semibold">{voidError}</div>}
 
-            <form onSubmit={handleVoidPayment} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Reason for Voiding <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g., Wrong amount entered, Cash refunded"
-                  value={voidReason}
-                  onChange={(e) => setVoidReason(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-red-500"
-                />
-              </div>
+            <textarea
+              required
+              rows={3}
+              placeholder="Reason for voiding (e.g. Duplicate entry, Wrong amount)..."
+              value={voidReason}
+              onChange={(e) => setVoidReason(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            />
 
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedPaymentToVoid(null);
-                    setVoidReason('');
-                  }}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={voiding || !voidReason.trim()}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl disabled:opacity-50"
-                >
-                  {voiding ? 'Voiding...' : 'Confirm Void'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setSelectedPaymentToVoid(null)}
+                className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={voiding}
+                className="px-4 py-2 bg-amber-500 text-slate-950 text-xs font-extrabold rounded-xl hover:bg-amber-400"
+              >
+                {voiding ? 'Voiding...' : 'Confirm Void'}
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
-      {/* Delete Payment Confirmation Modal */}
+      {/* Confirm Delete Modal */}
       <ConfirmModal
         isOpen={!!paymentToDelete}
         title="Delete Payment Transaction"

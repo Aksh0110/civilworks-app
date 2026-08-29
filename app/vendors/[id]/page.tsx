@@ -179,42 +179,35 @@ export default function VendorProfilePage() {
   const phoneDigits = vendor.mobile ? vendor.mobile.replace(/\D/g, '') : '';
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Top Banner & Quick Contact Bar */}
-      <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 p-3.5 rounded-xl space-y-3 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🏬</span>
-              <h1 className="text-2xl font-extrabold text-slate-900">{vendor.name}</h1>
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg">🏬</span>
+              <h1 className="text-lg font-extrabold text-slate-900">{vendor.name}</h1>
             </div>
-            <p className="text-xs text-[#087F3E] font-bold mt-1">
+            <p className="text-xs text-[#087F3E] font-bold mt-0.5">
               {vendor.category || 'Supplier'} {vendor.contactPerson ? `• ${vendor.contactPerson}` : ''}
             </p>
-            {vendor.address && <p className="text-xs text-slate-500 mt-1">📍 {vendor.address}</p>}
+            {vendor.address && <p className="text-[11px] text-slate-500 mt-0.5">📍 {vendor.address}</p>}
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={() => setIsEditVendorModalOpen(true)}
-              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors"
             >
               ✏️ Edit
             </button>
 
             <button
               onClick={() => setIsDeleteVendorConfirmOpen(true)}
-              className="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition-colors"
+              className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-lg transition-colors"
             >
               🗑️ Delete
             </button>
-
-            <Link
-              href="/vendors"
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
-            >
-              ← Back to Vendors
-            </Link>
           </div>
         </div>
 
@@ -370,7 +363,11 @@ export default function VendorProfilePage() {
                 return (
                   <div key={b._id} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-slate-900">INV: {b.billNumber}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-extrabold text-slate-900">
+                          {b.materialInwardId ? '📦 Delivery Invoice:' : '📄 Bill:'} {b.billNumber}
+                        </span>
+                      </div>
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
@@ -393,6 +390,12 @@ export default function VendorProfilePage() {
                         </button>
                       </div>
                     </div>
+
+                    {b.remarks && (
+                      <div className="text-xs font-bold text-slate-700 bg-white p-2 rounded-lg border border-slate-100">
+                        {b.remarks}
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-between text-xs text-slate-500">
                       <span>Date: {new Date(b.billDate).toLocaleDateString('en-IN')}</span>

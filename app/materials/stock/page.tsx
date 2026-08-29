@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useProject } from '@/lib/context/ProjectContext';
+import MaterialModal from '@/components/MaterialModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface StockItem {
   materialId: string;
@@ -12,6 +14,7 @@ interface StockItem {
   minStockLevel: number;
   currentStock: number;
   status: 'GOOD' | 'LOW' | 'OUT_OF_STOCK';
+  defaultRate?: number;
 }
 
 export default function StockOverviewPage() {
@@ -22,13 +25,20 @@ export default function StockOverviewPage() {
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'GOOD' | 'LOW' | 'OUT_OF_STOCK'>('ALL');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [categories, setCategories] = useState<string[]>([]);
+  const [units, setUnits] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Edit / Delete State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [materialToEdit, setMaterialToEdit] = useState<any>(null);
+  const [materialToDelete, setMaterialToDelete] = useState<StockItem | null>(null);
 
   useEffect(() => {
     fetch('/api/materials/categories')
       .then((r) => r.json())
       .then((d) => {
         if (d.data?.categories) setCategories(d.data.categories);
+        if (d.data?.units) setUnits(d.data.units);
       });
   }, []);
 
@@ -52,6 +62,17 @@ export default function StockOverviewPage() {
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
+  };
+
+  const handleDeleteMaterial = async () => {
+    if (!materialToDelete) return;
+    const res = await fetch(`/api/materials/${materialToDelete.materialId}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to delete material');
+    }
+    setMaterialToDelete(null);
+    loadStock();
   };
 
   const filteredItems = items.filter((item) => {
@@ -99,18 +120,10 @@ export default function StockOverviewPage() {
 
       {/* Metrics Bar */}
       {metrics && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-white border border-slate-200 p-3.5 rounded-2xl text-center shadow-sm">
             <span className="text-xs text-slate-500 block font-semibold">Total Materials</span>
             <span className="text-lg font-black text-slate-900">{items.length}</span>
-          </div>
-
-          <div
-            onClick={() => setStatusFilter('LOW')}
-            className="bg-white border border-amber-200 p-3.5 rounded-2xl text-center cursor-pointer hover:bg-amber-50 transition-colors shadow-sm"
-          >
-            <span className="text-xs text-amber-700 block font-semibold">Low Stock</span>
-            <span className="text-lg font-black text-amber-700">{metrics.lowStockCount}</span>
           </div>
 
           <div
@@ -164,17 +177,7 @@ export default function StockOverviewPage() {
                 : 'bg-white text-slate-600 border border-slate-200 hover:text-slate-900'
             }`}
           >
-            🟢 Good Stock
-          </button>
-          <button
-            onClick={() => setStatusFilter('LOW')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
-              statusFilter === 'LOW'
-                ? 'bg-amber-500 text-white shadow'
-                : 'bg-white text-amber-700 border border-amber-200 hover:text-amber-800'
-            }`}
-          >
-            ⚠️ Low Stock ({metrics?.lowStockCount || 0})
+            🟢 Available Stock
           </button>
           <button
             onClick={() => setStatusFilter('OUT_OF_STOCK')}
@@ -205,61 +208,105 @@ export default function StockOverviewPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredItems.map((item) => (
-            <Link
+            <div
               key={item.materialId}
-              href={`/materials/stock/${item.materialId}`}
               className="group bg-white border border-slate-200 hover:border-[#087F3E] p-4 rounded-2xl transition-all duration-200 flex flex-col justify-between shadow-sm"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
-                      {item.name}
-                    </h3>
+                    <Link href={`/materials/stock/${item.materialId}`}>
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                        {item.name}
+                      </h3>
+                    </Link>
                     <span className="text-xs text-slate-500">{item.category}</span>
                   </div>
 
-                  <span
-                    className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase shrink-0 ${
-                      item.status === 'GOOD'
-                        ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
-                        : item.status === 'LOW'
-                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
-                  >
-                    {item.status === 'GOOD' ? 'Good' : item.status === 'LOW' ? 'Low Stock' : 'Out of Stock'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase shrink-0 ${
+                        item.currentStock > 0
+                          ? 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
+                          : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}
+                    >
+                      {item.currentStock > 0 ? 'Available' : 'Out of Stock'}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMaterialToEdit({
+                          _id: item.materialId,
+                          name: item.name,
+                          category: item.category,
+                          unit: item.unit,
+                          defaultRate: item.defaultRate || 0
+                        });
+                        setIsModalOpen(true);
+                      }}
+                      className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                      title="Edit Material"
+                    >
+                      ✏️
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setMaterialToDelete(item)}
+                      className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      title="Delete Material"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                 <div>
                   <span className="text-xs text-slate-500 block">Current Stock</span>
-                  <span
-                    className={`text-xl font-black ${
-                      item.currentStock <= 0
-                        ? 'text-red-600'
-                        : item.status === 'LOW'
-                        ? 'text-amber-600'
-                        : 'text-slate-900'
-                    }`}
-                  >
-                    {item.currentStock.toLocaleString('en-IN')} <span className="text-xs font-semibold text-slate-500">{item.unit}</span>
-                  </span>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs text-slate-500 block">Min Threshold</span>
-                  <span className="text-xs font-bold text-slate-600">
-                    {item.minStockLevel || 0} {item.unit}
-                  </span>
+                  <Link href={`/materials/stock/${item.materialId}`}>
+                    <span
+                      className={`text-xl font-black ${
+                        item.currentStock <= 0
+                          ? 'text-red-600'
+                          : 'text-slate-900'
+                      }`}
+                    >
+                      {item.currentStock.toLocaleString('en-IN')} <span className="text-xs font-semibold text-slate-500">{item.unit}</span>
+                    </span>
+                  </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
+
+      <MaterialModal
+        isOpen={isModalOpen}
+        materialToEdit={materialToEdit}
+        onClose={() => {
+          setIsModalOpen(false);
+          setMaterialToEdit(null);
+        }}
+        onSuccess={() => loadStock()}
+        categories={categories}
+        units={units}
+      />
+
+      <ConfirmModal
+        isOpen={!!materialToDelete}
+        title="Delete Material Item"
+        message={`Are you sure you want to delete material "${materialToDelete?.name}"?`}
+        itemName={materialToDelete ? `${materialToDelete.name} (${materialToDelete.category})` : undefined}
+        warningText="Material definition will be removed from master catalog."
+        confirmText="Delete Material"
+        onClose={() => setMaterialToDelete(null)}
+        onConfirm={handleDeleteMaterial}
+      />
     </div>
   );
 }

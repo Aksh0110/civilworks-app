@@ -31,4 +31,3 @@ ProjectSchema.index({ code: 1 }, { unique: true });
 ProjectSchema.index({ status: 1 });
 
 export const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
-

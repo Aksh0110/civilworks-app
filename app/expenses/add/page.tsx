@@ -182,24 +182,17 @@ export default function AddExpensePage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto space-y-6 pb-20">
+    <div className="max-w-xl mx-auto space-y-3 pb-20">
       {/* Header Bar */}
-      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/expenses"
-            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
-          >
-            ←
-          </Link>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>💸</span> Add Site Expense
-            </h1>
-            <p className="text-xs text-slate-500">
-              Site: <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Select Site'}</span>
-            </p>
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">💸</span>
+            <h1 className="text-base font-extrabold text-slate-900">Add Site Expense</h1>
           </div>
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Site: <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Select Site'}</span>
+          </p>
         </div>
       </div>
 

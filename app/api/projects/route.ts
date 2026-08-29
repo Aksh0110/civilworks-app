@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getProjectsOverviewList, createProject } from '@/lib/services/projectService';
+import { getSession } from '@/lib/auth/session';
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+    const allowedProjectIds = session && session.role !== 'ADMIN' ? session.assignedProjectIds : undefined;
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || undefined;
 
-    const projects = await getProjectsOverviewList(status);
+    const projects = await getProjectsOverviewList(status, allowedProjectIds);
     return NextResponse.json({ data: projects });
   } catch (error: any) {
     return NextResponse.json(

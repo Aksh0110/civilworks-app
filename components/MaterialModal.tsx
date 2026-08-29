@@ -152,34 +152,18 @@ export default function MaterialModal({ isOpen, materialToEdit, onClose, onSucce
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                Min Stock Warning
-              </label>
-              <input
-                type="number"
-                min="0"
-                placeholder="50"
-                value={minStockLevel}
-                onChange={(e) => setMinStockLevel(e.target.value)}
-                className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#087F3E] text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                Default Rate (₹)
-              </label>
-              <input
-                type="number"
-                min="0"
-                placeholder="410"
-                value={defaultRate}
-                onChange={(e) => setDefaultRate(e.target.value)}
-                className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#087F3E] text-sm"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
+              Default Rate (₹)
+            </label>
+            <input
+              type="number"
+              min="0"
+              placeholder="e.g. 410"
+              value={defaultRate}
+              onChange={(e) => setDefaultRate(e.target.value)}
+              className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#087F3E] text-sm"
+            />
           </div>
 
           <div className="pt-3 flex gap-3">

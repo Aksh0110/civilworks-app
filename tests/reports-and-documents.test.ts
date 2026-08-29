@@ -19,14 +19,13 @@ describe('Reports & Document Management Unit Tests', () => {
   });
 
   it('categorizes material stock status accurately', () => {
-    const getStockStatus = (qty: number, minLevel: number) => {
+    const getStockStatus = (qty: number) => {
       if (qty <= 0) return 'Out of Stock';
-      if (qty <= minLevel) return 'Low';
       return 'Good';
     };
 
-    expect(getStockStatus(500, 100)).toBe('Good');
-    expect(getStockStatus(50, 100)).toBe('Low');
-    expect(getStockStatus(0, 100)).toBe('Out of Stock');
+    expect(getStockStatus(500)).toBe('Good');
+    expect(getStockStatus(50)).toBe('Good');
+    expect(getStockStatus(0)).toBe('Out of Stock');
   });
 });

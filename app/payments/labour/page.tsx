@@ -165,61 +165,53 @@ export default function PayLabourPage() {
   }
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">👷</span>
-            <h1 className="text-xl font-bold text-slate-900">Pay Labour Wage</h1>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-lg">👷</span>
+            <h1 className="text-base font-extrabold text-slate-900">Pay Labour Wage</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Calculate worked days, review amount due, and pay workers for{' '}
-            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Pay workers for <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
-
-        <Link
-          href="/payments"
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl self-start sm:self-auto"
-        >
-          ← Back to Payments
-        </Link>
       </div>
 
       {!selectedWorker ? (
         /* STEP 1: WORKER SELECTION */
-        <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 className="text-base font-bold text-slate-900">Select Worker to Pay</h2>
+        <div className="bg-white border border-slate-200 p-3 rounded-xl space-y-2.5 shadow-2xs">
+          <div className="flex flex-row items-center justify-between gap-2">
+            <h2 className="text-xs font-extrabold text-slate-900">Select Worker to Pay</h2>
 
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-1.5">
+              <label className="flex items-center gap-1.5 text-[11px] text-slate-700 cursor-pointer bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
                 <input
                   type="checkbox"
                   checked={dueOnly}
                   onChange={(e) => setDueOnly(e.target.checked)}
                   className="rounded border-slate-300 text-[#087F3E] focus:ring-0"
                 />
-                <span>Show Due Only ({workers.filter((w) => w.amountDue > 0).length})</span>
+                <span>Due Only ({workers.filter((w) => w.amountDue > 0).length})</span>
               </label>
             </div>
           </div>
 
           {/* Search & Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input
               type="text"
               placeholder="Search worker by name or code..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             />
 
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
             >
               <option value="ALL">All Categories ({categories.length})</option>
               {categories.map((cat) => (
@@ -232,33 +224,33 @@ export default function PayLabourPage() {
 
           {/* Worker Cards List */}
           {loading ? (
-            <div className="text-center py-8 text-xs text-slate-500">Loading worker wage details...</div>
+            <div className="text-center py-6 text-xs text-slate-500">Loading worker wage details...</div>
           ) : filteredWorkers.length === 0 ? (
-            <div className="text-center py-8 text-xs text-slate-500">No workers match your filter.</div>
+            <div className="text-center py-6 text-xs text-slate-500">No workers match your filter.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {filteredWorkers.map((w) => (
                 <button
                   key={w.workerId}
                   onClick={() => handleSelectWorker(w)}
-                  className="p-4 rounded-2xl bg-slate-50 hover:bg-[#EAF7EF] border border-slate-200 text-left transition-all flex items-center justify-between gap-3 group shadow-sm"
+                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-[#EAF7EF] border border-slate-200 text-left transition-all flex items-center justify-between gap-2 group shadow-2xs"
                 >
-                  <div className="space-y-1">
-                    <div className="font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <div className="font-extrabold text-xs text-slate-900 group-hover:text-[#087F3E] transition-colors truncate">
                       {w.name}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-[10px] text-slate-500 truncate">
                       {w.category} • ₹{w.dailyRate}/day
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[10px] text-slate-500 truncate">
                       Worked: {w.workedDays} days ({w.presentDays}P / {w.halfDays}HD)
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="text-xs text-slate-500">Due Amount</div>
+                    <div className="text-[9px] text-slate-500 font-semibold">Due</div>
                     <div
-                      className={`text-base font-extrabold ${
+                      className={`text-xs font-black ${
                         w.amountDue > 0 ? 'text-amber-600' : 'text-[#087F3E]'
                       }`}
                     >
@@ -272,7 +264,7 @@ export default function PayLabourPage() {
         </div>
       ) : (
         /* STEP 2: WAGE SUMMARY & PAYMENT ENTRY */
-        <div className="space-y-6">
+        <div className="space-y-3">
           {/* Worker Selected Header */}
           <div className="bg-white border border-slate-200 p-5 rounded-2xl flex items-center justify-between shadow-sm">
             <div>

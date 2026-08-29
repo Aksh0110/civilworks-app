@@ -34,7 +34,7 @@ export async function getAttendanceForDate(projectId: string, dateStr: string) {
 
   const range = dateQueryRange(dateStr);
   const query: any = { projectId, date: range };
-  const records = await Attendance.find(query).populate('workerId', 'name category dailyRate status').exec();
+  const records = await Attendance.find(query).populate('workerId', 'name category dailyRate status').lean().exec();
   return JSON.parse(JSON.stringify(records));
 }
 
@@ -170,13 +170,14 @@ export async function getAttendanceSummary(projectId: string, dateStr: string) {
 
   const range = dateQueryRange(dateStr);
   const query: any = { projectId, date: range };
-  const wageEntry = await WageEntry.findOne(query).exec();
+  const wageEntry = await WageEntry.findOne(query).lean().exec();
   if (wageEntry) {
     return JSON.parse(JSON.stringify(wageEntry));
   }
 
   const records = await Attendance.find(query)
     .populate('workerId', 'dailyRate')
+    .lean()
     .exec();
 
   const wageInputs = records.map((r: any) => ({

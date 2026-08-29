@@ -19,29 +19,32 @@ function maskMongoUri(uri: string): string {
 }
 
 export async function connectMongoDB() {
-  if (cached.conn) {
+  if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
   }
 
   if (!cached.promise) {
     const maskedUri = maskMongoUri(MONGODB_URI);
-    console.log(`[MongoDB] Initializing connection to ${maskedUri}...`);
+    console.log(`[MongoDB] Initializing connection pool to ${maskedUri}...`);
 
     const opts = {
-      autoIndex: true,
-      serverSelectionTimeoutMS: 5000 // 5 second timeout for quick failure logging
+      maxPoolSize: 20,
+      minPoolSize: 5,
+      socketTimeoutMS: 45000,
+      maxIdleTimeMS: 30000,
+      serverSelectionTimeoutMS: 5000
     };
 
     cached.promise = mongoose
-      .connect(MONGODB_URI, opts)
+      .connect(MONGODB_URI, opts as any)
       .then((mongooseInstance) => {
         const conn = mongooseInstance.connection;
-        console.log(`[MongoDB] ✅ Successfully connected to database "${conn.name}" on host "${conn.host}"`);
+        console.log(`[MongoDB] ✅ Connected to database "${conn.name}" on host "${conn.host}"`);
         return mongooseInstance;
       })
       .catch((error) => {
-        cached.promise = null; // Clear cached promise on failure so retries can occur
-        console.error(`[MongoDB Error] ❌ Database connection failed:`, error.message || error);
+        cached.promise = null;
+        console.error(`[MongoDB Error] ❌ Connection failed:`, error.message || error);
         throw error;
       });
   }
@@ -51,7 +54,7 @@ export async function connectMongoDB() {
     return cached.conn;
   } catch (error) {
     cached.conn = null;
+    cached.promise = null;
     throw error;
   }
 }
-

@@ -48,17 +48,11 @@ export default function PaymentReceiptPage() {
 
   return (
     <div className="max-w-md mx-auto py-4 space-y-6">
-      {/* Action Bar (Print / Back) */}
-      <div className="flex items-center justify-between print:hidden">
-        <Link
-          href="/payments"
-          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
-        >
-          ← Back to Payments
-        </Link>
+      {/* Action Bar (Print) */}
+      <div className="flex items-center justify-end print:hidden">
         <button
           onClick={() => window.print()}
-          className="px-4 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl shadow transition-colors"
+          className="px-3 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-lg shadow-2xs transition-colors"
         >
           🖨️ Print / Save PDF
         </button>
