@@ -45,22 +45,15 @@ export default function ExpenseCategoriesPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-20">
+    <div className="max-w-2xl mx-auto space-y-3 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/expenses"
-            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center text-sm transition-colors font-bold"
-          >
-            ←
-          </Link>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>🏷️</span> Expense Categories
-            </h1>
-            <p className="text-xs text-slate-500">Configure trade and site operational expense types</p>
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">🏷️</span>
+            <h1 className="text-base font-extrabold text-slate-900">Expense Categories</h1>
           </div>
+          <p className="text-[11px] text-slate-500 mt-0.5">Manage operational cost categories</p>
         </div>
 
         <button

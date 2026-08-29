@@ -84,29 +84,28 @@ export default function ProjectsDirectoryPage() {
   });
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Toast Banner */}
       {toastMessage && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#087F3E] text-white px-5 py-2.5 rounded-2xl shadow-xl font-bold text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top">
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-[#087F3E] text-white px-4 py-2 rounded-xl shadow-lg font-bold text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top">
           {toastMessage}
         </div>
       )}
 
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🏗️</span>
-            <h1 className="text-xl font-bold text-slate-900">Project Directory</h1>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-lg">🏗️</span>
+            <h1 className="text-base font-extrabold text-slate-900">Project Directory</h1>
             <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
               isAdmin ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-emerald-50 text-[#056B34] border-[#bce6cb]'
             }`}>
-              {isAdmin ? '🌐 All Sites (Admin)' : `🔒 Authorized Sites (${projects.length})`}
+              {isAdmin ? 'All Sites' : `${projects.length} Sites`}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Current site:{' '}
-            <span className="text-[#087F3E] font-extrabold">{activeProject?.name || 'None Selected'}</span>. Click any site to switch workspace.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Active: <span className="text-[#087F3E] font-extrabold">{activeProject?.name || 'None Selected'}</span>. Click site to switch.
           </p>
         </div>
 
@@ -115,73 +114,79 @@ export default function ProjectsDirectoryPage() {
             setProjectToEdit(null);
             setIsEditModalOpen(true);
           }}
-          className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
+          className="px-3 h-8 bg-[#087F3E] hover:bg-[#056B34] text-white text-[11px] font-bold rounded-lg transition-colors shadow-2xs flex items-center justify-center gap-1 shrink-0"
         >
           <span>+</span> Create Project
         </button>
       </div>
 
       {/* Search Input */}
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+      <div className="bg-white border border-slate-200 p-2 rounded-xl shadow-2xs">
         <input
           type="text"
           placeholder="Search project name, code, or location..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
         />
       </div>
 
       {/* Projects Grid */}
       {loading ? (
-        <div className="text-center py-12 text-xs text-slate-500">Loading site projects...</div>
+        <div className="text-center py-8 text-xs text-slate-500">Loading site projects...</div>
       ) : filteredProjects.length === 0 ? (
-        <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
-          <div className="text-3xl">🏗️</div>
-          <h3 className="text-sm font-bold text-slate-900">No projects found</h3>
-          <p className="text-xs text-slate-500">Create a construction project to start tracking site operations.</p>
+        <div className="bg-white border border-slate-200 p-6 rounded-xl text-center space-y-2 shadow-2xs">
+          <div className="text-2xl">🏗️</div>
+          <h3 className="text-xs font-bold text-slate-900">No projects found</h3>
+          <p className="text-[11px] text-slate-500">Create a construction project to start tracking site operations.</p>
           <button
             onClick={() => {
               setProjectToEdit(null);
               setIsEditModalOpen(true);
             }}
-            className="inline-block px-4 py-2 bg-[#087F3E] text-white text-xs font-bold rounded-xl"
+            className="inline-block px-3 py-1.5 bg-[#087F3E] text-white text-xs font-bold rounded-lg"
           >
             + Create Project
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {filteredProjects.map((p) => {
             const isActive = activeProject?._id === p._id;
 
             return (
               <div
                 key={p._id}
-                className={`p-5 rounded-2xl transition-all shadow-sm flex flex-col justify-between space-y-4 group ${
+                className={`p-2.5 rounded-xl transition-all shadow-2xs flex flex-col gap-1.5 ${
                   isActive
-                    ? 'bg-emerald-50/30 border-2 border-[#087F3E] shadow-md'
+                    ? 'bg-emerald-50/40 border-2 border-[#087F3E]'
                     : 'bg-white border border-slate-200 hover:border-slate-300'
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="text-base font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
-                      {p.name}
-                    </div>
-                    <div className="text-xs font-semibold text-slate-500">
-                      Code: <span className="text-slate-800">{p.code}</span>
-                      {p.location ? ` • ${p.location}` : ''}
-                    </div>
+                {/* Header Row */}
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <button
+                      onClick={() => handleSelectProject(p)}
+                      className={`px-2 py-0.5 rounded-md font-extrabold text-[10px] shrink-0 transition-colors ${
+                        isActive
+                          ? 'bg-[#087F3E] text-white'
+                          : 'bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb]'
+                      }`}
+                    >
+                      {isActive ? '✓ Active' : 'Select'}
+                    </button>
+                    <span className="text-xs font-extrabold text-slate-900 truncate">{p.name}</span>
+                    <span className="text-[10px] text-slate-500 font-semibold shrink-0">({p.code})</span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => {
                         setProjectToEdit(p);
                         setIsEditModalOpen(true);
                       }}
-                      className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                      className="p-0.5 text-slate-400 hover:text-slate-700 text-xs font-bold"
                       title="Edit Project"
                     >
                       ✏️
@@ -189,60 +194,50 @@ export default function ProjectsDirectoryPage() {
 
                     <button
                       onClick={() => setProjectToDelete(p)}
-                      className="p-1 text-slate-400 hover:text-red-600 text-xs font-bold"
+                      className="p-0.5 text-slate-400 hover:text-red-600 text-xs font-bold"
                       title="Delete Project"
                     >
                       🗑️
                     </button>
+
+                    <Link
+                      href={`/projects/${p._id}`}
+                      className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] rounded-md transition-colors"
+                    >
+                      Overview →
+                    </Link>
                   </div>
                 </div>
 
-                {/* Metrics Bar */}
-                <div className={`grid ${showWorkers ? 'grid-cols-4' : 'grid-cols-3'} gap-2 pt-3 border-t border-slate-100 text-center`}>
+                {/* Subtext Location */}
+                {p.location && (
+                  <div className="text-[10px] text-slate-500 truncate -mt-0.5">
+                    📍 {p.location}
+                  </div>
+                )}
+
+                {/* Single-line Inline Metrics Bar */}
+                <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-100/80 text-[10px]">
                   {showWorkers && (
-                    <div className="bg-white border border-slate-100 p-2 rounded-xl">
-                      <span className="text-[10px] text-slate-500 block font-semibold">Workers</span>
-                      <span className="text-xs font-black text-slate-900">{p.presentWorkers}</span>
+                    <div className="truncate">
+                      <span className="text-slate-400 font-medium">Workers:</span>{' '}
+                      <strong className="text-slate-800">{p.presentWorkers}</strong>
                     </div>
                   )}
-
-                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Today Expense</span>
-                    <span className="text-xs font-black text-slate-900">₹{p.todayExpense}</span>
+                  <div className="truncate">
+                    <span className="text-slate-400 font-medium">Expense:</span>{' '}
+                    <strong className="text-slate-800">₹{p.todayExpense}</strong>
                   </div>
-
-                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Total Due</span>
-                    <span className="text-xs font-black text-amber-600">₹{p.totalDue.toLocaleString('en-IN')}</span>
+                  <div className="truncate">
+                    <span className="text-slate-400 font-medium">Due:</span>{' '}
+                    <strong className="text-amber-600">₹{p.totalDue.toLocaleString('en-IN')}</strong>
                   </div>
-
-                  <div className="bg-white border border-slate-100 p-2 rounded-xl">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Out of Stock</span>
-                    <span className={`text-xs font-black ${p.outOfStockCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+                  <div className="truncate">
+                    <span className="text-slate-400 font-medium">Stock Alert:</span>{' '}
+                    <strong className={p.outOfStockCount > 0 ? 'text-red-600 font-extrabold' : 'text-slate-800'}>
                       {p.outOfStockCount || 0}
-                    </span>
+                    </strong>
                   </div>
-                </div>
-
-                {/* Actions Bar */}
-                <div className="flex items-center justify-between pt-2">
-                  <button
-                    onClick={() => handleSelectProject(p)}
-                    className={`px-4 py-2 rounded-xl font-extrabold text-xs transition-colors shadow-xs ${
-                      isActive
-                        ? 'bg-[#087F3E] text-white border border-[#087F3E]'
-                        : 'bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb]'
-                    }`}
-                  >
-                    {isActive ? '✓ Selected Site' : 'Select Site'}
-                  </button>
-
-                  <Link
-                    href={`/projects/${p._id}`}
-                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors shadow"
-                  >
-                    Overview →
-                  </Link>
                 </div>
               </div>
             );

@@ -80,45 +80,45 @@ export default function ProjectCommandCenterPage() {
   const { project, labour, materials, payments, expenses, progress, siteHealth, alerts, recentActivity } = overview;
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Top Banner & Quick Actions */}
-      <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 p-3.5 rounded-xl shadow-2xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🏗️</span>
-              <h1 className="text-2xl font-extrabold text-slate-900">{project.name}</h1>
-              <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-lg">🏗️</span>
+              <h1 className="text-base font-extrabold text-slate-900">{project.name}</h1>
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]">
                 {project.status}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-[11px] text-slate-500 mt-0.5">
               Code: <span className="text-slate-800 font-bold">{project.code}</span>
-              {project.location ? ` • Location: ${project.location}` : ''}
-              {project.siteContact ? ` • Contact: ${project.siteContact}` : ''}
+              {project.location ? ` • ${project.location}` : ''}
+              {project.siteContact ? ` • ${project.siteContact}` : ''}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          <div className="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors"
             >
               ✏️ Edit
             </button>
 
             <button
               onClick={() => setIsDeleteConfirmOpen(true)}
-              className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition-colors"
+              className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-lg transition-colors"
             >
               🗑️ Delete
             </button>
 
             <Link
               href="/projects"
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl"
+              className="px-3 py-1 bg-[#087F3E] text-white text-xs font-bold rounded-lg transition-colors"
             >
-              Switch Project ▾
+              Switch Site ▾
             </Link>
           </div>
         </div>

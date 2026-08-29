@@ -123,23 +123,23 @@ export default function AdminUserManagementPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+      <div className="space-y-3 pb-20 max-w-4xl mx-auto">
         {/* Toast Banner */}
         {toast && (
-          <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#087F3E] text-white px-5 py-2.5 rounded-2xl shadow-xl font-bold text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top">
+          <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#087F3E] text-white px-4 py-2 rounded-xl shadow-lg font-bold text-xs flex items-center gap-2 animate-in fade-in slide-in-from-top">
             ✅ {toast}
           </div>
         )}
 
         {/* Top Banner Header */}
-        <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">👥</span>
-              <h1 className="text-2xl font-extrabold text-slate-900">User Management Portal</h1>
+        <div className="bg-white border border-slate-200 p-3 rounded-xl shadow-2xs flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="text-base sm:text-lg">👥</span>
+              <h1 className="text-xs sm:text-base font-extrabold text-slate-900 truncate">User Management Portal</h1>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              Supervise user accounts, view user activities, assign role permissions, and control site access.
+            <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate">
+              Supervise user accounts, permissions, and site access.
             </p>
           </div>
 
@@ -148,132 +148,135 @@ export default function AdminUserManagementPage() {
               setUserToEdit(null);
               setIsModalOpen(true);
             }}
-            className="px-5 h-11 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto"
+            className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-[10px] sm:text-[11px] font-bold rounded-lg transition-colors shadow-2xs flex items-center justify-center gap-1 shrink-0"
           >
-            <span>+</span> Create Supervised User
+            <span>+</span> Create User
           </button>
         </div>
 
         {/* KPI Summary Cards */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm text-center">
-            <span className="text-xs text-slate-500 font-semibold block">Total Managed Users</span>
-            <span className="text-xl font-black text-slate-900 mt-1 block">{users.length}</span>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs text-center">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block truncate">Total Users</span>
+            <span className="text-sm sm:text-base font-black text-slate-900 mt-0.5 block">{users.length}</span>
           </div>
 
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm text-center">
-            <span className="text-xs text-slate-500 font-semibold block">Active Accounts</span>
-            <span className="text-xl font-black text-[#087F3E] mt-1 block">{activeCount}</span>
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs text-center">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block truncate">Active</span>
+            <span className="text-sm sm:text-base font-black text-[#087F3E] mt-0.5 block">{activeCount}</span>
           </div>
 
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm text-center">
-            <span className="text-xs text-slate-500 font-semibold block">Deactivated Users</span>
-            <span className="text-xl font-black text-red-600 mt-1 block">{inactiveCount}</span>
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs text-center">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block truncate">Deactivated</span>
+            <span className="text-sm sm:text-base font-black text-red-600 mt-0.5 block">{inactiveCount}</span>
           </div>
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+        <div className="bg-white border border-slate-200 p-2 rounded-xl shadow-2xs">
           <input
             type="text"
             placeholder="Search user by name or email address..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 
         {/* User Directory List */}
         {loading ? (
-          <div className="text-center py-12 text-xs text-slate-500">Loading supervised users...</div>
+          <div className="text-center py-8 text-xs text-slate-500">Loading supervised users...</div>
         ) : filteredUsers.length === 0 ? (
-          <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
-            <div className="text-3xl">👤</div>
-            <h3 className="text-sm font-bold text-slate-900">No users found</h3>
-            <p className="text-xs text-slate-500">Create a user account to grant access to site supervisors.</p>
+          <div className="bg-white border border-slate-200 p-6 rounded-xl text-center space-y-2 shadow-2xs">
+            <div className="text-2xl">👤</div>
+            <h3 className="text-xs font-extrabold text-slate-900">No users found</h3>
+            <p className="text-[11px] text-slate-500">Create a user account to grant access to site supervisors.</p>
             <button
               onClick={() => {
                 setUserToEdit(null);
                 setIsModalOpen(true);
               }}
-              className="inline-block px-4 py-2 bg-[#087F3E] text-white text-xs font-bold rounded-xl"
+              className="inline-block px-3 py-1.5 bg-[#087F3E] text-white text-xs font-bold rounded-lg"
             >
-              + Create Supervised User
+              + Create User
             </button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {filteredUsers.map((u) => {
               const assignedCount = u.assignedProjectIds?.length || 0;
+              const initials = u.name
+                ? u.name
+                    .split(' ')
+                    .filter(Boolean)
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()
+                : 'U';
 
               return (
                 <div
                   key={u._id}
-                  className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-slate-300 transition-colors"
+                  className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs flex items-center justify-between gap-2 hover:border-slate-300 transition-colors"
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base font-extrabold text-slate-900">{u.name}</span>
-                      <span
-                        className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
-                          u.role === 'ADMIN'
-                            ? 'bg-purple-50 text-purple-700 border-purple-200'
-                            : u.role === 'SUPERVISOR'
-                            ? 'bg-emerald-50 text-[#056B34] border-[#bce6cb]'
-                            : 'bg-blue-50 text-blue-700 border-blue-200'
-                        }`}
-                      >
-                        {u.role}
-                      </span>
-
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          u.status === 'ACTIVE'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {u.status}
-                      </span>
+                  {/* Left: User Avatar & Info */}
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    {/* User Avatar Circle */}
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
+                        u.role === 'ADMIN'
+                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                          : 'bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb]'
+                      }`}
+                    >
+                      {initials}
                     </div>
 
-                    <div className="text-xs text-slate-500 font-medium">
-                      Email: <span className="text-slate-800 font-bold">{u.email}</span>
-                    </div>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-extrabold text-slate-900 truncate">{u.name}</span>
+                        <span
+                          className={`text-[9px] font-black px-1.5 py-0.2 rounded-full border ${
+                            u.role === 'ADMIN'
+                              ? 'bg-purple-50 text-purple-700 border-purple-200'
+                              : u.role === 'SUPERVISOR'
+                              ? 'bg-emerald-50 text-[#056B34] border-[#bce6cb]'
+                              : 'bg-blue-50 text-blue-700 border-blue-200'
+                          }`}
+                        >
+                          {u.role}
+                        </span>
 
-                    {/* Assigned Project Site Tags */}
-                    <div className="flex items-center gap-1.5 pt-1 flex-wrap">
-                      <span className="text-[11px] font-bold text-slate-600">Assigned Sites:</span>
-                      {u.role === 'ADMIN' ? (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#056B34] border border-[#bce6cb]">
-                          🌐 All Construction Sites
+                        {u.status === 'INACTIVE' && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-red-100 text-red-800">
+                            INACTIVE
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="text-[10px] text-slate-500 truncate flex items-center gap-1">
+                        <span className="truncate">{u.email}</span>
+                        <span>•</span>
+                        <span className="font-semibold text-slate-700 shrink-0">
+                          {u.role === 'ADMIN'
+                            ? 'All Sites'
+                            : assignedCount === 0
+                            ? 'No Sites'
+                            : `${assignedCount} Sites`}
                         </span>
-                      ) : assignedCount === 0 ? (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">
-                          ⚠️ No Sites Assigned
-                        </span>
-                      ) : (
-                        projects
-                          .filter((p) => u.assignedProjectIds?.includes(p._id))
-                          .map((p) => (
-                            <span
-                              key={p._id}
-                              className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200"
-                            >
-                              🏗️ {p.name} ({p.code})
-                            </span>
-                          ))
-                      )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                  {/* Right: Quick Action Buttons */}
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => setSelectedActivityUser(u)}
-                      className="px-3 py-1.5 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] text-xs font-extrabold rounded-xl transition-colors flex items-center gap-1"
-                      title="View user activities & work history"
+                      className="px-2 py-1 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                      title="View user activity logs"
                     >
-                      <span>👤</span> View Activities
+                      <span>📜</span> <span className="hidden sm:inline">Activity</span>
                     </button>
 
                     <button
@@ -281,22 +284,23 @@ export default function AdminUserManagementPage() {
                         setUserToEdit(u);
                         setIsModalOpen(true);
                       }}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+                      className="p-1 text-slate-400 hover:text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-100"
+                      title="Edit User"
                     >
-                      ✏️ Edit
+                      ✏️
                     </button>
 
                     <button
                       onClick={() => handleToggleStatus(u)}
                       disabled={currentUser?._id === u._id}
-                      className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-colors border ${
+                      className={`px-2 py-1 text-[10px] font-bold rounded-lg transition-colors border ${
                         u.status === 'ACTIVE'
                           ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200 disabled:opacity-30'
                           : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
                       }`}
-                      title={currentUser?._id === u._id ? 'You cannot deactivate your own admin account' : ''}
+                      title={currentUser?._id === u._id ? 'Cannot deactivate your own account' : ''}
                     >
-                      {u.status === 'ACTIVE' ? '🔒 Deactivate' : '🔓 Activate'}
+                      {u.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                     </button>
                   </div>
                 </div>

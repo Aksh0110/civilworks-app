@@ -106,15 +106,15 @@ export default function DailyProgressHubPage() {
 
       {/* History Feed */}
       {loading ? (
-        <div className="py-12 text-center text-slate-500 text-sm">Loading daily site logs...</div>
+        <div className="py-8 text-center text-slate-500 text-xs">Loading daily site logs...</div>
       ) : history.length === 0 ? (
-        <div className="bg-white border border-slate-200 p-8 rounded-2xl text-center space-y-3 shadow-sm">
-          <span className="text-3xl">📝</span>
-          <h3 className="text-base font-bold text-slate-900">No Daily Reports Found</h3>
-          <p className="text-xs text-slate-500">Click "Work Update" to record today's site work progress.</p>
+        <div className="bg-white border border-slate-200 p-6 rounded-xl text-center space-y-2 shadow-2xs">
+          <span className="text-2xl">📝</span>
+          <h3 className="text-xs font-extrabold text-slate-900">No Daily Reports Found</h3>
+          <p className="text-[11px] text-slate-500">Click "Work Update" to record today's site work progress.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {history.map((rec) => {
             const formattedDate = new Date(rec.date).toLocaleDateString('en-IN', {
               weekday: 'short',
@@ -129,59 +129,59 @@ export default function DailyProgressHubPage() {
               <Link
                 key={rec._id}
                 href={`/progress/report?date=${dateIso}`}
-                className="group bg-white border border-slate-200 hover:border-[#087F3E] p-5 rounded-2xl transition-all duration-200 block space-y-3 shadow-sm"
+                className="group bg-white border border-slate-200 hover:border-[#087F3E] p-2.5 rounded-xl transition-all duration-200 block space-y-1.5 shadow-2xs"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#087F3E] text-sm">📅</span>
-                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="text-[#087F3E] text-xs">📅</span>
+                    <h3 className="text-xs font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors truncate">
                       {formattedDate}
                     </h3>
                   </div>
 
-                  <span className="text-xs text-[#087F3E] font-bold group-hover:translate-x-1 transition-transform">
-                    View Report →
+                  <span className="text-[10px] text-[#087F3E] font-extrabold shrink-0 group-hover:translate-x-0.5 transition-transform">
+                    Report →
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-800 font-bold">
-                    📦 {rec.totalWorkItems} Work Items
+                <div className="flex flex-wrap gap-1 text-[10px]">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800 font-bold">
+                    📦 {rec.totalWorkItems} Items
                   </span>
 
-                  <span className="px-2.5 py-1 rounded-lg bg-[#EAF7EF] border border-[#bce6cb] text-[#056B34] font-bold">
-                    ✓ {rec.completedCount} Completed
+                  <span className="px-1.5 py-0.5 rounded bg-[#EAF7EF] border border-[#bce6cb] text-[#056B34] font-bold">
+                    ✓ {rec.completedCount} Done
                   </span>
 
                   {rec.inProgressCount > 0 && (
-                    <span className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 font-bold">
+                    <span className="px-1.5 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-800 font-bold">
                       ⏳ {rec.inProgressCount} In Progress
                     </span>
                   )}
 
                   {rec.pendingCount > 0 && (
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-bold">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-bold">
                       ⏸️ {rec.pendingCount} Pending
                     </span>
                   )}
 
                   {rec.issueCount > 0 && (
-                    <span className="px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-700 font-bold">
+                    <span className="px-1.5 py-0.5 rounded bg-red-50 border border-red-200 text-red-700 font-bold">
                       ⚠️ {rec.issueCount} Issues
                     </span>
                   )}
 
                   {rec.photoCount > 0 && (
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 font-bold">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600 font-bold">
                       📷 {rec.photoCount} Photos
                     </span>
                   )}
                 </div>
 
                 {isFeatureEnabled('workers') && rec.workforceCount > 0 && (
-                  <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-100 flex items-center gap-3">
-                    <span>👷 Workforce: {rec.workforceCount} workers present</span>
-                    {rec.labourCost > 0 && <span>· Labour Cost: ₹{rec.labourCost.toLocaleString('en-IN')}</span>}
+                  <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-100 flex items-center gap-2">
+                    <span>👷 Workforce: {rec.workforceCount} workers</span>
+                    {rec.labourCost > 0 && <span>· Cost: ₹{rec.labourCost.toLocaleString('en-IN')}</span>}
                   </div>
                 )}
               </Link>
