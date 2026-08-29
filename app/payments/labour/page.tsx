@@ -19,6 +19,7 @@ export default function PayLabourPage() {
   // Payment Form state
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'ONLINE' | 'BANK_TRANSFER' | 'OTHER'>('CASH');
+  const [transactionRef, setTransactionRef] = useState('');
   const [notes, setNotes] = useState('');
 
   // Confirmation & Success modal states
@@ -64,6 +65,7 @@ export default function PayLabourPage() {
   const handleSelectWorker = (w: WorkerWageDueItem) => {
     setSelectedWorker(w);
     setPaymentAmount(w.amountDue > 0 ? String(w.amountDue) : '');
+    setTransactionRef('');
     setError('');
   };
 
@@ -73,6 +75,15 @@ export default function PayLabourPage() {
     const numAmount = parseFloat(paymentAmount);
     if (isNaN(numAmount) || numAmount <= 0) {
       setError('Please enter a valid positive payment amount.');
+      return;
+    }
+
+    if (paymentMethod === 'ONLINE' && !transactionRef.trim()) {
+      setError('Please enter the Transaction ID / UPI Reference.');
+      return;
+    }
+    if (paymentMethod === 'BANK_TRANSFER' && !transactionRef.trim()) {
+      setError('Please enter the Cheque No. or UTR No.');
       return;
     }
 
@@ -89,6 +100,7 @@ export default function PayLabourPage() {
           paymentType: 'LABOUR_PAYMENT',
           amount: numAmount,
           paymentMethod,
+          transactionRef: transactionRef.trim() || undefined,
           notes: notes.trim() || undefined,
           idempotencyKey: `labour-pay-${selectedWorker.workerId}-${idempotencyId}-${Date.now()}`,
           user: 'Site Supervisor'
@@ -106,6 +118,33 @@ export default function PayLabourPage() {
       setError(err.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleShareReceipt = async () => {
+    if (!successResult) return;
+    const receiptUrl = `${window.location.origin}/payments/receipt/${successResult._id}`;
+    const shareText = `🧾 *CivilWorks Payment Receipt*\nReceipt ID: ${successResult.receiptId}\nPaid To: ${selectedWorker?.name || 'Worker'}\nAmount: ₹${successResult.amount.toLocaleString('en-IN')}\nPayment Mode: ${successResult.paymentMethod}\n\nView Full Receipt:\n${receiptUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Payment Receipt ${successResult.receiptId}`,
+          text: shareText,
+          url: receiptUrl
+        });
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      alert('Receipt details & link copied to clipboard!');
+    } catch (err) {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+      window.open(waUrl, '_blank');
     }
   };
 
@@ -145,10 +184,17 @@ export default function PayLabourPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+            <button
+              type="button"
+              onClick={handleShareReceipt}
+              className="flex-1 py-3 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] font-extrabold text-xs rounded-xl transition-colors text-center shadow-2xs flex items-center justify-center gap-1.5"
+            >
+              <span>📱</span> Share Receipt
+            </button>
             <Link
               href={`/payments/receipt/${successResult._id}`}
-              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow-2xs flex items-center justify-center gap-1.5"
             >
               View Receipt
             </Link>
@@ -398,14 +444,47 @@ export default function PayLabourPage() {
                 </div>
               </div>
 
+              {/* Conditional Transaction Reference Inputs */}
+              {paymentMethod === 'ONLINE' && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-1">
+                    Transaction ID / UPI Reference <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. UPI/202684920482 or Ref #123456"
+                    value={transactionRef}
+                    onChange={(e) => setTransactionRef(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                  />
+                </div>
+              )}
+
+              {paymentMethod === 'BANK_TRANSFER' && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-1">
+                    Cheque No. / UTR No. <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. UTR987654321 or Cheque #402910"
+                    value={transactionRef}
+                    onChange={(e) => setTransactionRef(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                  />
+                </div>
+              )}
+
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Notes / Remark (Optional)</label>
+                <label className="block text-xs font-bold text-slate-900 mb-1">Notes / Remark (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Weekly settlement, Part payment for Mason work"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
                 />
               </div>
 
@@ -417,10 +496,18 @@ export default function PayLabourPage() {
                     setError('Please enter a valid positive payment amount.');
                     return;
                   }
+                  if (paymentMethod === 'ONLINE' && !transactionRef.trim()) {
+                    setError('Please enter the Transaction ID / UPI Reference.');
+                    return;
+                  }
+                  if (paymentMethod === 'BANK_TRANSFER' && !transactionRef.trim()) {
+                    setError('Please enter the Cheque No. or UTR No.');
+                    return;
+                  }
                   setError('');
                   setShowConfirmModal(true);
                 }}
-                className="w-full py-4 bg-[#087F3E] hover:bg-[#056B34] text-white text-base font-extrabold rounded-xl transition-all shadow text-center"
+                className="w-full py-2.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-lg transition-colors shadow-2xs text-center"
               >
                 Review & Confirm Payment →
               </button>
@@ -442,6 +529,13 @@ export default function PayLabourPage() {
                 <span className="text-slate-500">Recipient Worker:</span>
                 <span className="font-bold text-slate-900">{selectedWorker.name}</span>
               </div>
+
+              {transactionRef && (
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Ref / UTR / Cheque:</span>
+                  <span className="font-bold text-slate-900">{transactionRef}</span>
+                </div>
+              )}
 
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500">Payment Amount:</span>

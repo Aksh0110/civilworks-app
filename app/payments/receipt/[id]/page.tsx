@@ -46,15 +46,49 @@ export default function PaymentReceiptPage() {
     );
   }
 
+  const handleShareReceipt = async () => {
+    if (!receipt) return;
+    const receiptUrl = window.location.href;
+    const shareText = `🧾 *CivilWorks Payment Receipt*\nReceipt ID: ${receipt.receiptId}\nSite: ${receipt.projectName}\nPaid To: ${receipt.recipientName}\nAmount: ₹${Number(receipt.amount || 0).toLocaleString('en-IN')}\nPayment Mode: ${receipt.paymentMethod}\n\nView Full Receipt:\n${receiptUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Payment Receipt ${receipt.receiptId}`,
+          text: shareText,
+          url: receiptUrl
+        });
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      alert('Receipt details & link copied to clipboard!');
+    } catch (err) {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+      window.open(waUrl, '_blank');
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto py-4 space-y-6">
-      {/* Action Bar (Print) */}
-      <div className="flex items-center justify-end print:hidden">
+      {/* Action Bar (Print & Share) */}
+      <div className="flex items-center justify-end gap-2 print:hidden">
+        <button
+          onClick={handleShareReceipt}
+          className="px-3 py-1.5 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] text-xs font-extrabold rounded-lg shadow-2xs transition-colors flex items-center gap-1.5"
+        >
+          <span>📱</span> Share Receipt
+        </button>
+
         <button
           onClick={() => window.print()}
-          className="px-3 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-lg shadow-2xs transition-colors"
+          className="px-3 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-lg shadow-2xs transition-colors flex items-center gap-1.5"
         >
-          🖨️ Print / Save PDF
+          <span>🖨️</span> Print / Save PDF
         </button>
       </div>
 
@@ -96,6 +130,13 @@ export default function PaymentReceiptPage() {
             <span className="text-slate-500">Payment Mode:</span>
             <span className="font-semibold text-slate-900">{receipt.paymentMethod}</span>
           </div>
+
+          {receipt.transactionRef && (
+            <div className="flex justify-between py-1.5 border-b border-slate-100">
+              <span className="text-slate-500">Ref / UTR / Cheque:</span>
+              <span className="font-bold text-slate-900">{receipt.transactionRef}</span>
+            </div>
+          )}
 
           <div className="flex justify-between py-1.5 border-b border-slate-100">
             <span className="text-slate-500">Date & Time:</span>

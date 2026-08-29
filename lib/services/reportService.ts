@@ -349,9 +349,13 @@ export async function getProjectCostSummaryReport(projectId: string) {
     wageEntries.reduce((s: number, w: any) => s + (w.totalWage || 0), 0)
   );
 
+  const unlinkedInward = inwardList.filter(
+    (i: any) => !vendorBills.some((b: any) => b.materialInwardId && b.materialInwardId.toString() === i._id.toString())
+  );
+
   const materialProcurementBilled = roundMoney(
-    inwardList.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0) +
-      vendorBills.reduce((s: number, b: any) => s + (b.totalAmount || 0), 0)
+    vendorBills.reduce((s: number, b: any) => s + (b.totalAmount || 0), 0) +
+      unlinkedInward.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0)
   );
 
   const operationalSiteExpenses = roundMoney(

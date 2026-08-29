@@ -17,6 +17,7 @@ function GiveAdvanceForm() {
   const [selectedRecipientId, setSelectedRecipientId] = useState('');
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'ONLINE' | 'BANK_TRANSFER' | 'OTHER'>('CASH');
+  const [transactionRef, setTransactionRef] = useState('');
   const [notes, setNotes] = useState('');
 
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ function GiveAdvanceForm() {
     if (!activeProject?._id) return;
     setLoading(true);
     setSelectedRecipientId('');
+    setTransactionRef('');
 
     if (advanceType === 'LABOUR') {
       fetch(`/api/workers?projectId=${activeProject._id}&status=ACTIVE`)
@@ -64,6 +66,15 @@ function GiveAdvanceForm() {
       return;
     }
 
+    if (paymentMethod === 'ONLINE' && !transactionRef.trim()) {
+      setError('Please enter the Transaction ID / UPI Reference.');
+      return;
+    }
+    if (paymentMethod === 'BANK_TRANSFER' && !transactionRef.trim()) {
+      setError('Please enter the Cheque No. or UTR No.');
+      return;
+    }
+
     try {
       setSubmitting(true);
       setError('');
@@ -74,6 +85,7 @@ function GiveAdvanceForm() {
         paymentType,
         amount: numAmount,
         paymentMethod,
+        transactionRef: transactionRef.trim() || undefined,
         notes: notes.trim() || undefined,
         idempotencyKey: `advance-${advanceType.toLowerCase()}-${selectedRecipientId}-${idempotencyId}-${Date.now()}`,
         user: 'Site Supervisor'
@@ -98,6 +110,33 @@ function GiveAdvanceForm() {
       setError(err.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleShareReceipt = async () => {
+    if (!successResult) return;
+    const receiptUrl = `${window.location.origin}/payments/receipt/${successResult._id}`;
+    const shareText = `🧾 *CivilWorks Advance Receipt*\nReceipt ID: ${successResult.receiptId}\nPaid To: ${successResult.recipientName || 'Recipient'}\nAmount: ₹${successResult.amount.toLocaleString('en-IN')}\nPayment Mode: ${successResult.paymentMethod}\n\nView Full Receipt:\n${receiptUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Advance Receipt ${successResult.receiptId}`,
+          text: shareText,
+          url: receiptUrl
+        });
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      alert('Receipt details & link copied to clipboard!');
+    } catch (err) {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+      window.open(waUrl, '_blank');
     }
   };
 
@@ -130,10 +169,17 @@ function GiveAdvanceForm() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
+            <button
+              type="button"
+              onClick={handleShareReceipt}
+              className="flex-1 py-3 bg-[#EAF7EF] hover:bg-[#d5edd9] text-[#056B34] border border-[#bce6cb] font-extrabold text-xs rounded-xl transition-colors text-center shadow-2xs flex items-center justify-center gap-1.5"
+            >
+              <span>📱</span> Share Receipt
+            </button>
             <Link
               href={`/payments/receipt/${successResult._id}`}
-              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow"
+              className="flex-1 py-3 bg-[#087F3E] hover:bg-[#056B34] text-white font-extrabold text-xs rounded-xl transition-colors text-center shadow-2xs flex items-center justify-center gap-1.5"
             >
               View Receipt
             </Link>
@@ -244,8 +290,8 @@ function GiveAdvanceForm() {
 
         {/* Payment Method */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-2">Payment Method</label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <label className="block text-xs font-bold text-slate-900 mb-1">Payment Method</label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {(
               [
                 { id: 'CASH', label: '💵 Cash' },
@@ -258,9 +304,9 @@ function GiveAdvanceForm() {
                 key={m.id}
                 type="button"
                 onClick={() => setPaymentMethod(m.id)}
-                className={`p-3 rounded-xl border text-xs font-bold transition-all ${
+                className={`py-1.5 px-2 rounded-lg border text-xs font-bold transition-all ${
                   paymentMethod === m.id
-                    ? 'bg-[#087F3E] text-white border-[#087F3E] shadow'
+                    ? 'bg-[#087F3E] text-white border-[#087F3E] shadow-2xs'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -270,15 +316,48 @@ function GiveAdvanceForm() {
           </div>
         </div>
 
+        {/* Conditional Transaction Reference Inputs */}
+        {paymentMethod === 'ONLINE' && (
+          <div>
+            <label className="block text-xs font-bold text-slate-900 mb-1">
+              Transaction ID / UPI Reference <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. UPI/202684920482 or Ref #123456"
+              value={transactionRef}
+              onChange={(e) => setTransactionRef(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            />
+          </div>
+        )}
+
+        {paymentMethod === 'BANK_TRANSFER' && (
+          <div>
+            <label className="block text-xs font-bold text-slate-900 mb-1">
+              Cheque No. / UTR No. <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. UTR987654321 or Cheque #402910"
+              value={transactionRef}
+              onChange={(e) => setTransactionRef(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            />
+          </div>
+        )}
+
         {/* Remarks */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Remarks / Reason (Optional)</label>
+          <label className="block text-xs font-bold text-slate-900 mb-1">Remarks / Reason (Optional)</label>
           <input
             type="text"
             placeholder="e.g. Festival advance, Site mobilization advance"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
           />
         </div>
 

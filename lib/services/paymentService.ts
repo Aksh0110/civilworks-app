@@ -141,6 +141,7 @@ export interface CreateLabourPaymentInput {
   amount: number;
   paymentMethod: PaymentMethod;
   paymentDate?: Date;
+  transactionRef?: string;
   notes?: string;
   idempotencyKey?: string;
   user?: string;
@@ -174,6 +175,7 @@ export async function createLabourPayment(input: CreateLabourPaymentInput) {
     receiptId,
     status: 'COMPLETED',
     idempotencyKey: input.idempotencyKey,
+    transactionRef: input.transactionRef?.trim(),
     notes: input.notes,
     createdBy: input.user || 'Site Supervisor'
   });
@@ -230,6 +232,7 @@ export async function createLabourAdvance(input: CreateLabourPaymentInput) {
     receiptId,
     status: 'COMPLETED',
     idempotencyKey: input.idempotencyKey,
+    transactionRef: input.transactionRef?.trim(),
     notes: input.notes,
     createdBy: input.user || 'Site Supervisor'
   });
@@ -284,23 +287,26 @@ export async function getVendorsWithOutstanding(projectId: string): Promise<Vend
   for (const vendor of vendors) {
     const vendorId = vendor._id.toString();
 
-    // 1. Calculate total billed from MaterialInward and VendorBill
-    const inwardRecords = await (MaterialInward as any).find({
-      projectId: projId,
-      vendorId: vendor._id
-    }).lean();
-
-    const inwardTotal = inwardRecords.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0);
-
+    // 1. Calculate total billed from VendorBill and unlinked MaterialInward
     const vendorBills = await (VendorBill as any).find({
       projectId: projId,
       vendorId: vendor._id
     }).lean();
 
+    const inwardRecords = await (MaterialInward as any).find({
+      projectId: projId,
+      vendorId: vendor._id
+    }).lean();
+
+    const unlinkedInward = inwardRecords.filter(
+      (i: any) => !vendorBills.some((b: any) => b.materialInwardId && b.materialInwardId.toString() === i._id.toString())
+    );
+
     const billsTotal = vendorBills.reduce((s: number, b: any) => s + (b.totalAmount || 0), 0);
+    const unlinkedInwardTotal = unlinkedInward.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0);
     const openBillsCount = vendorBills.filter((b: any) => b.status !== 'SETTLED').length;
 
-    const totalBilled = roundMoney(inwardTotal + billsTotal);
+    const totalBilled = roundMoney(billsTotal + unlinkedInwardTotal);
 
     // 2. Fetch completed vendor payments
     const payments = await (Payment as any).find({
@@ -350,9 +356,17 @@ export async function getVendorDetail(projectId: string, vendorId: string) {
   const summaryList = await getVendorsWithOutstanding(projectId);
   const summary = summaryList.find((v) => v.vendorId === vendorId);
 
-  const bills = await (VendorBill as any).find({ projectId: projId, vendorId: vId })
+  const bills = await (VendorBill as any).find({
+    projectId: projId,
+    vendorId: vId,
+    status: { $ne: 'SETTLED' }
+  })
     .sort({ billDate: -1 })
     .lean();
+
+  const openBillsOnly = bills.filter(
+    (b: any) => b.status !== 'SETTLED' && roundMoney((b.totalAmount || 0) - (b.paidAmount || 0)) > 0
+  );
 
   const inward = await (MaterialInward as any).find({ projectId: projId, vendorId: vId })
     .sort({ date: -1 })
@@ -361,7 +375,7 @@ export async function getVendorDetail(projectId: string, vendorId: string) {
   const inwardMap = new Map<string, any>();
   inward.forEach((i: any) => inwardMap.set(i._id.toString(), i));
 
-  const enrichedBills = bills.map((b: any) => {
+  const enrichedBills = openBillsOnly.map((b: any) => {
     let items: any[] = [];
     if (b.materialInwardId) {
       const inw = inwardMap.get(b.materialInwardId.toString());
@@ -400,6 +414,7 @@ export interface CreateVendorPaymentInput {
   amount: number;
   paymentMethod: PaymentMethod;
   paymentDate?: Date;
+  transactionRef?: string;
   notes?: string;
   idempotencyKey?: string;
   user?: string;
@@ -433,6 +448,7 @@ export async function createVendorPayment(input: CreateVendorPaymentInput) {
     receiptId,
     status: 'COMPLETED',
     idempotencyKey: input.idempotencyKey,
+    transactionRef: input.transactionRef?.trim(),
     notes: input.notes,
     createdBy: input.user || 'Site Supervisor'
   });
@@ -526,6 +542,7 @@ export async function createVendorAdvance(input: CreateVendorPaymentInput) {
     receiptId,
     status: 'COMPLETED',
     idempotencyKey: input.idempotencyKey,
+    transactionRef: input.transactionRef?.trim(),
     notes: input.notes,
     createdBy: input.user || 'Site Supervisor'
   });

@@ -21,6 +21,7 @@ export interface IPayment {
   voidedAt?: Date;
   voidedBy?: string;
   idempotencyKey?: string;
+  transactionRef?: string;
   notes?: string;
   createdBy?: string;
   createdAt?: Date;
@@ -63,6 +64,7 @@ const PaymentSchema = new Schema(
     voidedAt: { type: Date },
     voidedBy: { type: String, trim: true },
     idempotencyKey: { type: String, trim: true, index: true },
+    transactionRef: { type: String, trim: true },
     notes: { type: String, trim: true },
     createdBy: { type: String, default: 'Site Supervisor', trim: true }
   },

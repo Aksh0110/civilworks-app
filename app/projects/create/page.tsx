@@ -67,9 +67,8 @@ export default function CreateProjectPage() {
 
   if (successProject) {
     return (
-      <AppShell>
-        <main className="content max-w-lg mx-auto py-6 space-y-6">
-          <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
+      <main className="content max-w-lg mx-auto py-6 space-y-6">
+        <div className="bg-[#EAF7EF] border border-[#bce6cb] p-6 rounded-2xl text-center space-y-4 shadow-sm">
             <div className="w-16 h-16 bg-[#087F3E] text-white rounded-full flex items-center justify-center text-3xl mx-auto font-black shadow">
               ✓
             </div>
@@ -109,15 +108,13 @@ export default function CreateProjectPage() {
                 Done
               </Link>
             </div>
-          </div>
-        </main>
-      </AppShell>
+        </div>
+      </main>
     );
   }
 
   return (
-    <AppShell>
-      <main className="content space-y-6 pb-20 max-w-2xl mx-auto">
+    <main className="content space-y-6 pb-20 max-w-2xl mx-auto">
         {/* Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
           <div>
@@ -273,6 +270,5 @@ export default function CreateProjectPage() {
           </button>
         </form>
       </main>
-    </AppShell>
-  );
+    );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { DEFAULT_VENDOR_CATEGORIES } from '@/lib/constants/vendorCategories';
 
 interface VendorModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface VendorModalProps {
 export default function VendorModal({ isOpen, vendorToEdit, onClose, onSuccess }: VendorModalProps) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
-  const [category, setCategory] = useState('Material Supplier');
+  const [category, setCategory] = useState('Cement / Steel');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,12 +22,12 @@ export default function VendorModal({ isOpen, vendorToEdit, onClose, onSuccess }
     if (vendorToEdit) {
       setName(vendorToEdit.name || '');
       setMobile(vendorToEdit.mobile || '');
-      setCategory(vendorToEdit.category || 'Material Supplier');
+      setCategory(vendorToEdit.category || 'Cement / Steel');
       setAddress(vendorToEdit.address || '');
     } else {
       setName('');
       setMobile('');
-      setCategory('Material Supplier');
+      setCategory('Cement / Steel');
       setAddress('');
     }
   }, [vendorToEdit, isOpen]);
@@ -132,12 +133,11 @@ export default function VendorModal({ isOpen, vendorToEdit, onClose, onSuccess }
               onChange={(e) => setCategory(e.target.value)}
               className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-[#087F3E]"
             >
-              <option value="Material Supplier">Material Supplier</option>
-              <option value="Cement Supplier">Cement Supplier</option>
-              <option value="Steel Supplier">Steel Supplier</option>
-              <option value="Aggregate & Sand">Aggregate & Sand</option>
-              <option value="Hardware Store">Hardware Store</option>
-              <option value="Sub-contractor">Sub-contractor</option>
+              {DEFAULT_VENDOR_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
 

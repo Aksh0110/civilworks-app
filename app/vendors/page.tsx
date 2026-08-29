@@ -101,15 +101,15 @@ export default function VendorsListPage() {
       </div>
 
       {/* Filter Bar & Tabs */}
-      <div className="bg-white border border-slate-200 p-3 rounded-xl space-y-2.5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-white border border-slate-200 p-1.5 rounded-lg space-y-1 shadow-2xs">
+        <div className="flex items-center justify-between gap-1">
           {/* Status Tabs */}
-          <div className="flex bg-slate-100 p-0.5 rounded-lg gap-1 border border-slate-200">
+          <div className="flex bg-slate-100 p-0.5 rounded gap-0.5 border border-slate-200 shrink-0">
             {(['ALL', 'DUE', 'ADVANCE', 'SETTLED'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setActiveTab(t)}
-                className={`px-2 py-1 rounded-md text-[10px] font-bold transition-colors ${
+                className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold transition-colors ${
                   activeTab === t
                     ? 'bg-[#087F3E] text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -124,7 +124,7 @@ export default function VendorsListPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+            className="bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-[10px] font-bold text-slate-700 focus:outline-none focus:border-[#087F3E] h-6 min-w-0 max-w-[125px] sm:max-w-none text-ellipsis"
           >
             <option value="ALL">All Categories</option>
             {DEFAULT_VENDOR_CATEGORIES.map((cat) => (
@@ -138,49 +138,49 @@ export default function VendorsListPage() {
         {/* Search */}
         <input
           type="text"
-          placeholder="Search vendor name, contact person, or phone..."
+          placeholder="Search vendor name, contact, or phone..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
+          className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-0.5 text-[11px] text-slate-900 h-6 focus:outline-none focus:border-[#087F3E] placeholder:text-slate-400"
         />
       </div>
 
       {/* Vendor Cards List */}
       {loading ? (
-        <div className="text-center py-8 text-xs text-slate-500">Loading vendor profiles...</div>
+        <div className="text-center py-6 text-xs text-slate-500 font-medium">Loading vendor profiles...</div>
       ) : filteredVendors.length === 0 ? (
-        <div className="bg-white border border-slate-200 p-6 rounded-xl text-center space-y-2 shadow-2xs">
-          <div className="text-2xl">🏬</div>
+        <div className="bg-white border border-slate-200 p-5 rounded-xl text-center space-y-1.5 shadow-2xs">
+          <div className="text-xl">🏬</div>
           <h3 className="text-xs font-extrabold text-slate-900">No vendors found</h3>
-          <p className="text-[11px] text-slate-500">Add suppliers to track bills, payments, and outstanding balances.</p>
+          <p className="text-[10px] text-slate-500">Add suppliers to track bills, payments, and outstanding balances.</p>
           <button
             onClick={() => {
               setVendorToEdit(null);
               setIsVendorModalOpen(true);
             }}
-            className="inline-block px-3 py-1.5 bg-[#087F3E] text-white text-xs font-bold rounded-lg"
+            className="inline-block px-2.5 py-1 bg-[#087F3E] text-white text-[11px] font-bold rounded-md"
           >
             + Add Vendor
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           {filteredVendors.map((v) => (
             <div
               key={v._id}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 text-left shadow-2xs flex flex-col gap-1.5"
+              className="p-2 rounded-lg bg-white border border-slate-200 text-left shadow-2xs flex flex-col gap-1 hover:border-[#087F3E] transition-colors"
             >
               {/* Header Row */}
-              <div className="flex items-center justify-between gap-1.5">
-                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center gap-1 min-w-0 flex-1">
                   <Link
                     href={`/vendors/${v._id}`}
-                    className="text-xs font-extrabold text-slate-900 hover:text-[#087F3E] transition-colors truncate"
+                    className="text-[11px] font-extrabold text-slate-900 hover:text-[#087F3E] transition-colors truncate"
                   >
                     {v.name}
                   </Link>
                   <span
-                    className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded-full uppercase shrink-0 ${
+                    className={`text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase shrink-0 ${
                       v.vendorStatus === 'DUE'
                         ? 'bg-amber-50 text-amber-700 border border-amber-200'
                         : v.vendorStatus === 'ADVANCE'
@@ -192,13 +192,13 @@ export default function VendorsListPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-0.5 shrink-0">
                   <button
                     onClick={() => {
                       setVendorToEdit(v);
                       setIsVendorModalOpen(true);
                     }}
-                    className="p-0.5 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                    className="p-1 hover:bg-slate-100 rounded text-[10px] text-slate-500 transition-colors"
                     title="Edit Vendor"
                   >
                     ✏️
@@ -206,7 +206,7 @@ export default function VendorsListPage() {
 
                   <button
                     onClick={() => setVendorToDelete(v)}
-                    className="p-0.5 text-slate-400 hover:text-red-600 text-xs font-bold"
+                    className="p-1 hover:bg-red-50 rounded text-[10px] text-slate-400 hover:text-red-600 transition-colors"
                     title="Delete Vendor"
                   >
                     🗑️
@@ -214,23 +214,23 @@ export default function VendorsListPage() {
 
                   <Link
                     href={`/vendors/${v._id}`}
-                    className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[10px] rounded-md transition-colors"
+                    className="px-1.5 py-0.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-[9px] rounded transition-colors flex items-center gap-0.5"
                   >
-                    Ledger →
+                    <span>📑</span> Ledger →
                   </Link>
                 </div>
               </div>
 
               {/* Subline Details & Financial Summary */}
-              <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-100/80 text-[10px]">
-                <div className="text-slate-500 truncate">
+              <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-slate-100/80 text-[9px]">
+                <div className="text-slate-500 font-medium truncate">
                   {v.category} {v.mobile ? `· 📞 ${v.mobile}` : ''}
                 </div>
 
                 <div className="shrink-0 text-right">
-                  <span className="text-slate-400 font-medium">Due: </span>
+                  <span className="text-slate-400 font-bold">Due: </span>
                   <strong
-                    className={`text-xs font-black ${
+                    className={`text-[11px] font-black ${
                       v.outstandingAmount > 0 ? 'text-amber-600' : 'text-slate-700'
                     }`}
                   >
