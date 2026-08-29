@@ -56,57 +56,64 @@ export async function getWorkersWithDue(projectId: string): Promise<WorkerWageDu
   await connectMongoDB();
   const projId = new (mongoose.Types.ObjectId as any)(projectId);
 
-  const workers = await (WorkerModel as any).find({ projectId: projId, status: 'ACTIVE' }).lean();
+  // Batch query workers, all project attendance, and all completed labour payments in parallel
+  const [workers, allAttendance, allPayments] = await Promise.all([
+    (WorkerModel as any).find({ projectId: projId, status: 'ACTIVE' }).lean(),
+    (Attendance as any).find({ projectId: projId }).select('workerId status').lean(),
+    (Payment as any)
+      .find({ projectId: projId, recipientType: 'WORKER', status: 'COMPLETED' })
+      .select('recipientId paymentType amount')
+      .lean()
+  ]);
 
-  const results: WorkerWageDueItem[] = [];
+  const attendanceByWorker = new Map<string, any[]>();
+  allAttendance.forEach((att: any) => {
+    const wId = att.workerId?.toString();
+    if (wId) {
+      if (!attendanceByWorker.has(wId)) attendanceByWorker.set(wId, []);
+      attendanceByWorker.get(wId)!.push(att);
+    }
+  });
 
-  for (const worker of workers) {
+  const paymentsByWorker = new Map<string, any[]>();
+  allPayments.forEach((p: any) => {
+    const wId = p.recipientId?.toString();
+    if (wId) {
+      if (!paymentsByWorker.has(wId)) paymentsByWorker.set(wId, []);
+      paymentsByWorker.get(wId)!.push(p);
+    }
+  });
+
+  const results: WorkerWageDueItem[] = workers.map((worker: any) => {
     const workerId = worker._id.toString();
-
-    // 1. Fetch attendance records
-    const attendanceRecords = await (Attendance as any).find({
-      projectId: projId,
-      workerId: worker._id
-    }).lean();
+    const workerAtt = attendanceByWorker.get(workerId) || [];
+    const workerPayments = paymentsByWorker.get(workerId) || [];
 
     let presentDays = 0;
     let halfDays = 0;
-
-    for (const att of attendanceRecords) {
+    for (const att of workerAtt) {
       if (att.status === 'PRESENT') presentDays++;
       else if (att.status === 'HALF_DAY') halfDays++;
     }
 
     const workedDays = presentDays * 1.0 + halfDays * 0.5;
-    const grossWage = roundMoney(workedDays * worker.dailyRate);
-
-    // 2. Fetch completed labour payments
-    const completedPayments = await (Payment as any).find({
-      projectId: projId,
-      recipientId: worker._id,
-      paymentType: 'LABOUR_PAYMENT',
-      status: 'COMPLETED'
-    }).lean();
+    const grossWage = roundMoney(workedDays * (worker.dailyRate || 0));
 
     const previousPaid = roundMoney(
-      completedPayments.reduce((sum: number, p: any) => sum + (p.amount || 0), 0)
+      workerPayments
+        .filter((p: any) => p.paymentType === 'LABOUR_PAYMENT')
+        .reduce((sum: number, p: any) => sum + (p.amount || 0), 0)
     );
 
-    // 3. Fetch completed labour advances
-    const completedAdvances = await (Payment as any).find({
-      projectId: projId,
-      recipientId: worker._id,
-      paymentType: 'LABOUR_ADVANCE',
-      status: 'COMPLETED'
-    }).lean();
-
     const advances = roundMoney(
-      completedAdvances.reduce((sum: number, p: any) => sum + (p.amount || 0), 0)
+      workerPayments
+        .filter((p: any) => p.paymentType === 'LABOUR_ADVANCE')
+        .reduce((sum: number, p: any) => sum + (p.amount || 0), 0)
     );
 
     const amountDue = roundMoney(Math.max(0, grossWage - advances - previousPaid));
 
-    results.push({
+    return {
       workerId,
       workerIdCode: worker.workerIdCode,
       name: worker.name,
@@ -120,10 +127,9 @@ export async function getWorkersWithDue(projectId: string): Promise<WorkerWageDu
       advances,
       previousPaid,
       amountDue
-    });
-  }
+    };
+  });
 
-  // Sort workers with amountDue > 0 first, then by name
   return results.sort((a, b) => b.amountDue - a.amountDue || a.name.localeCompare(b.name));
 }
 
@@ -281,22 +287,49 @@ export async function getVendorsWithOutstanding(projectId: string): Promise<Vend
   await connectMongoDB();
   const projId = new (mongoose.Types.ObjectId as any)(projectId);
 
-  const vendors = await (VendorModel as any).find({ status: 'ACTIVE' }).lean();
-  const results: VendorOutstandingItem[] = [];
+  // Batch query active vendors, all project vendor bills, material inwards, and completed vendor payments in parallel
+  const [vendors, allBills, allInwards, allPayments] = await Promise.all([
+    (VendorModel as any).find({ status: 'ACTIVE' }).lean(),
+    (VendorBill as any).find({ projectId: projId }).select('vendorId totalAmount status materialInwardId').lean(),
+    (MaterialInward as any).find({ projectId: projId }).select('vendorId totalAmount _id').lean(),
+    (Payment as any)
+      .find({ projectId: projId, recipientType: 'VENDOR', status: 'COMPLETED' })
+      .select('recipientId paymentType amount')
+      .lean()
+  ]);
 
-  for (const vendor of vendors) {
+  const billsByVendor = new Map<string, any[]>();
+  allBills.forEach((b: any) => {
+    const vId = b.vendorId?.toString();
+    if (vId) {
+      if (!billsByVendor.has(vId)) billsByVendor.set(vId, []);
+      billsByVendor.get(vId)!.push(b);
+    }
+  });
+
+  const inwardsByVendor = new Map<string, any[]>();
+  allInwards.forEach((i: any) => {
+    const vId = i.vendorId?.toString();
+    if (vId) {
+      if (!inwardsByVendor.has(vId)) inwardsByVendor.set(vId, []);
+      inwardsByVendor.get(vId)!.push(i);
+    }
+  });
+
+  const paymentsByVendor = new Map<string, any[]>();
+  allPayments.forEach((p: any) => {
+    const vId = p.recipientId?.toString();
+    if (vId) {
+      if (!paymentsByVendor.has(vId)) paymentsByVendor.set(vId, []);
+      paymentsByVendor.get(vId)!.push(p);
+    }
+  });
+
+  const results: VendorOutstandingItem[] = vendors.map((vendor: any) => {
     const vendorId = vendor._id.toString();
-
-    // 1. Calculate total billed from VendorBill and unlinked MaterialInward
-    const vendorBills = await (VendorBill as any).find({
-      projectId: projId,
-      vendorId: vendor._id
-    }).lean();
-
-    const inwardRecords = await (MaterialInward as any).find({
-      projectId: projId,
-      vendorId: vendor._id
-    }).lean();
+    const vendorBills = billsByVendor.get(vendorId) || [];
+    const inwardRecords = inwardsByVendor.get(vendorId) || [];
+    const vendorPayments = paymentsByVendor.get(vendorId) || [];
 
     const unlinkedInward = inwardRecords.filter(
       (i: any) => !vendorBills.some((b: any) => b.materialInwardId && b.materialInwardId.toString() === i._id.toString())
@@ -305,31 +338,23 @@ export async function getVendorsWithOutstanding(projectId: string): Promise<Vend
     const billsTotal = vendorBills.reduce((s: number, b: any) => s + (b.totalAmount || 0), 0);
     const unlinkedInwardTotal = unlinkedInward.reduce((s: number, i: any) => s + (i.totalAmount || 0), 0);
     const openBillsCount = vendorBills.filter((b: any) => b.status !== 'SETTLED').length;
-
     const totalBilled = roundMoney(billsTotal + unlinkedInwardTotal);
 
-    // 2. Fetch completed vendor payments
-    const payments = await (Payment as any).find({
-      projectId: projId,
-      recipientId: vendor._id,
-      paymentType: 'VENDOR_PAYMENT',
-      status: 'COMPLETED'
-    }).lean();
+    const previousPaid = roundMoney(
+      vendorPayments
+        .filter((p: any) => p.paymentType === 'VENDOR_PAYMENT')
+        .reduce((s: number, p: any) => s + (p.amount || 0), 0)
+    );
 
-    const previousPaid = roundMoney(payments.reduce((s: number, p: any) => s + (p.amount || 0), 0));
+    const advances = roundMoney(
+      vendorPayments
+        .filter((p: any) => p.paymentType === 'VENDOR_ADVANCE')
+        .reduce((s: number, p: any) => s + (p.amount || 0), 0)
+    );
 
-    // 3. Fetch completed vendor advances
-    const advancesRecords = await (Payment as any).find({
-      projectId: projId,
-      recipientId: vendor._id,
-      paymentType: 'VENDOR_ADVANCE',
-      status: 'COMPLETED'
-    }).lean();
-
-    const advances = roundMoney(advancesRecords.reduce((s: number, p: any) => s + (p.amount || 0), 0));
     const outstandingAmount = roundMoney(Math.max(0, totalBilled - previousPaid - advances));
 
-    results.push({
+    return {
       vendorId,
       name: vendor.name,
       mobile: vendor.mobile,
@@ -339,8 +364,8 @@ export async function getVendorsWithOutstanding(projectId: string): Promise<Vend
       advances,
       outstandingAmount,
       openBillsCount
-    });
-  }
+    };
+  });
 
   return results.sort((a, b) => b.outstandingAmount - a.outstandingAmount || a.name.localeCompare(b.name));
 }

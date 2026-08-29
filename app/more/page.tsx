@@ -6,7 +6,7 @@ import { isFeatureEnabled } from '@/lib/config/features';
 import { useAuth } from '@/lib/context/AuthContext';
 
 const modules = [
-  { key: 'reports', icon: '📊', title: 'Reports', desc: 'Muster & cost summaries', href: '/reports' },
+  { key: 'reports', icon: '📊', title: 'Reports', desc: 'Master & cost summaries', href: '/reports' },
   { key: 'documents', icon: '📂', title: 'Documents', desc: 'Drawings, bills & files', href: '/documents' },
   { key: 'payments', icon: '💳', title: 'Payments', desc: 'Pay workers & vendors', href: '/payments' },
   { key: 'vendors', icon: '🏬', title: 'Vendors', desc: 'Profiles, bills & ledger', href: '/vendors' },

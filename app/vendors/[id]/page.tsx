@@ -29,12 +29,6 @@ export default function VendorProfilePage() {
   const [contactToDelete, setContactToDelete] = useState<any | null>(null);
 
   // Modals state
-  const [showAddBillModal, setShowAddBillModal] = useState(false);
-  const [billNumber, setBillNumber] = useState('');
-  const [billAmount, setBillAmount] = useState('');
-  const [billRemarks, setBillRemarks] = useState('');
-  const [submittingBill, setSubmittingBill] = useState(false);
-
   const [showAddContactModal, setShowAddContactModal] = useState(false);
   const [contactName, setContactName] = useState('');
   const [contactRole, setContactRole] = useState('Manager');
@@ -84,38 +78,6 @@ export default function VendorProfilePage() {
     const res = await fetch(`/api/vendors/${vendorId}/contacts/${contactToDelete._id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete contact');
     loadProfileData();
-  };
-
-  const handleAddBill = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeProject?._id || !billNumber.trim() || !billAmount) return;
-
-    try {
-      setSubmittingBill(true);
-      const res = await fetch('/api/vendors/bills', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectId: activeProject._id,
-          vendorId,
-          billNumber: billNumber.trim(),
-          totalAmount: parseFloat(billAmount),
-          remarks: billRemarks.trim() || undefined,
-          user: 'Site Supervisor'
-        })
-      });
-
-      if (!res.ok) throw new Error('Failed to create bill');
-      setShowAddBillModal(false);
-      setBillNumber('');
-      setBillAmount('');
-      setBillRemarks('');
-      loadProfileData();
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSubmittingBill(false);
-    }
   };
 
   const handleAddContact = async (e: React.FormEvent) => {
@@ -233,18 +195,11 @@ export default function VendorProfilePage() {
           )}
 
           <Link
-            href="/payments/vendor"
+            href={`/payments/vendor?vendorId=${vendorId}`}
             className="px-4 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl flex items-center gap-1.5 transition-colors shadow"
           >
             <span>💳</span> Pay Vendor
           </Link>
-
-          <button
-            onClick={() => setShowAddBillModal(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl flex items-center gap-1.5 transition-colors shadow"
-          >
-            <span>📄</span> + Add Bill
-          </button>
         </div>
       </div>
 
@@ -346,16 +301,13 @@ export default function VendorProfilePage() {
         <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900">Vendor Bills ({bills.length})</h3>
-            <button
-              onClick={() => setShowAddBillModal(true)}
-              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow"
-            >
-              + Add Bill
-            </button>
           </div>
 
           {bills.length === 0 ? (
-            <div className="text-center py-8 text-xs text-slate-500">No bills recorded for this vendor.</div>
+            <div className="text-center py-8 space-y-1">
+              <p className="text-xs text-slate-500 font-medium">No bills recorded for this vendor.</p>
+              <p className="text-[11px] text-slate-400">Bills are generated automatically when site deliveries are recorded under Material Inward.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {bills.map((b: any) => {
@@ -421,7 +373,7 @@ export default function VendorProfilePage() {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900">Payment History ({payments.length})</h3>
             <Link
-              href="/payments/vendor"
+              href={`/payments/vendor?vendorId=${vendorId}`}
               className="px-3.5 py-1.5 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl shadow"
             >
               Pay Vendor
@@ -577,69 +529,6 @@ export default function VendorProfilePage() {
                 </a>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Add Bill Modal */}
-      {showAddBillModal && (
-        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 pb-6 sm:pb-4">
-          <div className="bg-white border border-slate-200 w-full max-w-md p-6 max-h-[85vh] overflow-y-auto rounded-2xl space-y-4 shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900">Add Vendor Bill</h3>
-            <form onSubmit={handleAddBill} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Invoice / Bill Number *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. INV-1289"
-                  value={billNumber}
-                  onChange={(e) => setBillNumber(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Total Bill Amount (₹) *</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  placeholder="Enter total amount..."
-                  value={billAmount}
-                  onChange={(e) => setBillAmount(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Remarks (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 500 bags Cement"
-                  value={billRemarks}
-                  onChange={(e) => setBillRemarks(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#087F3E]"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAddBillModal(false)}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingBill}
-                  className="px-4 py-2 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-extrabold rounded-xl shadow"
-                >
-                  Save Bill
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

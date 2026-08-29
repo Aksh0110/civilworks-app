@@ -428,13 +428,13 @@ export async function getDailyReportData(projectId: string, dateStr: string) {
   const normalizedDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 
   const query: any = { projectId, date: normalizedDate };
-  const progress = await DailyProgress.findOne(query).exec();
+  const progress = await DailyProgress.findOne(query).lean().exec();
 
   if (!progress) {
     return null;
   }
 
-  const plain = JSON.parse(JSON.stringify(progress));
+  const plain: any = progress;
 
   const completedWork = plain.workItems.filter((i: any) => i.status === 'COMPLETED');
   const inProgressWork = plain.workItems.filter((i: any) => i.status === 'IN_PROGRESS');

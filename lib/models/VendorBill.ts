@@ -40,6 +40,7 @@ const VendorBillSchema = new Schema(
 );
 
 VendorBillSchema.index({ projectId: 1, vendorId: 1, status: 1 });
+VendorBillSchema.index({ materialInwardId: 1 });
 
 export const VendorBill =
   mongoose.models.VendorBill || mongoose.model('VendorBill', VendorBillSchema);

@@ -582,10 +582,10 @@ export async function getStockOverview(
   if (category && category !== 'ALL') {
     matQuery.category = category;
   }
-  const materials = await Material.find(matQuery).sort({ name: 1 }).exec();
+  const materials = await Material.find(matQuery).sort({ name: 1 }).lean().exec();
 
   const stockQuery: any = { projectId };
-  const stocks = await MaterialStock.find(stockQuery).exec();
+  const stocks = await MaterialStock.find(stockQuery).lean().exec();
   const stockMap = new Map<string, any>();
   stocks.forEach((s: any) => stockMap.set(s.materialId.toString(), s));
 

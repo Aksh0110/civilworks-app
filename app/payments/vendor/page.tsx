@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useId, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useProject } from '@/lib/context/ProjectContext';
 import { VendorOutstandingItem } from '@/lib/services/paymentService';
 
-export default function PayVendorPage() {
+function PayVendorForm() {
   const { activeProject } = useProject();
+  const searchParams = useSearchParams();
+  const paramVendorId = searchParams.get('vendorId');
   const idempotencyId = useId();
 
   const [vendors, setVendors] = useState<VendorOutstandingItem[]>([]);
@@ -31,7 +34,7 @@ export default function PayVendorPage() {
   useEffect(() => {
     if (!activeProject?._id) return;
     loadVendors();
-  }, [activeProject?._id]);
+  }, [activeProject?._id, paramVendorId]);
 
   const loadVendors = () => {
     if (!activeProject?._id) return;
@@ -40,7 +43,27 @@ export default function PayVendorPage() {
     fetch(`/api/payments/vendors/due?projectId=${activeProject._id}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.data) setVendors(d.data);
+        const list: VendorOutstandingItem[] = d.data || [];
+        setVendors(list);
+
+        if (paramVendorId) {
+          const match = list.find((v) => v.vendorId === paramVendorId);
+          if (match) {
+            handleSelectVendor(match);
+          } else {
+            fetch(`/api/payments/vendors/due?projectId=${activeProject._id}&vendorId=${paramVendorId}`)
+              .then((res) => res.json())
+              .then((detRes) => {
+                if (detRes.data?.summary) {
+                  const item: VendorOutstandingItem = detRes.data.summary;
+                  setSelectedVendor(item);
+                  setVendorDetail(detRes.data);
+                  setPaymentAmount(item.outstandingAmount > 0 ? String(item.outstandingAmount) : '');
+                }
+              })
+              .catch(console.error);
+          }
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -576,5 +599,13 @@ export default function PayVendorPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PayVendorPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12 text-xs text-slate-500">Loading vendor payment form...</div>}>
+      <PayVendorForm />
+    </Suspense>
   );
 }

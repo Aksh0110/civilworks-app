@@ -172,7 +172,7 @@ export async function getAttendanceSummary(projectId: string, dateStr: string) {
   const query: any = { projectId, date: range };
   const wageEntry = await WageEntry.findOne(query).lean().exec();
   if (wageEntry) {
-    return JSON.parse(JSON.stringify(wageEntry));
+    return wageEntry;
   }
 
   const records = await Attendance.find(query)
