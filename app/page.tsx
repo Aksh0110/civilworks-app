@@ -6,9 +6,11 @@ import { useProject } from '@/lib/context/ProjectContext';
 import Link from 'next/link';
 
 import { isFeatureEnabled } from '@/lib/config/features';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function HomePage() {
   const { activeProject } = useProject();
+  const { isAdmin } = useAuth();
   const [summary, setSummary] = useState<any>(null);
   const [workerCount, setWorkerCount] = useState(0);
   const [materialMetrics, setMaterialMetrics] = useState<{ lowStockCount: number; outOfStockCount: number; totalAttentionCount: number } | null>(null);
@@ -43,10 +45,14 @@ export default function HomePage() {
     { key: 'expenses', icon: '💸', label: 'Expenses', href: '/expenses' },
     { key: 'workers', icon: '👷', label: 'Workers', href: '/workers' },
     { key: 'vendors', icon: '🏬', label: 'Vendors', href: '/vendors' },
+    { key: 'users', icon: '👥', label: 'Users', href: '/admin/users', adminOnly: true },
     { key: 'projects', icon: '🏗️', label: 'Projects', href: '/projects' }
   ];
 
-  const quick = allQuickActions.filter((action) => action.key === 'projects' || isFeatureEnabled(action.key as any));
+  const quick = allQuickActions.filter((action) => {
+    if (action.adminOnly && !isAdmin) return false;
+    return action.key === 'projects' || action.key === 'users' || isFeatureEnabled(action.key as any);
+  });
 
   const completedToday = todayProgress?.workItems?.filter((i: any) => i.status === 'COMPLETED').length || 0;
   const inProgressToday = todayProgress?.workItems?.filter((i: any) => i.status === 'IN_PROGRESS').length || 0;
@@ -106,6 +112,18 @@ export default function HomePage() {
         {/* Operations List */}
         <div className="section-title">Operations & Modules</div>
         <section className="list space-y-3">
+          {isAdmin && (
+            <div className="list-item flex items-center justify-between bg-emerald-50/50 border-l-4 border-l-[#087F3E]">
+              <div>
+                <strong className="text-[#056B34]">👥 User Management Portal</strong>
+                <div className="subtle">Supervise users, roles & assigned site permissions</div>
+              </div>
+              <Link href="/admin/users" className="btn btn-secondary btn-sm text-[#056B34] border-[#bce6cb]">
+                Manage Users
+              </Link>
+            </div>
+          )}
+
           <div className="list-item flex items-center justify-between">
             <div>
               <strong>Daily Progress & Site Diary</strong>

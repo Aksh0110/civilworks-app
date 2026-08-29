@@ -120,84 +120,83 @@ export default function PaymentsMainPage() {
     : (['ALL', 'VENDOR', 'ADVANCES'] as const);
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">💳</span>
-            <h1 className="text-xl font-extrabold text-slate-900">Payment & Settlements</h1>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">💳</span>
+            <h1 className="text-base font-extrabold text-slate-900">Payment & Settlements</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage vendor bill payments, settlements, and advances for{' '}
-            <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Selected Site'}</span>.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Payments & settlements for <span className="text-[#087F3E] font-bold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
       </div>
 
       {/* Summary Widget */}
-      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-4' : 'sm:grid-cols-2'} gap-3`}>
+      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-4' : 'sm:grid-cols-2'} gap-2`}>
         {showLabour && (
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-            <span className="text-xs text-slate-500 block font-semibold">Today Labour Paid</span>
-            <span className="text-lg font-black text-[#087F3E] mt-1 block">
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+            <span className="text-[11px] text-slate-500 block font-semibold">Today Labour</span>
+            <span className="text-base font-black text-[#087F3E] mt-0.5 block">
               ₹{(summary?.todayLabourPaid || 0).toLocaleString('en-IN')}
             </span>
           </div>
         )}
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Today Vendor Paid</span>
-          <span className="text-lg font-black text-[#087F3E] mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Today Vendor</span>
+          <span className="text-base font-black text-[#087F3E] mt-0.5 block">
             ₹{(summary?.todayVendorPaid || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
         {showLabour && (
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-            <span className="text-xs text-slate-500 block font-semibold">Labour Wage Due</span>
-            <span className="text-lg font-black text-amber-600 mt-1 block">
+          <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+            <span className="text-[11px] text-slate-500 block font-semibold">Labour Due</span>
+            <span className="text-base font-black text-amber-600 mt-0.5 block">
               ₹{(summary?.outstandingLabourDue || 0).toLocaleString('en-IN')}
             </span>
           </div>
         )}
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Vendor Outstanding</span>
-          <span className="text-lg font-black text-amber-600 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Vendor Outstanding</span>
+          <span className="text-base font-black text-amber-600 mt-0.5 block">
             ₹{(summary?.outstandingVendorDue || 0).toLocaleString('en-IN')}
           </span>
         </div>
       </div>
 
       {/* Primary Action Cards */}
-      <div className={`grid grid-cols-1 ${showLabour ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-4`}>
+      <div className={`grid grid-cols-2 ${showLabour ? 'sm:grid-cols-2' : 'sm:grid-cols-1'} gap-2.5`}>
         {showLabour && (
           <Link
             href="/payments/labour"
-            className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
+            className="group bg-white border border-slate-200 hover:border-[#087F3E] p-3 rounded-xl transition-all duration-200 shadow-2xs flex flex-col justify-between"
           >
-            <div className="flex items-start justify-between">
-              <div className="w-14 h-14 rounded-2xl bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+            <div className="flex items-center justify-between">
+              <div className="w-8 h-8 rounded-lg bg-[#EAF7EF] text-[#056B34] border border-[#bce6cb] flex items-center justify-center text-lg">
                 👷
               </div>
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#EAF7EF] text-[#056B34]">
-                Wage Payment
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#056B34]">
+                Wage
               </span>
             </div>
 
-            <div className="mt-5">
-              <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+            <div className="mt-2">
+              <h2 className="text-xs font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
                 Pay Labour
               </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Select workers with wage due, review worked days, and settle payments.
+              <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">
+                Settle worker wages.
               </p>
             </div>
 
-            <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
-              <span>Pay Worker Wages</span>
-              <span className="text-base">→</span>
+            <div className="mt-2 flex items-center text-[11px] font-bold text-[#087F3E] gap-1">
+              <span>Pay Wages</span>
+              <span>→</span>
             </div>
           </Link>
         )}
@@ -205,60 +204,60 @@ export default function PaymentsMainPage() {
         {/* Pay Vendor Card */}
         <Link
           href="/payments/vendor"
-          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-6 rounded-2xl transition-all duration-200 shadow-sm flex flex-col justify-between"
+          className="group bg-white border border-slate-200 hover:border-[#087F3E] p-3 rounded-xl transition-all duration-200 shadow-2xs flex flex-col justify-between"
         >
-          <div className="flex items-start justify-between">
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center text-lg">
               🏬
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700">
-              Vendor Payment
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+              Vendor
             </span>
           </div>
 
-          <div className="mt-5">
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#087F3E] transition-colors">
+          <div className="mt-2">
+            <h2 className="text-xs font-extrabold text-slate-900 group-hover:text-[#087F3E] transition-colors">
               Pay Vendor
             </h2>
-            <p className="text-xs text-slate-500 mt-1">
-              Pay outstanding vendor balances or settle specific material bills.
+            <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">
+              Settle vendor bills.
             </p>
           </div>
 
-          <div className="mt-6 flex items-center text-xs font-bold text-[#087F3E] gap-1">
-            <span>Pay Vendor Bills</span>
-            <span className="text-base">→</span>
+          <div className="mt-2 flex items-center text-[11px] font-bold text-[#087F3E] gap-1">
+            <span>Pay Bills</span>
+            <span>→</span>
           </div>
         </Link>
       </div>
 
       {/* Secondary Quick Actions for Advances */}
-      <div className={`grid ${showLabour ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+      <div className={`grid ${showLabour ? 'grid-cols-2' : 'grid-cols-1'} gap-2.5`}>
         {showLabour && (
           <Link
             href="/payments/advance?type=LABOUR"
-            className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
+            className="bg-white border border-slate-200 p-2.5 rounded-xl hover:border-slate-300 transition-colors shadow-2xs flex items-center gap-2.5"
           >
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center text-base shrink-0">
               💵
             </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Give Labour Advance</h3>
-              <p className="text-xs text-slate-500">Record wage advance</p>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xs font-bold text-slate-900 truncate">Labour Advance</h3>
+              <p className="text-[10px] text-slate-500 truncate">Record wage advance</p>
             </div>
           </Link>
         )}
 
         <Link
           href="/payments/advance?type=VENDOR"
-          className="bg-white border border-slate-200 p-4 rounded-2xl hover:border-slate-300 transition-colors shadow-sm flex items-center gap-3"
+          className="bg-white border border-slate-200 p-2.5 rounded-xl hover:border-slate-300 transition-colors shadow-2xs flex items-center gap-2.5"
         >
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-base shrink-0">
             🏷️
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Give Vendor Advance</h3>
-            <p className="text-xs text-slate-500">Record supplier advance</p>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs font-bold text-slate-900 truncate">Vendor Advance</h3>
+            <p className="text-[10px] text-slate-500 truncate">Record supplier advance</p>
           </div>
         </Link>
       </div>

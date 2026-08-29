@@ -25,16 +25,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className="flex items-center gap-2">
           {user ? (
             <div className="flex items-center gap-2">
-              {user.role === 'ADMIN' && (
-                <Link
-                  href="/admin/users"
-                  className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-[#056B34] border border-[#bce6cb] text-[11px] font-extrabold rounded-lg transition-colors flex items-center gap-1"
-                  title="User Management Portal"
-                >
-                  <span>👥</span>
-                  <span className="hidden sm:inline">Users</span>
-                </Link>
-              )}
+
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-black text-slate-800">{user.name}</span>
                 <span className="text-[10px] font-bold text-[#087F3E] uppercase">{user.role}</span>

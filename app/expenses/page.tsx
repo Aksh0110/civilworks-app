@@ -67,54 +67,53 @@ export default function ExpensesHubPage() {
   });
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">💸</span>
-            <h1 className="text-xl font-bold text-slate-900">Site Expense Management</h1>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">💸</span>
+            <h1 className="text-base font-extrabold text-slate-900">Site Expense Management</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Track operational site costs for{' '}
-            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Operational site costs for <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
 
         <Link
           href="/expenses/add"
-          className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0"
+          className="px-3 h-8 bg-[#087F3E] hover:bg-[#056B34] text-white text-[11px] font-bold rounded-lg transition-colors shadow-2xs flex items-center justify-center gap-1 shrink-0"
         >
           <span>+</span> Add Expense
         </Link>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Today</span>
-          <span className="text-lg font-black text-amber-600 mt-1 block">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Today</span>
+          <span className="text-base font-black text-amber-600 mt-0.5 block">
             ₹{(summary?.todayTotal || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">This Week</span>
-          <span className="text-lg font-black text-slate-900 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">This Week</span>
+          <span className="text-base font-black text-slate-900 mt-0.5 block">
             ₹{(summary?.weekTotal || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">This Month</span>
-          <span className="text-lg font-black text-slate-900 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">This Month</span>
+          <span className="text-base font-black text-slate-900 mt-0.5 block">
             ₹{(summary?.monthTotal || 0).toLocaleString('en-IN')}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Total Project</span>
-          <span className="text-lg font-black text-[#087F3E] mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Total Project</span>
+          <span className="text-base font-black text-[#087F3E] mt-0.5 block">
             ₹{(summary?.projectTotal || 0).toLocaleString('en-IN')}
           </span>
         </div>

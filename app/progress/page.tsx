@@ -47,53 +47,52 @@ export default function DailyProgressHubPage() {
   );
 
   return (
-    <div className="space-y-6 pb-20 max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+    <div className="space-y-3 pb-20 max-w-4xl mx-auto">
+      <div className="flex flex-row items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xs">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">📋</span>
-            <h1 className="text-xl font-bold text-slate-900">Daily Progress & Site Logs</h1>
+          <div className="flex items-center gap-1.5">
+            <span className="text-lg">📋</span>
+            <h1 className="text-base font-extrabold text-slate-900">Daily Progress & Site Logs</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Structured daily work updates & site diary for{' '}
-            <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Daily work updates & site diary for <span className="text-[#087F3E] font-semibold">{activeProject?.name || 'Selected Site'}</span>.
           </p>
         </div>
 
         <Link
           href="/progress/update"
-          className="px-5 h-12 bg-[#087F3E] hover:bg-[#056B34] text-white text-xs font-bold rounded-xl transition-colors shadow flex items-center justify-center gap-2 shrink-0"
+          className="px-3 h-8 bg-[#087F3E] hover:bg-[#056B34] text-white text-[11px] font-bold rounded-lg transition-colors shadow-2xs flex items-center justify-center gap-1 shrink-0"
         >
           <span>✏️</span> Work Update
         </Link>
       </div>
 
       {/* Today's Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Today's Work Items</span>
-          <span className="text-lg font-black text-amber-600 mt-1 block">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Today Work Items</span>
+          <span className="text-base font-black text-amber-600 mt-0.5 block">
             {todayRecord ? `${todayRecord.totalWorkItems} Items` : '0 Items'}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Completed Today</span>
-          <span className="text-lg font-black text-[#087F3E] mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Completed Today</span>
+          <span className="text-base font-black text-[#087F3E] mt-0.5 block">
             {todayRecord ? `${todayRecord.completedCount} Done` : '0 Done'}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Active Issues</span>
-          <span className="text-lg font-black text-slate-900 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Active Issues</span>
+          <span className="text-base font-black text-slate-900 mt-0.5 block">
             {todayRecord ? `${todayRecord.issueCount} Issues` : '0 Issues'}
           </span>
         </div>
 
-        <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-          <span className="text-xs text-slate-500 block font-semibold">Site Photos</span>
-          <span className="text-lg font-black text-slate-900 mt-1 block">
+        <div className="bg-white border border-slate-200 p-2.5 rounded-xl shadow-2xs">
+          <span className="text-[11px] text-slate-500 block font-semibold">Site Photos</span>
+          <span className="text-base font-black text-slate-900 mt-0.5 block">
             {todayRecord ? `${todayRecord.photoCount} Photos` : '0 Photos'}
           </span>
         </div>
